@@ -1,0 +1,195 @@
+"""
+quitefastmst Pyhon Package
+"""
+
+# ############################################################################ #
+#                                                                              #
+#   Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>     #
+#                                                                              #
+#                                                                              #
+#   This program is free software: you can redistribute it and/or modify       #
+#   it under the terms of the GNU Affero General Public License                #
+#   Version 3, 19 November 2007, published by the Free Software Foundation.    #
+#   This program is distributed in the hope that it will be useful,            #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of             #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the               #
+#   GNU Affero General Public License Version 3 for more details.              #
+#   You should have received a copy of the License along with this program.    #
+#   If this is not the case, refer to <https://www.gnu.org/licenses/>.         #
+#                                                                              #
+# ############################################################################ #
+
+
+import setuptools
+from setuptools.command.sdist import sdist
+from Cython.Distutils import build_ext
+from Cython.Build import cythonize
+import numpy as np
+import os.path
+import glob
+import os
+import sys
+import re
+
+
+cython_modules = {
+    "quitefastmst.quitefastmst": [
+        os.path.join("src", "knn_euclid_brute.cpp"),
+        os.path.join("src", "knn_euclid_kdtree.cpp"),
+        os.path.join("src", "mst_euclid_brute.cpp"),
+        os.path.join("src", "mst_euclid_kdtree.cpp"),
+        os.path.join("src", "py_fastmst.pyx"),
+    ],
+}
+
+
+class quitefastmst_sdist(sdist):
+    def run(self):
+        for pyx_files in cython_modules.values():
+            cythonize(pyx_files, include_path=["src/", "../src/"])
+        sdist.run(self)
+
+
+class quitefastmst_build_ext(build_ext):
+    def build_extensions(self):
+
+        # This code is adapted from
+        # scikit-learn/sklearn/_build_utils/openmp_helpers.py
+        # (version last updated on 13 Nov 2019; 9876f74)
+        # See https://github.com/scikit-learn/scikit-learn and https://scikit-learn.org/.
+
+        if hasattr(self.compiler, 'compiler'):
+            compiler = self.compiler.compiler[0]
+        else:
+            compiler = self.compiler.__class__.__name__
+
+        if sys.platform == "win32" and ('icc' in compiler or 'icl' in compiler):
+            for e in self.extensions:
+                e.extra_compile_args += ['/Qopenmp', '/Qstd=c++17']
+                e.extra_link_args += ['/Qopenmp']
+        elif sys.platform == "win32":
+            for e in self.extensions:
+                e.extra_compile_args += ['/openmp']
+                e.extra_link_args += ['/openmp']
+        elif sys.platform == "darwin" and ('icc' in compiler or 'icl' in compiler):
+            for e in self.extensions:
+                e.extra_compile_args += ['-openmp', '-std=c++17']
+                e.extra_link_args += ['-openmp']
+        elif sys.platform == "darwin":  # and 'openmp' in os.getenv('CPPFLAGS', ''):
+            # -fopenmp can't be passed as compile flag when using Apple-clang.
+            # OpenMP support has to be enabled during preprocessing.
+            #
+            # For example, our macOS wheel build jobs use the following environment
+            # variables to build with Apple-clang and the brew installed "libomp":
+            #
+            # export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
+            # export CFLAGS="$CFLAGS -I/usr/local/opt/libomp/include"
+            # export CXXFLAGS="$CXXFLAGS -I/usr/local/opt/libomp/include"
+            # export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/opt/libomp/lib
+            #                          -L/usr/local/opt/libomp/lib -lomp"
+            for e in self.extensions:
+                e.extra_compile_args += ['-std=c++17', '-O3']
+            pass
+        elif sys.platform == "linux":
+            # Default flag for GCC and clang:
+            for e in self.extensions:
+                e.extra_compile_args += ['-fopenmp', '-std=c++17', '-O3']
+                e.extra_link_args += ['-fopenmp']
+        else:
+            pass
+
+        # Old version:
+        # c = self.compiler.compiler_type
+        # if c == "msvc":
+        #     for e in self.extensions:
+        #         e.extra_compile_args += "/openmp"
+        # elif c == "mingw32":
+        #     for e in self.extensions:
+        #         e.extra_compile_args += "-fopenmp"
+        #         e.extra_link_args += "-fopenmp"
+        # elif c == "unix":
+        #     # Well... gcc/clang has -fopenmp,
+        #     # icc has -openmp, oracle has -xopenmp, etc.
+        #     # The user should specify CXXFLAGS and LDFLAGS herself, I think.
+        #     pass
+
+        build_ext.build_extensions(self)
+
+
+ext_kwargs = dict(
+    include_dirs=[np.get_include(), "src/", "../src/"],
+    language="c++",
+    depends=glob.glob(os.path.join("src", "*.h")) +
+            glob.glob(os.path.join("src", "*.cpp")),
+    define_macros=[
+        ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION"),
+        ("QUITEFASTMST_PYTHON", "1"),
+    ]
+)
+
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+
+with open("quitefastmst/__init__.py", "r") as fh:
+    __version__ = re.search("(?m)^\\s*__version__\\s*=\\s*[\"']([0-9.]+)[\"']", fh.read())
+    if __version__ is None:
+        raise ValueError("the package version could not be read")
+    __version__ = __version__.group(1)
+
+
+setuptools.setup(
+    name="quitefastmst",
+    version=__version__,
+    description="quitefastmst: TO DO",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Marek Gagolewski",
+    author_email="marek@gagolewski.com",
+    maintainer="Marek Gagolewski",
+    license="GNU Affero General Public License v3",
+    install_requires=[
+        "numpy",
+        "Cython",  # not: cython
+      ],
+    download_url="https://github.com/gagolews/quitefastmst",
+    url="https://quitefastmst.gagolewski.com/",
+    project_urls={
+        "Bug Tracker":        "https://github.com/gagolews/quitefastmst/issues",
+        "Documentation":      "https://quitefastmst.gagolewski.com/",
+        "Source Code":        "https://github.com/gagolews/quitefastmst",
+        "Benchmark Datasets": "https://clustering-benchmarks.gagolewski.com/",
+        "Author":             "https://www.gagolewski.com/",
+    },
+    packages=setuptools.find_packages(),
+    include_package_data=True,
+    classifiers=[
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        #"Programming Language :: Python :: 3.7",
+        #"Programming Language :: Python :: 3.8",
+        #"Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3 :: Only",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Operating System :: MacOS",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Developers",
+        "Development Status :: 5 - Production/Stable",
+        "Topic :: Scientific/Engineering",
+    ],
+    cmdclass={
+        "sdist": quitefastmst_sdist,
+        "build_ext": quitefastmst_build_ext
+    },
+    ext_modules=[
+        setuptools.Extension(module, pyx_files, **ext_kwargs)
+        for module, pyx_files in cython_modules.items()
+    ]
+)

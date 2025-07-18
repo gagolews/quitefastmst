@@ -1,0 +1,13 @@
+PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -DQUITEFASTMST_R -Isrc/ -I../src/
+
+PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)
+
+SOURCES = \
+    knn_euclid_brute.cpp \
+    mst_euclid_brute.cpp \
+    knn_euclid_kdtree.cpp \
+    mst_euclid_kdtree.cpp \
+    RcppFastmst.cpp \
+    RcppExports.cpp
+
+OBJECTS = $(SOURCES:.cpp=.o)

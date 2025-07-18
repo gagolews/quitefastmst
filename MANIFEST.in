@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+include NEWS
+include src/c_*.h
+include quitefastmst/c_*.pxd
+include *.in
+include *.txt

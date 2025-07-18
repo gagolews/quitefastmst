@@ -1,0 +1,29 @@
+Package: quitefastmst
+Type: Package
+Title: TO DO
+Version: 0.99.9666
+Date: 2025-07-18
+Authors@R: c(
+    person("Marek", "Gagolewski",
+        role = c("aut", "cre", "cph"),
+        email = "marek@gagolewski.com",
+        comment = c(ORCID = "0000-0003-0637-6028"))
+    )
+Description:
+    TO DO
+    The 'Python' version of 'quitefastmst' is available via 'PyPI'.
+BugReports: https://github.com/gagolews/quitefastmst/issues
+URL:
+    https://quitefastmst.gagolewski.com/
+    https://github.com/gagolews/quitefastmst
+License: AGPL-3
+Imports:
+    Rcpp (>= 1.0.4),
+    stats,
+    utils
+Suggests:
+    datasets,
+LinkingTo: Rcpp
+Encoding: UTF-8
+SystemRequirements: OpenMP, C++17
+RoxygenNote: 7.3.2
