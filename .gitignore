@@ -1,0 +1,52 @@
+.devel/data/pbmc3k_raw.h5ad
+*.kate-swp
+.vscode
+.pytest_cache
+__pycache__
+build
+dist
+quitefastmst/*.so
+quitefastmst/*.c
+quitefastmst/*.cpp
+quitefastmst/*.html
+quitefastmst.egg-info
+pytest/__pycache__
+.ipynb_checkpoints
+*.Rmd-tmp-*
+src/*.o
+src/*.so
+src/py_*.cpp
+cache-*
+coverage.xml
+.coverage
+htmlcov
+
+# Compiled files:
+*.o
+*.so
+*.dll
+*.a
+src-i386/
+src-x64/
+
+
+# Backup and temporary files:
+*~
+*.backup
+*.cache
+*.bak
+*.tmp
+tmp*
+delme*
+
+# LaTeX/knitr dust:
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+cache-knitr/
+cache/
+
+# Sphinx documentation
+.devel/sphinx/_build
