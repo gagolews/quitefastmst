@@ -165,7 +165,7 @@ for n, d, M, s in scenarios:
         dist = CopulaDistribution(copula=GumbelCopula(theta=2, k_dim=d), marginals=[scipy.stats.pareto(2) for i in range(d)])
         X = dist.rvs(n, random_state=np.random.mtrand._rand)
     elif s == "thermogauss_scan001":
-        X = np.loadtxt("/home/gagolews/Python/quitefastmst/.devel/benchmarks/benchmark_data/thermogauss_scan001.3d.gz")
+        X = np.loadtxt("/home/gagolews/Python/quitefastmst/.devel/benchmark_data/thermogauss_scan001.3d.gz")
     else:
         raise Exception("wrong 's'")
 
