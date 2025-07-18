@@ -41,11 +41,8 @@
 #define __c_kdtree_boruvka_h
 
 #include "c_common.h"
-// #include "c_argfuns.h"
 #include "c_kdtree.h"
 #include "c_disjoint_sets.h"
-#include "c_mst_triple.h"
-
 
 
 namespace quitefastkdtree {
@@ -370,7 +367,7 @@ protected:
     int omp_nthreads;
 
 
-    std::vector<NODE*> leaves; // TODO: sesquitree only
+    std::vector<NODE*> leaves; // sesquitree only
 
 
     inline void tree_add(Py_ssize_t i, Py_ssize_t j, FLOAT d)
@@ -383,7 +380,7 @@ protected:
     }
 
 
-    void setup_leaves()  // TODO: sesquitree only
+    void setup_leaves()
     {
         QUITEFASTMST_ASSERT(boruvka_variant == BORUVKA_QTB);
 
@@ -424,7 +421,6 @@ protected:
                 );
             }
         }
-        // }
     }
 
 
@@ -712,22 +708,12 @@ protected:
 
     void find_mst_next_dtb(NODE* roota, NODE* rootb)
     {
-        //QUITEFASTMST_ASSERT(roota);
-        //QUITEFASTMST_ASSERT(rootb);
-
         // we have ds.find(i) == ds.get_parent(i) for all i!
 
         if (roota->cluster_repr >= 0 && roota->cluster_repr == rootb->cluster_repr) {
             // both consist of members of the same cluster - nothing to do
             return;
         }
-
-        // pruning below!
-        //FLOAT dist = distance_node_node_sqeuclid(roota, rootb);
-        //if (roota->dtb_data.cluster_max_dist < dist) {
-        //    // we've a better candidate already - nothing to do
-        //    return;
-        //}
 
         if (roota->is_leaf()) {
             if (rootb->is_leaf()) {
@@ -1153,21 +1139,6 @@ void mst(
                 nn_ind[perm[i]*(M-1)+j]  = perm[_nn_ind[i*(M-1)+j]];
             }
         }
-
-        // if (M > 2) {
-        //     // we need to recompute the distances as we applied a correction for ambiguity
-        //     const FLOAT* _data     = tree.get_data();
-        //     const FLOAT* _d_core   = tree.get_dcore();
-        //     for (Py_ssize_t i=0; i<n-1; ++i) {
-        //         Py_ssize_t i1 = tree_ind[2*i+0];
-        //         Py_ssize_t i2 = tree_ind[2*i+1];
-        //         tree_dist[i] = max3(
-        //             DISTANCE::point_point(_data+i1*D, _data+i2*D),
-        //             _d_core[i1],
-        //             _d_core[i2]
-        //         );
-        //     }
-        // }
     }
 
     for (Py_ssize_t i=0; i<n-1; ++i) {

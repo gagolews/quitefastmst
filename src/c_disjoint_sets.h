@@ -101,15 +101,6 @@ public:
 
         this->par[x] = this->find(this->par[x]);
 
-        // if (this->par[x] == this->par[this->par[x]]) {
-        //     // common case - eliminate recursion
-        //     this->par[x] = this->par[this->par[x]];
-        // }
-        // else {
-        //     this->par[this->par[x]] = this->find(this->par[this->par[x]]);
-        //     this->par[x] = this->par[this->par[x]];
-        // }
-
         return this->par[x];
     }
 
