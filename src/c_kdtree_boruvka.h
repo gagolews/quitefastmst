@@ -466,6 +466,8 @@ protected:
 
     void setup_leaves()  // TODO: sesquitree only
     {
+        QUITEFASTMST_ASSERT(boruvka_variant == BORUVKA_QTB);
+
         // NOTE: nleaves can be determined whilst building the tree
         Py_ssize_t nleaves = 0;
         for (auto curnode = this->nodes.begin(); curnode != this->nodes.end(); ++curnode)
@@ -478,19 +480,9 @@ protected:
         for (auto curnode = this->nodes.begin(); curnode != this->nodes.end(); ++curnode) {
             if (curnode->is_leaf()) {
                 leaves[_leafnum++] = &(*curnode);
-
-                curnode->qtb_data.lastbest_dist = INFINITY;
+                curnode->qtb_data.lastbest_dist = 0.0;
                 curnode->qtb_data.lastbest_ind  = -1;
                 curnode->qtb_data.lastbest_from = -1;
-
-                // TODO : why is this important?
-                for (Py_ssize_t i=curnode->idx_from; i<curnode->idx_to; ++i) {
-                    if (curnode->qtb_data.lastbest_dist > lastbest_dist[i]) {
-                        curnode->qtb_data.lastbest_dist = lastbest_dist[i];
-                        curnode->qtb_data.lastbest_ind  = lastbest_ind[i];
-                        curnode->qtb_data.lastbest_from = i;
-                    }
-                }
             }
         }
 
@@ -523,13 +515,11 @@ protected:
     }
 
 
-    void update_cluster_data()
+    void update_node_data()
     {
         // Performed in each iteration
 
-        for (Py_ssize_t i=0; i<this->n; ++i)
-            this->ds.find(i);
-        // now ds.find(i) == ds.get_parent(i) for all i
+        // ds.find(i) == ds.get_parent(i) for all i
 
         // nodes is a deque...
         for (auto curnode = this->nodes.rbegin(); curnode != this->nodes.rend(); ++curnode)
@@ -547,6 +537,20 @@ protected:
                     if (curnode->cluster_repr != ds.get_parent(j)) {
                         curnode->cluster_repr = -1;  // not all are members of the same cluster
                         break;
+                    }
+                }
+
+                if (curnode->cluster_repr >= 0 && boruvka_variant == BORUVKA_QTB) {
+                    Py_ssize_t i=curnode->idx_from;
+                    curnode->qtb_data.lastbest_dist = lastbest_dist[i];
+                    curnode->qtb_data.lastbest_ind  = lastbest_ind[i];
+                    curnode->qtb_data.lastbest_from = i;
+                    for (++i; i<curnode->idx_to; ++i) {
+                        if (curnode->qtb_data.lastbest_dist > lastbest_dist[i]) {
+                            curnode->qtb_data.lastbest_dist = lastbest_dist[i];
+                            curnode->qtb_data.lastbest_ind  = lastbest_ind[i];
+                            curnode->qtb_data.lastbest_from = i;
+                        }
                     }
                 }
             }
@@ -896,17 +900,6 @@ protected:
                     if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
                     #endif
                 }
-
-                curleaf->qtb_data.lastbest_dist = INFINITY;
-                curleaf->qtb_data.lastbest_ind  = -1;
-                curleaf->qtb_data.lastbest_from = -1;
-                for (Py_ssize_t i=curleaf->idx_from; i<curleaf->idx_to; ++i) {
-                    if (curleaf->qtb_data.lastbest_dist > lastbest_dist[i]) {
-                        curleaf->qtb_data.lastbest_dist = lastbest_dist[i];
-                        curleaf->qtb_data.lastbest_ind  = lastbest_ind[i];
-                        curleaf->qtb_data.lastbest_from = i;
-                    }
-                }
             }
         }
     }
@@ -1062,9 +1055,12 @@ protected:
             tree_iter++;
             QUITEFASTMST_PROFILER_START
 
+            for (Py_ssize_t i=0; i<this->n; ++i)
+                this->ds.find(i);
+            // now ds.find(i) == ds.get_parent(i) for all i
+
             // reset cluster_max_dist and set up cluster_repr,
-            // ensure ds.find(i) == ds.get_parent(i) for all i
-            update_cluster_data();
+            update_node_data();
 
             ds_k = 0;
             for (Py_ssize_t i=0; i<this->n; ++i) {
