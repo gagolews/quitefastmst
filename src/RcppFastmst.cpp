@@ -407,8 +407,8 @@ List knn_euclid(
 //' @param algorithm \code{"auto"}, \code{"single_kd_tree"}
 //'    \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"} or \code{"brute"};
 //'    K-d trees can only be used for d between 2 and 20 only;
-//'    \code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 3}.
-//'    \code{"single_kd_tree"} is used otherwise, unless \eqn{d>20}.
+//'    \code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 20}.
+//'    \code{"brute"} is used otherwise
 //' @param max_leaf_size maximal number of points in the K-d tree leaves;
 //'    smaller leaves use more memory, yet are not necessarily faster;
 //'    use \code{0} to select the default value, currently set to 32 for the
@@ -486,10 +486,10 @@ List mst_euclid(
 
     if (algorithm == "auto") {
         if (2 <= d && d <= 20) {
-            if (d <= 3)
-                algorithm = "sesqui_kd_tree";
-            else
-                algorithm = "single_kd_tree";
+            //if (d <= 3)
+            algorithm = "sesqui_kd_tree";
+            //else
+            //    algorithm = "single_kd_tree";
         }
         else
             algorithm = "brute";

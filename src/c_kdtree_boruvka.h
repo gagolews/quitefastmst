@@ -145,10 +145,9 @@ struct kdtree_node_orderer {
 
 
 
-
 /** A class enabling searching for the nearest neighbour
  *  outside of the current point's cluster;
- *  (for the "single-tree" Borůvka algo); it is thread-safe
+ *  (for the "sesqui-tree" and "single-tree" Borůvka algo); it is thread-safe
  */
 template <
     typename FLOAT,
@@ -159,16 +158,22 @@ template <
 class kdtree_nearest_outsider
 {
 private:
-    Py_ssize_t which;   ///< for which point are we getting the nns
-    Py_ssize_t cluster; ///< the point's cluster
-    const FLOAT* x;     ///< the point itself (shortcut)
-    const FLOAT* data;  ///< the dataset
-    const FLOAT* dcore; ///< the "core" distances
-    FLOAT nn_dist;      ///< shortest distance
-    Py_ssize_t nn_ind;  ///< index of the nn
+    const FLOAT* data;      ///< the dataset
+    const FLOAT* dcore;     ///< the "core" distances
     Py_ssize_t M;
 
     const Py_ssize_t* ds_par;  ///< points' cluster IDs (par[i]==ds.find(i)!)
+
+    FLOAT nn_dist;          ///< shortest distance
+    Py_ssize_t nn_ind;      ///< index of the nn
+    Py_ssize_t nn_from;
+
+    const FLOAT* x;     ///< the point itself (shortcut) / first point
+    NODE* curleaf;      ///< nullptr or a whole leaf
+    Py_ssize_t which;   ///< for which point are we getting the nns / first point index
+    Py_ssize_t cluster; ///< the point's / points' cluster
+
+
 
     template <bool USE_DCORE>
     inline void point_vs_points(Py_ssize_t idx_from, Py_ssize_t idx_to)
@@ -189,7 +194,7 @@ private:
 
 
     template <bool USE_DCORE>
-    void find_nn(const NODE* root)
+    void find_nn_single(const NODE* root)
     {
         if (root->cluster_repr == cluster) {
             // nothing to do - all are members of the x's cluster
@@ -212,103 +217,16 @@ private:
         );
 
         if (sel.nearer_dist < nn_dist) {
-            find_nn<USE_DCORE>(sel.nearer_node);
+            find_nn_single<USE_DCORE>(sel.nearer_node);
 
             if (sel.farther_dist < nn_dist)
-                find_nn<USE_DCORE>(sel.farther_node);
-        }
-    }
-
-
-public:
-    kdtree_nearest_outsider(
-        const FLOAT* data,
-        FLOAT* dcore,
-        const Py_ssize_t which,
-        const Py_ssize_t* ds_par,
-        Py_ssize_t M
-    ) :
-        which(which), cluster(ds_par[which]), x(data+D*which), data(data),
-        dcore(dcore), M(M), ds_par(ds_par)
-    {
-
-    }
-
-
-    /**
-     *  @param root
-     *  @param nn_dist best nn_dist found so far for the current cluster
-     */
-    void find(const NODE* root, FLOAT nn_dist=INFINITY)
-    {
-        this->nn_dist = nn_dist;
-        this->nn_ind  = -1;
-
-        if (M>2) find_nn<true>(root);
-        else find_nn<false>(root);
-    }
-
-
-    inline FLOAT get_nn_dist() { return nn_dist; }
-    inline Py_ssize_t get_nn_ind() { return nn_ind; }
-};
-
-
-
-
-
-
-/** A class enabling searching for the nearest neighbour
- *  outside of the current point's cluster;
- *  (for the "sesqui-tree" Borůvka algo); it is thread-safe
- */
-template <
-    typename FLOAT,
-    Py_ssize_t D,
-    typename DISTANCE=kdtree_distance_sqeuclid<FLOAT,D>,
-    typename NODE=kdtree_node_clusterable<FLOAT, D>
->
-class kdtree_nearest_outsider_multi
-{
-private:
-    NODE* curleaf;
-    const FLOAT* data;      ///< the dataset
-    const FLOAT* dcore;     ///< the "core" distances
-    Py_ssize_t M;
-
-    const Py_ssize_t* ds_par;  ///< points' cluster IDs (par[i]==ds.find(i)!)
-
-    FLOAT nn_dist;          ///< shortest distance
-    Py_ssize_t nn_ind;      ///< index of the nn
-    Py_ssize_t nn_from;
-
-
-    template <bool USE_DCORE>
-    inline void points_vs_points(Py_ssize_t idx_from, Py_ssize_t idx_to)
-    {
-        const FLOAT* x = data+D*curleaf->idx_from;
-        for (Py_ssize_t which=curleaf->idx_from; which<curleaf->idx_to; ++which, x+=D) {
-            if (USE_DCORE && dcore[which] >= nn_dist) continue;
-
-            const FLOAT* y = data+D*idx_from;
-            for (Py_ssize_t j=idx_from; j<idx_to; ++j, y+=D) {
-                if (curleaf->cluster_repr == ds_par[j]) continue;
-
-                if (USE_DCORE && dcore[j] >= nn_dist) continue;
-                FLOAT dd = DISTANCE::point_point(x, y);
-                if (USE_DCORE) dd = max3(dd, dcore[which], dcore[j]);
-                if (dd < nn_dist) {
-                    nn_dist = dd;
-                    nn_ind = j;
-                    nn_from = which;
-                }
-            }
+                find_nn_single<USE_DCORE>(sel.farther_node);
         }
     }
 
 
     template <bool USE_DCORE>
-    void find_nn(const NODE* root)
+    void find_nn_multi(const NODE* root)
     {
         if (root->cluster_repr == curleaf->cluster_repr) {
             // nothing to do - all are members of the x's cluster
@@ -316,7 +234,23 @@ private:
         }
 
         if (root->is_leaf()) {
-            points_vs_points<USE_DCORE>(root->idx_from, root->idx_to);
+            const FLOAT* _y = data+D*root->idx_from;
+            for (Py_ssize_t j=root->idx_from; j<root->idx_to; ++j, _y+=D) {
+                if (curleaf->cluster_repr == ds_par[j]) continue;
+                if (USE_DCORE && dcore[j] >= nn_dist) continue;
+
+                const FLOAT* _x = x;
+                for (Py_ssize_t i=curleaf->idx_from; i<curleaf->idx_to; ++i, _x+=D) {
+                    if (USE_DCORE && dcore[i] >= nn_dist) continue;
+                    FLOAT dd = DISTANCE::point_point(_x, _y);
+                    if (USE_DCORE) dd = max3(dd, dcore[i], dcore[j]);
+                    if (dd < nn_dist) {
+                        nn_dist = dd;
+                        nn_ind = j;
+                        nn_from = i;
+                    }
+                }
+            }
             return;
         }
 
@@ -326,41 +260,66 @@ private:
         );
 
         if (sel.nearer_dist < nn_dist) {
-            find_nn<USE_DCORE>(sel.nearer_node);
+            find_nn_multi<USE_DCORE>(sel.nearer_node);
 
             if (sel.farther_dist < nn_dist)
-                find_nn<USE_DCORE>(sel.farther_node);
+                find_nn_multi<USE_DCORE>(sel.farther_node);
         }
     }
 
 
 public:
-    kdtree_nearest_outsider_multi(
+    kdtree_nearest_outsider(
         const FLOAT* data,
         FLOAT* dcore,
-        NODE* curleaf,
-        const Py_ssize_t* ds_par,
-        Py_ssize_t M
+        Py_ssize_t M,
+        const Py_ssize_t* ds_par
     ) :
-        curleaf(curleaf), data(data),
-        dcore(dcore), M(M), ds_par(ds_par)
+        data(data), dcore(dcore), M(M), ds_par(ds_par)
     {
         ;
     }
 
 
     /**
+     *  @param curleaf
      *  @param root
      *  @param nn_dist best nn_dist found so far for the current cluster
      */
-    void find(const NODE* root, FLOAT nn_dist=INFINITY)
+    void find_multi(NODE* curleaf, const NODE* root, FLOAT nn_dist=INFINITY)
     {
         this->nn_dist = nn_dist;
         this->nn_ind  = -1;
         this->nn_from = -1;
 
-        if (M>2) find_nn<true>(root);
-        else find_nn<false>(root);
+        this->curleaf = curleaf;
+        this->which = curleaf->idx_from;
+        this->x = data+D*this->which;
+        this->cluster = curleaf->cluster_repr;
+
+        if (M>2) find_nn_multi<true>(root);
+        else find_nn_multi<false>(root);
+    }
+
+
+    /**
+     *  @param which
+     *  @param root
+     *  @param nn_dist best nn_dist found so far for the current cluster
+     */
+    void find_single(Py_ssize_t which, const NODE* root, FLOAT nn_dist=INFINITY)
+    {
+        this->nn_dist = nn_dist;
+        this->nn_ind  = -1;
+        this->nn_from = which;
+
+        this->curleaf = nullptr;
+        this->which = which;
+        this->x = data+D*this->which;
+        this->cluster = ds_par[this->which];
+
+        if (M>2) find_nn_single<true>(root);
+        else find_nn_single<false>(root);
     }
 
 
@@ -431,7 +390,6 @@ protected:
         leaves.resize(this->nleaves);
 
         Py_ssize_t _leafnum = 0;
-
         for (auto curnode = this->nodes.begin(); curnode != this->nodes.end(); ++curnode) {
             if (curnode->is_leaf()) {
                 leaves[_leafnum++] = &(*curnode);
@@ -440,7 +398,6 @@ protected:
                 curnode->qtb_data.lastbest_from = -1;
             }
         }
-
         QUITEFASTMST_ASSERT(_leafnum == this->nleaves);
     }
 
@@ -448,6 +405,7 @@ protected:
     void setup_min_dcore()
     {
         QUITEFASTMST_ASSERT(M>=2);
+        QUITEFASTMST_ASSERT(boruvka_variant == BORUVKA_DTB);
 
         for (auto curnode = this->nodes.rbegin(); curnode != this->nodes.rend(); ++curnode)
         {
@@ -525,6 +483,7 @@ protected:
     void update_nn_data()
     {
         if (boruvka_variant != BORUVKA_DTB && tree_iter > 1) {
+            // if tree_iter == 1, then all lastbest_ind[i] == -1;
             // we don't get access to individual NNs in DTB, except in the 1st iter
 
             for (Py_ssize_t i=0; i<this->n; ++i) {
@@ -572,12 +531,13 @@ protected:
                     lastbest_dist[i] = dcore[i];  // actually unchanged
                     lastbest_ind[i] = j;
 
-                    // helps DTB even with nthreads>1
-                    Py_ssize_t ds_find_j = ds.get_parent(j);
-                    if (ncl_dist[ds_find_j] > dcore[i]) {
-                        ncl_dist[ds_find_j] = dcore[i];
-                        ncl_ind[ds_find_j]  = i;
-                        ncl_from[ds_find_j] = j;
+                    if (boruvka_variant == BORUVKA_DTB || omp_nthreads == 1) {
+                        Py_ssize_t ds_find_j = ds.get_parent(j);
+                        if (ncl_dist[ds_find_j] > dcore[i]) {
+                            ncl_dist[ds_find_j] = dcore[i];
+                            ncl_ind[ds_find_j]  = i;
+                            ncl_from[ds_find_j] = j;
+                        }
                     }
 
                     break;  // other candidates have d_M >= dcore[i] anyway
@@ -840,6 +800,110 @@ protected:
     }
 
 
+    void find_nn_next_multi(NODE* curleaf)  // QTB
+    {
+    QUITEFASTMST_ASSERT(curleaf->cluster_repr == ds.get_parent(curleaf->idx_from));
+        Py_ssize_t ds_find_i = curleaf->cluster_repr;
+
+        // NOTE: assumption: no race condition/atomic read...
+        FLOAT ncl_dist_cur = ncl_dist[ds_find_i];
+
+        if (ncl_dist_cur <= curleaf->qtb_data.lastbest_dist) return;
+
+        if (curleaf->qtb_data.lastbest_ind >= 0) {
+            Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
+            if (ds_find_i == ds_find_j)
+                curleaf->qtb_data.lastbest_ind = -1;
+        }
+
+        if (curleaf->qtb_data.lastbest_ind < 0) {
+            kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
+                this->data, (M>2)?(this->dcore.data()):NULL,
+                M, ds.get_parents()
+            );
+            nn.find_multi(curleaf, &this->nodes[0], reset_nns?INFINITY:ncl_dist_cur);
+            if (nn.get_nn_ind() >= 0) {
+                curleaf->qtb_data.lastbest_ind  = nn.get_nn_ind();
+                curleaf->qtb_data.lastbest_dist = nn.get_nn_dist();
+                curleaf->qtb_data.lastbest_from = nn.get_nn_from();
+            }
+        }
+
+        if (curleaf->qtb_data.lastbest_ind < 0) return;
+
+        #if OPENMP_IS_ENABLED
+        if (omp_nthreads > 1) omp_set_lock(&omp_lock);
+        #endif
+        if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i]) {
+            ncl_dist[ds_find_i] = curleaf->qtb_data.lastbest_dist;
+            ncl_ind[ds_find_i]  = curleaf->qtb_data.lastbest_ind;
+            ncl_from[ds_find_i] = curleaf->qtb_data.lastbest_from;
+        }
+
+        if (omp_nthreads == 1) {  // otherwise slightly worse performance...
+            Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
+            QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
+            if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_j]) {
+                ncl_dist[ds_find_j] = curleaf->qtb_data.lastbest_dist;
+                ncl_ind[ds_find_j]  = curleaf->qtb_data.lastbest_from;
+                ncl_from[ds_find_j] = curleaf->qtb_data.lastbest_ind;
+            }
+        }
+        #if OPENMP_IS_ENABLED
+        if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
+        #endif
+    }
+
+
+    void find_nn_next_single(Py_ssize_t i)  // STB, QTB
+    {
+        // Py_ssize_t i = (M<2)?u:ptperm[u];
+        Py_ssize_t ds_find_i = ds.get_parent(i);
+
+        // NOTE: assumption: no race condition/atomic read...
+        FLOAT ncl_dist_cur = ncl_dist[ds_find_i];
+
+        if (ncl_dist_cur <= lastbest_dist[i]) return;  // speeds up even for M==1
+
+        if (lastbest_ind[i] < 0) {
+            kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
+                this->data, (M>2)?(this->dcore.data()):NULL,
+                M, ds.get_parents()
+            );
+            nn.find_single(i, &this->nodes[0], reset_nns?INFINITY:ncl_dist_cur);
+            lastbest_ind[i] = nn.get_nn_ind();  // can be negative if best found >= ncl_dist_cur
+            if (lastbest_ind[i] >= 0)
+                lastbest_dist[i] = nn.get_nn_dist();
+        }
+
+        if (lastbest_ind[i] < 0) return;
+
+        #if OPENMP_IS_ENABLED
+        if (omp_nthreads > 1) omp_set_lock(&omp_lock);
+        #endif
+
+        if (lastbest_dist[i] < ncl_dist[ds_find_i]) {
+            ncl_dist[ds_find_i] = lastbest_dist[i];
+            ncl_ind[ds_find_i]  = lastbest_ind[i];
+            ncl_from[ds_find_i] = i;
+        }
+
+        if (omp_nthreads == 1) {  // otherwise slightly worse performance...
+            Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
+            QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
+            if (lastbest_dist[i] < ncl_dist[ds_find_j]) {
+                ncl_dist[ds_find_j] = lastbest_dist[i];
+                ncl_ind[ds_find_j]  = i;
+                ncl_from[ds_find_j] = lastbest_ind[i];
+            }
+        }
+
+        #if OPENMP_IS_ENABLED
+        if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
+        #endif
+    }
+
+
     void find_mst_next_qtb()
     {
         // find the point from another cluster that is closest to the i-th point
@@ -853,103 +917,11 @@ protected:
 
             if (curleaf->cluster_repr >= 0 && curleaf->idx_to - curleaf->idx_from > 1)  // all elems in the same cluster
             {
-                QUITEFASTMST_ASSERT(curleaf->cluster_repr == ds.get_parent(curleaf->idx_from));
-                Py_ssize_t ds_find_i = curleaf->cluster_repr;
-
-                // NOTE: assumption: no race condition/atomic read...
-                FLOAT nn_dist_best = ncl_dist[ds_find_i];
-
-                if (nn_dist_best <= curleaf->qtb_data.lastbest_dist) continue;
-
-                if (curleaf->qtb_data.lastbest_ind >= 0) {
-                    Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
-                    if (ds_find_i == ds_find_j)
-                        curleaf->qtb_data.lastbest_ind = -1;
-                }
-
-                if (curleaf->qtb_data.lastbest_ind < 0) {
-                    kdtree_nearest_outsider_multi<FLOAT, D, DISTANCE, NODE> nn(
-                        this->data, (M>2)?(this->dcore.data()):NULL,
-                        curleaf, ds.get_parents(), M
-                    );
-                    nn.find(&this->nodes[0], reset_nns?INFINITY:nn_dist_best);
-                    if (nn.get_nn_ind() >= 0) {
-                        curleaf->qtb_data.lastbest_ind  = nn.get_nn_ind();
-                        curleaf->qtb_data.lastbest_dist = nn.get_nn_dist();
-                        curleaf->qtb_data.lastbest_from = nn.get_nn_from();
-                    }
-                }
-
-                if (curleaf->qtb_data.lastbest_ind < 0) continue;
-
-                #if OPENMP_IS_ENABLED
-                if (omp_nthreads > 1) omp_set_lock(&omp_lock);
-                #endif
-                if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i]) {
-                    ncl_dist[ds_find_i] = curleaf->qtb_data.lastbest_dist;
-                    ncl_ind[ds_find_i]  = curleaf->qtb_data.lastbest_ind;
-                    ncl_from[ds_find_i] = curleaf->qtb_data.lastbest_from;
-                }
-
-                if (omp_nthreads == 1) {  // otherwise slightly worse performance...
-                    Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
-                    QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
-                    if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_j]) {
-                        ncl_dist[ds_find_j] = curleaf->qtb_data.lastbest_dist;
-                        ncl_ind[ds_find_j]  = curleaf->qtb_data.lastbest_from;
-                        ncl_from[ds_find_j] = curleaf->qtb_data.lastbest_ind;
-                    }
-                }
-                #if OPENMP_IS_ENABLED
-                if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
-                #endif
+                find_nn_next_multi(curleaf);
             }
             else {
                 for (Py_ssize_t i=curleaf->idx_from; i<curleaf->idx_to; ++i) {
-                    // Py_ssize_t i = (M<2)?u:ptperm[u];
-                    Py_ssize_t ds_find_i = ds.get_parent(i);
-
-                    // NOTE: assumption: no race condition/atomic read...
-                    FLOAT nn_dist_best = ncl_dist[ds_find_i];
-
-                    if (nn_dist_best <= lastbest_dist[i]) continue;  // speeds up even for M==1
-
-                    if (lastbest_ind[i] < 0) {
-                        kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
-                            this->data, (M>2)?(this->dcore.data()):NULL,
-                            i, ds.get_parents(), M
-                        );
-                        nn.find(&this->nodes[0], reset_nns?INFINITY:nn_dist_best);
-                        lastbest_ind[i] = nn.get_nn_ind();  // can be negative if best found >= nn_dist_best
-                        if (lastbest_ind[i] >= 0)
-                            lastbest_dist[i] = nn.get_nn_dist();
-                    }
-
-                    if (lastbest_ind[i] < 0) continue;
-
-                    #if OPENMP_IS_ENABLED
-                    if (omp_nthreads > 1) omp_set_lock(&omp_lock);
-                    #endif
-
-                    if (lastbest_dist[i] < ncl_dist[ds_find_i]) {
-                        ncl_dist[ds_find_i] = lastbest_dist[i];
-                        ncl_ind[ds_find_i]  = lastbest_ind[i];
-                        ncl_from[ds_find_i] = i;
-                    }
-
-                    if (omp_nthreads == 1) {  // otherwise slightly worse performance...
-                        Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
-                        QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
-                        if (lastbest_dist[i] < ncl_dist[ds_find_j]) {
-                            ncl_dist[ds_find_j] = lastbest_dist[i];
-                            ncl_ind[ds_find_j]  = i;
-                            ncl_from[ds_find_j] = lastbest_ind[i];
-                        }
-                    }
-
-                    #if OPENMP_IS_ENABLED
-                    if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
-                    #endif
+                    find_nn_next_single(i);  // updates lastbest_dist[i] and ncl_dist[ds_find_i] if necessary
                 }
             }
         }
@@ -964,50 +936,7 @@ protected:
         #pragma omp parallel for schedule(static)
         #endif
         for (Py_ssize_t i=0; i<this->n; ++i) {
-            // Py_ssize_t i = (M<2)?u:ptperm[u];
-            Py_ssize_t ds_find_i = ds.get_parent(i);
-
-            // NOTE: assumption: no race condition/atomic read...
-            FLOAT nn_dist_best = ncl_dist[ds_find_i];
-
-            if (nn_dist_best <= lastbest_dist[i]) continue;  // speeds up even for M==1
-
-            if (lastbest_ind[i] < 0) {
-                kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
-                    this->data, (M>2)?(this->dcore.data()):NULL,
-                    i, ds.get_parents(), M
-                );
-                nn.find(&this->nodes[0], reset_nns?INFINITY:nn_dist_best);
-                lastbest_ind[i]  = nn.get_nn_ind();    // can be negative if best found >= nn_dist_best
-                if (lastbest_ind[i] >= 0)
-                    lastbest_dist[i] = nn.get_nn_dist();
-            }
-
-            if (lastbest_ind[i] < 0) continue;
-
-            #if OPENMP_IS_ENABLED
-            if (omp_nthreads > 1) omp_set_lock(&omp_lock);
-            #endif
-
-            if (lastbest_dist[i] < ncl_dist[ds_find_i]) {
-                ncl_dist[ds_find_i] = lastbest_dist[i];
-                ncl_ind[ds_find_i]  = lastbest_ind[i];
-                ncl_from[ds_find_i] = i;
-            }
-
-            if (omp_nthreads == 1) {  // otherwise slightly worse performance...
-                Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
-                QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
-                if (lastbest_dist[i] < ncl_dist[ds_find_j]) {
-                    ncl_dist[ds_find_j] = lastbest_dist[i];
-                    ncl_ind[ds_find_j]  = i;
-                    ncl_from[ds_find_j] = lastbest_ind[i];
-                }
-            }
-
-            #if OPENMP_IS_ENABLED
-            if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
-            #endif
+            find_nn_next_single(i);  // updates lastbest_dist[i] and ncl_dist[ds_find_i] if necessary
         }
     }
 

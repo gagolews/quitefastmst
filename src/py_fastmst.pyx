@@ -488,8 +488,8 @@ cpdef tuple mst_euclid(
         say, `<= 20`). `M<=2` denotes the ordinary Euclidean distance
     algorithm : ``{"auto", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "brute"}``, default="auto"
         K-d trees can only be used for `d` between 2 and 20 only.
-        ``"auto"`` selects ``"sesqui_kd_tree"`` for `d<=3`.
-        ``"kd_tree_single"`` is used otherwise, unless `d>20`.
+        ``"auto"`` selects ``"sesqui_kd_tree"`` for `d<=20`.
+        ``"brute"`` is used otherwise
     max_leaf_size : int
         maximal number of points in the K-d tree leaves;
         smaller leaves use more memory, yet are not necessarily faster;
@@ -548,10 +548,10 @@ cpdef tuple mst_euclid(
 
     if algorithm == "auto":
         if 2 <= d <= 20:
-            if d <= 3:
-                algorithm = "sesqui_kd_tree"
-            else:
-                algorithm = "single_kd_tree"
+            #if d <= 3:
+            algorithm = "sesqui_kd_tree"
+            #else:
+            #    algorithm = "single_kd_tree"
         else:
             algorithm = "brute"
 
