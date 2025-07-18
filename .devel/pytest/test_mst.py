@@ -23,8 +23,8 @@ def mst_check(X, **kwargs):
 
     for M in [1, 2, 3, 5, n-1]:
         res = []
-        for algo in ["auto", "brute", "kd_tree_single", "kd_tree_dual"]:
-            if d > 20 and algo in ["kd_tree_single", "kd_tree_dual"]:
+        for algo in ["auto", "brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
+            if d > 20 and algo in ["single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
                 continue
 
             t0 = time.time()

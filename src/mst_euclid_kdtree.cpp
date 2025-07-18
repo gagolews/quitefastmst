@@ -30,7 +30,7 @@ void _mst_euclid_kdtree(
     FLOAT* nn_dist, Py_ssize_t* nn_ind,
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
-    bool use_dtb,
+    FLOAT boruvka_variant,
     FLOAT mutreach_adj,
     bool /*verbose*/
 ) {
@@ -40,7 +40,7 @@ void _mst_euclid_kdtree(
 
     QUITEFASTMST_PROFILER_START
     quitefastkdtree::kdtree_boruvka<FLOAT, D, DISTANCE> tree(X, n, M,
-        max_leaf_size, first_pass_max_brute_size, use_dtb, mutreach_adj);
+        max_leaf_size, first_pass_max_brute_size, boruvka_variant, mutreach_adj);
     QUITEFASTMST_PROFILER_STOP("tree init")
 
     QUITEFASTMST_PROFILER_START
@@ -95,8 +95,8 @@ void _mst_euclid_kdtree(
  *  Our implementation of K-d trees [6]_ has been quite optimised; amongst
  *  others, it has good locality of reference (at the cost of making a
  *  copy of the input dataset), features the sliding midpoint (midrange) rule
- *  suggested in [7]_, and a node pruning strategy inspired by the discussion
- *  in [8]_.
+ *  suggested in [7]_, node pruning strategies inspired by some ideas
+ *  from [8]_, and a couple of further tuneups proposed by the current author.
  *
  *  The "single-tree" version of the Borůvka algorithm is naively
  *  parallelisable: in every iteration, it seeks each point's nearest "alien",
@@ -107,8 +107,13 @@ void _mst_euclid_kdtree(
  *  a single-threaded setting.  For another (approximate) adaptation
  *  of the dual-tree algorithm to the mutual reachability distance, see [11]_.
  *
- *  Nevertheless, it is well-known that K-d trees perform well only in spaces
- *  of low intrinsic dimensionality (a.k.a. the "curse").
+ *  The "sesqui-tree" variant (by the current author) is a mixture of the two
+ *  approaches:  it compares leaves against the full tree.  It is usually
+ *  faster than the single- and dual-tree methods in very low dimensional
+ *  spaces and usually not much slower than the single-tree variant otherwise.
+ *
+ *  Nevertheless, it is generally known that K-d trees perform well only in
+ *  spaces of rather low intrinsic dimensionality (a.k.a. the "curse").
  *
  *
  *  References:
@@ -163,8 +168,8 @@ void _mst_euclid_kdtree(
  * @param first_pass_max_brute_size minimal number of points in a node to treat
  *        it as a leaf (unless it's actually a leaf) in the first iteration
  *        of the algorithm
- * @param use_dtb whether a dual or a single-tree Borůvka algorithm
- *        should be used
+ * @param boruvka_variant whether a dual- (2.0), a single- (1.0) or
+ *        a sesqui-tree (otherwise) Borůvka algorithm should be used
  * @param mutreach_adj (M>2 only) adjustment for mutual reachability distance
  *        ambiguity (for M>2):
  *        values in `(-1,0)` prefer connecting to farther NNs,
@@ -180,7 +185,7 @@ void Cmst_euclid_kdtree(
     FLOAT* nn_dist, Py_ssize_t* nn_ind,
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
-    bool use_dtb,
+    FLOAT boruvka_variant,
     FLOAT mutreach_adj,
     bool verbose
 ) {
@@ -207,7 +212,7 @@ void Cmst_euclid_kdtree(
             _mst_euclid_kdtree<FLOAT,  D_>(\
                 X, n, M, mst_dist, mst_ind, \
                 nn_dist, nn_ind, max_leaf_size, first_pass_max_brute_size, \
-                use_dtb, mutreach_adj, verbose \
+                boruvka_variant, mutreach_adj, verbose \
             )
 
     /* LMAO; templates... */
@@ -249,7 +254,7 @@ template void Cmst_euclid_kdtree<float>(
     float* nn_dist, Py_ssize_t* nn_ind,
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
-    bool use_dtb,
+    float boruvka_variant,
     float mutreach_adj,
     bool verbose
 );
@@ -260,7 +265,7 @@ template void Cmst_euclid_kdtree<double>(
     double* nn_dist, Py_ssize_t* nn_ind,
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
-    bool use_dtb,
+    double boruvka_variant,
     double mutreach_adj,
     bool verbose
 );

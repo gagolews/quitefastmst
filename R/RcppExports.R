@@ -174,8 +174,8 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #' amongst others, it has good locality of reference (at the cost of making
 #' a copy of the input dataset), features the sliding
 #' midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
-#' and a node pruning strategy inspired by the discussion
-#' by Sample et al. (2001).
+#' node pruning strategies inspired by some ideas from (Sample et al. ,2001),
+#' and a couple of further tuneups proposed by the current author.
 #'
 #' The "single-tree" version of the Borůvka algorithm is naively
 #' parallelisable: in every iteration, it seeks each point's nearest "alien",
@@ -183,9 +183,14 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #' The "dual-tree" Borůvka version of the algorithm is, in principle, based
 #' on (March et al., 2010). As far as our implementation is concerned,
 #' the dual-tree approach is often only faster in 2- and 3-dimensional spaces,
-#' for \eqn{M\leq 2}, and in a single-threaded setting.  For another (approximate)
-#' adaptation of the dual-tree algorithm to the mutual reachability distance,
-#' see (McInnes and Healy, 2017).
+#' for \eqn{M\leq 2}, and in a single-threaded setting.  For another
+#' (approximate) adaptation of the dual-tree algorithm to the mutual
+#' reachability distance, see (McInnes and Healy, 2017).
+#'
+#' The "sesqui-tree" variant (by the current author) is a mixture of the two
+#' approaches:  it compares leaves against the full tree.  It is usually
+#' faster than the single- and dual-tree methods in very low dimensional
+#' spaces and usually not much slower than the single-tree variant otherwise.
 #'
 #' Nevertheless, it is well-known that K-d trees perform well only in spaces
 #' of low intrinsic dimensionality (a.k.a. the "curse").  For high \code{d},
@@ -247,16 +252,15 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #' @param M the degree of the mutual reachability distance
 #'    (should be rather small, say, \eqn{\leq 20}).
 #'    \eqn{M\leq 2} denotes the ordinary Euclidean distance
-#' @param algorithm \code{"auto"}, \code{"kd_tree_single"}
-#'    \code{"kd_tree_dual"} or \code{"brute"};
+#' @param algorithm \code{"auto"}, \code{"single_kd_tree"}
+#'    \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"} or \code{"brute"};
 #'    K-d trees can only be used for d between 2 and 20 only;
-#'    \code{"auto"} selects \code{"kd_tree_dual"} for \eqn{d\leq 3},
-#'    \eqn{M\leq 2}, and in a single-threaded setting only.
-#'    \code{"kd_tree_single"} is used otherwise, unless \eqn{d>20}.
+#'    \code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 3}.
+#'    \code{"single_kd_tree"} is used otherwise, unless \eqn{d>20}.
 #' @param max_leaf_size maximal number of points in the K-d tree leaves;
 #'    smaller leaves use more memory, yet are not necessarily faster;
 #'    use \code{0} to select the default value, currently set to 32 for the
-#'    single-tree and 8 for the dual-tree Borůvka algorithm
+#'    single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm
 #' @param first_pass_max_brute_size minimal number of points in a node to
 #'    treat it as a leaf (unless it's actually a leaf) in the first
 #'    iteration of the algorithm; use \code{0} to select the default value,

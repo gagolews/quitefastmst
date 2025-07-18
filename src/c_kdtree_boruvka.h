@@ -6,10 +6,17 @@
  *  and Applications" by W.B. March, P. Ram, A.G. Gray published
  *  in ACM SIGKDD 2010.  As far as our implementation
  *  is concerned, the dual-tree approach is only faster in 2- and
- *  3-dimensional spaces, for M <= 2, and in a single-threaded setting.
+ *  3-dimensional spaces, for M <= 2, and in a single-threaded setting
+ *  (in the current implementation, only the first iteration is parallelised
+ *  anyway).
  *
  *  The single-tree version (iteratively find each point's nearest neighbour
  *  outside its own cluster, i.e., nearest alien) is naively parallelisable.
+ *
+ *  The "sesqui-tree" variant (by the current author) is a mixture of the two
+ *  approaches:  it compares leaves against the full tree.  It is usually
+ *  faster than the single- and dual-tree methods in very low dimensional
+ *  spaces and usually not much slower than the single-tree variant otherwise.
  *
  *  For more details on our implementation of K-d trees, see
  *  the source file defining the base class.
@@ -49,26 +56,25 @@ struct kdtree_node_clusterable : public kdtree_node_base<FLOAT, D>
     kdtree_node_clusterable* left;
     kdtree_node_clusterable* right;
 
-    struct t_dtb_data { FLOAT cluster_max_dist; };
-    struct t_qtb_data { FLOAT lastbest_dist; Py_ssize_t lastbest_ind; Py_ssize_t lastbest_from; };
-
     Py_ssize_t cluster_repr;  //< representative point index if all descendants are in the same cluster, -1 otherwise
-    FLOAT min_dcore;          // for M>2, redundant otherwise (TODO: template them out)
+
+    struct t_dtb_data { FLOAT cluster_max_dist; FLOAT min_dcore /* M>2 */; };
+    struct t_qtb_data { FLOAT lastbest_dist; Py_ssize_t lastbest_ind; Py_ssize_t lastbest_from; };
 
     union {
         t_dtb_data dtb_data;
         t_qtb_data qtb_data;
     };
 
-    kdtree_node_clusterable() {
+
+    kdtree_node_clusterable()
+    {
         left = nullptr;
         // right = nullptr;
-        //cluster_repr = -1;
-        //cluster_max_dist = INFINITY;
-        //min_dcore = 0.0;
     }
 
-    inline bool is_leaf() const {
+    inline bool is_leaf() const
+    {
         return left == nullptr /*&& right == nullptr*/; // either both null or none
     }
 };
@@ -86,7 +92,7 @@ struct kdtree_node_orderer {
     FLOAT nearer_dist;
     FLOAT farther_dist;
 
-    kdtree_node_orderer(const FLOAT* x, NODE* to1, NODE* to2, bool use_min_dcore=false)
+    kdtree_node_orderer(const FLOAT* x, NODE* to1, NODE* to2)  // QTB, STB
     {
         nearer_dist  = DISTANCE::point_node(
             x, to1->bbox_min.data(),  to1->bbox_max.data()
@@ -95,13 +101,6 @@ struct kdtree_node_orderer {
         farther_dist = DISTANCE::point_node(
             x, to2->bbox_min.data(),  to2->bbox_max.data()
         );
-
-        if (use_min_dcore) {
-            if (nearer_dist < to1->min_dcore)
-                nearer_dist = to1->min_dcore;
-            if (farther_dist < to2->min_dcore)
-                farther_dist = to2->min_dcore;
-        }
 
         if (nearer_dist <= farther_dist) {
             nearer_node  = to1;
@@ -114,7 +113,7 @@ struct kdtree_node_orderer {
         }
     }
 
-    kdtree_node_orderer(NODE* from, NODE* to1, NODE* to2, bool use_min_dcore=false)
+    kdtree_node_orderer(NODE* from, NODE* to1, NODE* to2, bool use_min_dcore=false)  // DTB
     {
         nearer_dist  = DISTANCE::node_node(
             from->bbox_min.data(), from->bbox_max.data(),
@@ -126,9 +125,10 @@ struct kdtree_node_orderer {
             to2->bbox_min.data(),  to2->bbox_max.data()
         );
 
-        if (use_min_dcore) {
-            nearer_dist  = max3(nearer_dist, from->min_dcore, to1->min_dcore);
-            farther_dist = max3(farther_dist, from->min_dcore, to2->min_dcore);
+        if (use_min_dcore)
+        {
+            nearer_dist  = max3(nearer_dist,  from->dtb_data.min_dcore, to1->dtb_data.min_dcore);
+            farther_dist = max3(farther_dist, from->dtb_data.min_dcore, to2->dtb_data.min_dcore);
         }
 
         if (nearer_dist <= farther_dist) {
@@ -196,11 +196,6 @@ private:
             return;
         }
 
-        if (USE_DCORE && nn_dist <= root->min_dcore) {
-            // we have a better candidate already
-            return;
-        }
-
         if (root->is_leaf()/* || root->idx_to-root->idx_from <= max_brute_size*/) {
             if (which < root->idx_from || which >= root->idx_to)
                 point_vs_points<USE_DCORE>(root->idx_from, root->idx_to);
@@ -213,7 +208,7 @@ private:
 
 
         kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(
-            x, root->left, root->right, USE_DCORE
+            x, root->left, root->right
         );
 
         if (sel.nearer_dist < nn_dist) {
@@ -320,11 +315,6 @@ private:
             return;
         }
 
-        if (USE_DCORE && nn_dist <= root->min_dcore) {
-            // we have a better candidate already
-            return;
-        }
-
         if (root->is_leaf()) {
             points_vs_points<USE_DCORE>(root->idx_from, root->idx_to);
             return;
@@ -332,7 +322,7 @@ private:
 
 
         kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(
-            curleaf, root->left, root->right, USE_DCORE
+            curleaf, root->left, root->right
         );
 
         if (sel.nearer_dist < nn_dist) {
@@ -434,46 +424,11 @@ protected:
     }
 
 
-    template <bool USE_DCORE>
-    inline void leaf_vs_leaf_dtb(NODE* roota, NODE* rootb)
-    {
-        // assumes ds.find(i) == ds.get_parent(i) for all i!
-        const FLOAT* _x = this->data + roota->idx_from*D;
-        for (Py_ssize_t i=roota->idx_from; i<roota->idx_to; ++i, _x += D)
-        {
-            Py_ssize_t ds_find_i = ds.get_parent(i);
-            if (USE_DCORE && dcore[i] >= ncl_dist[ds_find_i]) continue;
-
-            for (Py_ssize_t j=rootb->idx_from; j<rootb->idx_to; ++j)
-            {
-                Py_ssize_t ds_find_j = ds.get_parent(j);
-                if (ds_find_i == ds_find_j) continue;
-                if (USE_DCORE && dcore[j] >= ncl_dist[ds_find_i]) continue;
-
-                FLOAT dij = DISTANCE::point_point(_x, this->data+j*D);
-
-                if (USE_DCORE) dij = max3(dij, dcore[i], dcore[j]);
-
-                if (dij < ncl_dist[ds_find_i]) {
-                    ncl_dist[ds_find_i] = dij;
-                    ncl_ind[ds_find_i]  = j;
-                    ncl_from[ds_find_i] = i;
-                }
-            }
-        }
-    }
-
-
     void setup_leaves()  // TODO: sesquitree only
     {
         QUITEFASTMST_ASSERT(boruvka_variant == BORUVKA_QTB);
 
-        // NOTE: nleaves can be determined whilst building the tree
-        Py_ssize_t nleaves = 0;
-        for (auto curnode = this->nodes.begin(); curnode != this->nodes.end(); ++curnode)
-            if (curnode->is_leaf()) nleaves++;
-
-        leaves.resize(nleaves);
+        leaves.resize(this->nleaves);
 
         Py_ssize_t _leafnum = 0;
 
@@ -486,28 +441,28 @@ protected:
             }
         }
 
-        QUITEFASTMST_ASSERT(_leafnum == nleaves);
+        QUITEFASTMST_ASSERT(_leafnum == this->nleaves);
     }
 
 
-    void update_min_dcore()
+    void setup_min_dcore()
     {
         QUITEFASTMST_ASSERT(M>=2);
 
         for (auto curnode = this->nodes.rbegin(); curnode != this->nodes.rend(); ++curnode)
         {
             if (curnode->is_leaf()) {
-                curnode->min_dcore = dcore[curnode->idx_from];
-                for (Py_ssize_t j=curnode->idx_from+1; j<curnode->idx_to; ++j) {
-                    if (dcore[j] < curnode->min_dcore)
-                        curnode->min_dcore = dcore[j];
+                curnode->dtb_data.min_dcore = dcore[curnode->idx_from];
+                for (Py_ssize_t i=curnode->idx_from+1; i<curnode->idx_to; ++i) {
+                    if (dcore[i] < curnode->dtb_data.min_dcore)
+                        curnode->dtb_data.min_dcore = dcore[i];
                 }
             }
             else {
                 // all descendants have already been processed as children in `nodes` occur after their parents
-                curnode->min_dcore = std::min(
-                    curnode->left->min_dcore,
-                    curnode->right->min_dcore
+                curnode->dtb_data.min_dcore = std::min(
+                    curnode->left->dtb_data.min_dcore,
+                    curnode->right->dtb_data.min_dcore
                 );
             }
         }
@@ -565,6 +520,72 @@ protected:
             }
         }
     }
+
+
+    void update_nn_data()
+    {
+        if (boruvka_variant != BORUVKA_DTB && tree_iter > 1) {
+            // we don't get access to individual NNs in DTB, except in the 1st iter
+
+            for (Py_ssize_t i=0; i<this->n; ++i) {
+                if (lastbest_ind[i] < 0) continue;
+
+                Py_ssize_t ds_find_i = ds.get_parent(i);
+                Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
+                if (ds_find_i == ds_find_j) {
+                    lastbest_ind[i] = -1;
+                    continue;
+                }
+
+                if (ncl_dist[ds_find_i] > lastbest_dist[i]) {
+                    ncl_dist[ds_find_i] = lastbest_dist[i];
+                    ncl_ind[ds_find_i]  = lastbest_ind[i];
+                    ncl_from[ds_find_i] = i;
+                }
+
+                // ok even if nthreads>1
+                if (ncl_dist[ds_find_j] > lastbest_dist[i]) {
+                    ncl_dist[ds_find_j] = lastbest_dist[i];
+                    ncl_ind[ds_find_j]  = i;
+                    ncl_from[ds_find_j] = lastbest_ind[i];
+                }
+            }
+        }
+
+        if (M > 2) {
+            // reuse M-1 NNs if d==dcore[i] as an initialiser to ncl_ind/dist/from;
+            // good speed-up sometimes (we'll be happy with any match; leaves
+            // are formed in the 1st iteration of the algorithm)
+            const Py_ssize_t k = M-1;
+            for (Py_ssize_t i=0; i<this->n; ++i) {
+                Py_ssize_t ds_find_i = ds.get_parent(i);
+                if (ncl_dist[ds_find_i] <= lastbest_dist[i] || lastbest_dist[i] > dcore[i]) continue;
+                for (Py_ssize_t v=0; v<k; ++v)
+                {
+                    Py_ssize_t j = Mnn_ind[i*(M-1)+((mutreach_adj<0.0)?(k-1-v):(v))];
+                    if (ds_find_i == ds.get_parent(j) || dcore[i] < dcore[j]) continue;
+
+                    ncl_dist[ds_find_i] = dcore[i];
+                    ncl_ind[ds_find_i]  = j;
+                    ncl_from[ds_find_i] = i;
+
+                    lastbest_dist[i] = dcore[i];  // actually unchanged
+                    lastbest_ind[i] = j;
+
+                    // helps DTB even with nthreads>1
+                    Py_ssize_t ds_find_j = ds.get_parent(j);
+                    if (ncl_dist[ds_find_j] > dcore[i]) {
+                        ncl_dist[ds_find_j] = dcore[i];
+                        ncl_ind[ds_find_j]  = i;
+                        ncl_from[ds_find_j] = j;
+                    }
+
+                    break;  // other candidates have d_M >= dcore[i] anyway
+                }
+            }
+        }
+    }
+
 
 
     void find_mst_first_1()
@@ -696,6 +717,36 @@ protected:
         // the 1st iteration: connect nearest neighbours with each other
         if (M <= 2) find_mst_first_1();
         else        find_mst_first_M();
+    }
+
+
+    template <bool USE_DCORE>
+    inline void leaf_vs_leaf_dtb(NODE* roota, NODE* rootb)
+    {
+        // assumes ds.find(i) == ds.get_parent(i) for all i!
+        const FLOAT* _x = this->data + roota->idx_from*D;
+        for (Py_ssize_t i=roota->idx_from; i<roota->idx_to; ++i, _x += D)
+        {
+            Py_ssize_t ds_find_i = ds.get_parent(i);
+            if (USE_DCORE && dcore[i] >= ncl_dist[ds_find_i]) continue;
+
+            for (Py_ssize_t j=rootb->idx_from; j<rootb->idx_to; ++j)
+            {
+                Py_ssize_t ds_find_j = ds.get_parent(j);
+                if (ds_find_i == ds_find_j) continue;
+                if (USE_DCORE && dcore[j] >= ncl_dist[ds_find_i]) continue;
+
+                FLOAT dij = DISTANCE::point_point(_x, this->data+j*D);
+
+                if (USE_DCORE) dij = max3(dij, dcore[i], dcore[j]);
+
+                if (dij < ncl_dist[ds_find_i]) {
+                    ncl_dist[ds_find_i] = dij;
+                    ncl_ind[ds_find_i]  = j;
+                    ncl_from[ds_find_i] = i;
+                }
+            }
+        }
     }
 
 
@@ -961,71 +1012,6 @@ protected:
     }
 
 
-    void update_lastbest()
-    {
-        if (boruvka_variant != BORUVKA_DTB && tree_iter > 1) {
-            // we don't get access to individual NNs in DTB, except in the 1st iter
-
-            for (Py_ssize_t i=0; i<this->n; ++i) {
-                if (lastbest_ind[i] < 0) continue;
-
-                Py_ssize_t ds_find_i = ds.get_parent(i);
-                Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
-                if (ds_find_i == ds_find_j) {
-                    lastbest_ind[i] = -1;
-                    continue;
-                }
-
-                if (ncl_dist[ds_find_i] > lastbest_dist[i]) {
-                    ncl_dist[ds_find_i] = lastbest_dist[i];
-                    ncl_ind[ds_find_i]  = lastbest_ind[i];
-                    ncl_from[ds_find_i] = i;
-                }
-
-                // ok even if nthreads>1
-                if (ncl_dist[ds_find_j] > lastbest_dist[i]) {
-                    ncl_dist[ds_find_j] = lastbest_dist[i];
-                    ncl_ind[ds_find_j]  = i;
-                    ncl_from[ds_find_j] = lastbest_ind[i];
-                }
-            }
-        }
-
-        if (M > 2) {
-            // reuse M-1 NNs if d==dcore[i] as an initialiser to ncl_ind/dist/from;
-            // good speed-up sometimes (we'll be happy with any match; leaves
-            // are formed in the 1st iteration of the algorithm)
-            const Py_ssize_t k = M-1;
-            for (Py_ssize_t i=0; i<this->n; ++i) {
-                Py_ssize_t ds_find_i = ds.get_parent(i);
-                if (ncl_dist[ds_find_i] <= lastbest_dist[i] || lastbest_dist[i] > dcore[i]) continue;
-                for (Py_ssize_t v=0; v<k; ++v)
-                {
-                    Py_ssize_t j = Mnn_ind[i*(M-1)+((mutreach_adj<0.0)?(k-1-v):(v))];
-                    if (ds_find_i == ds.get_parent(j) || dcore[i] < dcore[j]) continue;
-
-                    ncl_dist[ds_find_i] = dcore[i];
-                    ncl_ind[ds_find_i]  = j;
-                    ncl_from[ds_find_i] = i;
-
-                    lastbest_dist[i] = dcore[i];  // actually unchanged
-                    lastbest_ind[i] = j;
-
-                    // helps DTB even with nthreads>1
-                    Py_ssize_t ds_find_j = ds.get_parent(j);
-                    if (ncl_dist[ds_find_j] > dcore[i]) {
-                        ncl_dist[ds_find_j] = dcore[i];
-                        ncl_ind[ds_find_j]  = i;
-                        ncl_from[ds_find_j] = j;
-                    }
-
-                    break;  // other candidates have d_M >= dcore[i] anyway
-                }
-            }
-        }
-    }
-
-
     void find_mst()
     {
         QUITEFASTMST_PROFILER_USE
@@ -1035,12 +1021,17 @@ protected:
         find_mst_first();
         QUITEFASTMST_PROFILER_STOP("find_mst_first")
 
-        QUITEFASTMST_PROFILER_START
-        if (M>2) update_min_dcore();
-        QUITEFASTMST_PROFILER_STOP("update_min_dcore")
+        if (boruvka_variant == BORUVKA_DTB && M>2) {
+            QUITEFASTMST_PROFILER_START
+            setup_min_dcore();
+            QUITEFASTMST_PROFILER_STOP("setup_min_dcore")
+        }
 
-        if (boruvka_variant == BORUVKA_QTB)
-            setup_leaves();  // TODO: sesquitree only
+        if (boruvka_variant == BORUVKA_QTB) {
+            QUITEFASTMST_PROFILER_START
+            setup_leaves();
+            QUITEFASTMST_PROFILER_STOP("setup_leaves")
+        }
 
         std::vector<Py_ssize_t> ds_parents(this->n);
         Py_ssize_t ds_k;
@@ -1055,25 +1046,21 @@ protected:
             tree_iter++;
             QUITEFASTMST_PROFILER_START
 
-            for (Py_ssize_t i=0; i<this->n; ++i)
-                this->ds.find(i);
-            // now ds.find(i) == ds.get_parent(i) for all i
-
-            // reset cluster_max_dist and set up cluster_repr,
-            update_node_data();
-
             ds_k = 0;
             for (Py_ssize_t i=0; i<this->n; ++i) {
-                if (i == ds.get_parent(i)) {
+                if (i == this->ds.find(i)) {
                     ncl_dist[i] = INFINITY;
                     ncl_ind[i]  = -1;
                     ncl_from[i] = -1;
                     ds_parents[ds_k++] = i;
                 }
             }
+            // now ds.find(i) == ds.get_parent(i) for all i
 
+            update_nn_data();  // update lastbest_dist etc.
 
-            update_lastbest();
+            update_node_data();  // reset cluster_max_dist and set up cluster_repr
+
 
             if (boruvka_variant == BORUVKA_DTB)
                 find_mst_next_dtb();
@@ -1113,7 +1100,7 @@ public:
         FLOAT* data, const Py_ssize_t n, const Py_ssize_t M=1,
         const Py_ssize_t max_leaf_size=16,
         const Py_ssize_t first_pass_max_brute_size=16,
-        const bool use_dtb=false,
+        const FLOAT boruvka_variant=1.5,
         const FLOAT mutreach_adj=-INFINITY
     ) :
         kdtree<FLOAT, D, DISTANCE, NODE>(data, n, max_leaf_size), tree_edges(0), tree_iter(0),
@@ -1132,14 +1119,12 @@ public:
         lastbest_dist.resize(n);
         lastbest_ind.resize(n);
 
-        if (use_dtb)
-            boruvka_variant = BORUVKA_DTB;
-        else {
-            if (max_leaf_size != first_pass_max_brute_size) // TODO
-                boruvka_variant = BORUVKA_QTB;
-            else
-                boruvka_variant = BORUVKA_STB;
-        }
+        if (boruvka_variant == 2.0)
+            this->boruvka_variant = BORUVKA_DTB;
+        else if (boruvka_variant == 1.0)
+            this->boruvka_variant = BORUVKA_STB;
+        else
+            this->boruvka_variant = BORUVKA_QTB;  // 1.5 ;)
 
         reset_nns = (M<=2);  // plain Euclidean MST benefits from this
 

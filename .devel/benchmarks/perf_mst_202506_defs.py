@@ -171,20 +171,30 @@ def mst_quitefast_brute(X, M, **kwargs):
     return tree_w, tree_e
 
 
-def mst_quitefast_kdtree_single(X, M, **kwargs):
+def mst_quitefast_single_kd_tree(X, M, **kwargs):
     res = quitefastmst.mst_euclid(
         X, M,
-        algorithm="kd_tree_single",
+        algorithm="single_kd_tree",
         **kwargs
     )
     tree_w, tree_e = res[:2]
     return tree_w, tree_e
 
 
-def mst_quitefast_kdtree_dual(X, M, **kwargs):
+def mst_quitefast_sesqui_kd_tree(X, M, **kwargs):
     res = quitefastmst.mst_euclid(
         X, M,
-        algorithm="kd_tree_dual",
+        algorithm="sesqui_kd_tree",
+        **kwargs
+    )
+    tree_w, tree_e = res[:2]
+    return tree_w, tree_e
+
+
+def mst_quitefast_dual_kd_tree(X, M, **kwargs):
+    res = quitefastmst.mst_euclid(
+        X, M,
+        algorithm="dual_kd_tree",
         **kwargs
     )
     tree_w, tree_e = res[:2]

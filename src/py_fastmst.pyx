@@ -101,7 +101,7 @@ cdef extern from "../src/c_fastmst.h":
         T* mst_dist, Py_ssize_t* mst_ind,
         T* nn_dist, Py_ssize_t* nn_ind,
         Py_ssize_t max_leaf_size, Py_ssize_t first_pass_max_brute_size,
-        bint use_dtb, T mutreach_adj, bint verbose
+        T boruvka_variant, T mutreach_adj, bint verbose
     ) except +
 
     void Cmst_euclid_brute[T](
@@ -403,8 +403,8 @@ cpdef tuple mst_euclid(
     Our implementation of K-d trees [6]_ has been quite optimised; amongst
     others, it has good locality of reference (at the cost of making a
     copy of the input dataset), features the sliding midpoint (midrange) rule
-    suggested in [7]_, and a node pruning strategy inspired by the discussion
-    in [8]_.
+    suggested in [7]_, node pruning strategies inspired by some ideas
+    from [8]_, and a couple of further tuneups proposed by the current author.
 
     The "single-tree" version of the Borůvka algorithm is naively
     parallelisable: in every iteration, it seeks each point's nearest "alien",
@@ -414,6 +414,11 @@ cpdef tuple mst_euclid(
     is often only faster in 2- and 3-dimensional spaces, for `M<=2`, and in
     a single-threaded setting.  For another (approximate) adaptation
     of the dual-tree algorithm to the mutual reachability distance, see [11]_.
+
+    The "sesqui-tree" variant (by the current author) is a mixture of the two
+    approaches:  it compares leaves against the full tree.  It is usually
+    faster than the single- and dual-tree methods in very low dimensional
+    spaces and usually not much slower than the single-tree variant otherwise.
 
     Nevertheless, it is well-known that K-d trees perform well only in spaces
     of low intrinsic dimensionality (a.k.a. the "curse").  For high `d`,
@@ -481,16 +486,15 @@ cpdef tuple mst_euclid(
     M : int `< n`
         the degree of the mutual reachability distance (should be rather small,
         say, `<= 20`). `M<=2` denotes the ordinary Euclidean distance
-    algorithm : ``{"auto", "kd_tree_single", "kd_tree_dual", "brute"}``, default="auto"
+    algorithm : ``{"auto", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "brute"}``, default="auto"
         K-d trees can only be used for `d` between 2 and 20 only.
-        ``"auto"`` selects ``"kd_tree_dual"`` for `d<=3`, `M<=2`,
-        and in a single-threaded setting only. ``"kd_tree_single"`` is used
-        otherwise, unless `d>20`.
+        ``"auto"`` selects ``"sesqui_kd_tree"`` for `d<=3`.
+        ``"kd_tree_single"`` is used otherwise, unless `d>20`.
     max_leaf_size : int
         maximal number of points in the K-d tree leaves;
         smaller leaves use more memory, yet are not necessarily faster;
         use ``0`` to select the default value, currently set to 32 for the
-        single-tree and 8 for the dual-tree Borůvka algorithm
+        single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm
     first_pass_max_brute_size : int
         minimal number of points in a node to treat it as a leaf (unless
         it's actually a leaf) in the first iteration of the algorithm;
@@ -500,10 +504,9 @@ cpdef tuple mst_euclid(
         whose fractional part should be close to 0:
         values in `(-1,0)` prefer connecting to farther NNs,
         values in `(0, 1)` fall for closer NNs (which is what many other
-        implementations provide),
-        values in `(-2,-1)` prefer connecting to points with smaller core distances,
-        values in `(1, 2)` favour larger core distances;
-        see above for more details
+        implementations provide), values in `(-2,-1)` prefer connecting to
+        points with smaller core distances, values in `(1, 2)` favour larger
+        core distances; see above for more details
     verbose: bool
         whether to print diagnostic messages
 
@@ -540,33 +543,42 @@ cpdef tuple mst_euclid(
     if n < 1 or d <= 1: raise ValueError("X is ill-shaped");
     if M < 1 or M > n-1: raise ValueError("incorrect M")
 
+    cdef floatT boruvka_variant
+    cdef bool use_kdtree
+
     if algorithm == "auto":
         if 2 <= d <= 20:
-            if Comp_get_max_threads() == 1 and d <= 3 and M <= 2:
-                algorithm = "kd_tree_dual"
+            if d <= 3:
+                algorithm = "sesqui_kd_tree"
             else:
-                algorithm = "kd_tree_single"
+                algorithm = "single_kd_tree"
         else:
             algorithm = "brute"
 
-    if algorithm == "kd_tree_single" or algorithm == "kd_tree_dual":
+    if algorithm in ("single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"):
         if not 2 <= d <= 20:
             raise ValueError("K-d trees can only be used for 2 <= d <= 20")
 
         use_kdtree = True
 
-        if algorithm == "kd_tree_single":
+        if algorithm == "single_kd_tree":
             if max_leaf_size == 0:
                 max_leaf_size = 32  # the current default
             if first_pass_max_brute_size == 0:
                 first_pass_max_brute_size = 32  # the current default
-            use_dtb = False
-        elif algorithm == "kd_tree_dual":
+            boruvka_variant = 1.0
+        elif algorithm == "sesqui_kd_tree":
+            if max_leaf_size == 0:
+                max_leaf_size = 32  # the current default
+            if first_pass_max_brute_size == 0:
+                first_pass_max_brute_size = 32  # the current default
+            boruvka_variant = 1.5
+        elif algorithm == "dual_kd_tree":
             if max_leaf_size == 0:
                 max_leaf_size = 8  # the current default
             if first_pass_max_brute_size == 0:
                 first_pass_max_brute_size = 32  # the current default
-            use_dtb = True
+            boruvka_variant = 2.0
 
         if max_leaf_size <= 0:
             raise ValueError("max_leaf_size must be positive")
@@ -599,7 +611,7 @@ cpdef tuple mst_euclid(
             <floatT*>(0) if M==1 else &nn_dist[0,0],
             <Py_ssize_t*>(0) if M==1 else &nn_ind[0,0],
             max_leaf_size, first_pass_max_brute_size,
-            use_dtb, mutreach_adj, verbose
+            boruvka_variant, mutreach_adj, verbose
         )
     else:
         Cmst_euclid_brute(

@@ -34,13 +34,13 @@ scenarios = [
     # (n, 3, 2, "norm"),
     # (n, 5, 2, "norm"),
     (1208592, -3, 10,  "thermogauss_scan001"),
-    (1208592,  2, 10,  "norm"),
-    (1208592,  3, 10,  "norm"),
-    (1208592,  5, 10,  "norm"),
     (1208592, -3,  1,  "thermogauss_scan001"),
-    (1208592,  2,  1,  "norm"),
-    (1208592,  3,  1,  "norm"),
+    (1208592,  5, 10,  "norm"),
     (1208592,  5,  1,  "norm"),
+    # (1208592,  2, 10,  "norm"),
+    # (1208592,  2,  1,  "norm"),
+    # (1208592,  3, 10,  "norm"),
+    # (1208592,  3,  1,  "norm"),
     # (n, 2, 1, "norm"),
     # (n, 2, 10, "norm"),
     # (n, 5, 1, "norm"),
@@ -114,18 +114,10 @@ for m in modules:
 import perf_mst_202506_defs as msts
 
 cases = dict(
-    quitefast_kdtree_single       = lambda X, M: msts.mst_quitefast_kdtree_single(X, M),
-    # quitefast_kdtree_single_2       = lambda X, M: msts.mst_quitefast_kdtree_single(X, M),
-    # quitefast_kdtree_single_3       = lambda X, M: msts.mst_quitefast_kdtree_single(X, M),
-    # quitefast_kdtree_sesqui_20    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, max_leaf_size=20),  # TODO param hack
-    quitefast_kdtree_sesqui_16    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, max_leaf_size=16),  # TODO param hack
-    # quitefast_kdtree_sesqui_16_2    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, max_leaf_size=16),  # TODO param hack
-    # quitefast_kdtree_sesqui_16_3    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, max_leaf_size=16),  # TODO param hack
-    # quitefast_kdtree_sesqui_12    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, max_leaf_size=12),  # TODO param hack
-    # quitefast_kdtree_single2    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, mutreach_adj=-0.00000011920928955078125),
-    # quitefast_kdtree_single4    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, mutreach_adj=+0.00000011920928955078125),
-    # quitefast_kdtree_single5    = lambda X, M: msts.mst_quitefast_kdtree_single(X, M, mutreach_adj=+1.00000011920928955078125),
-    quitefast_kdtree_dual       = lambda X, M: msts.mst_quitefast_kdtree_dual(X, M),
+    quitefast_single_kd_tree       = lambda X, M: msts.mst_quitefast_single_kd_tree(X, M),
+    quitefast_sesqui_kd_tree       = lambda X, M: msts.mst_quitefast_sesqui_kd_tree(X, M),
+    quitefast_sesqui_kd_tree_16    = lambda X, M: msts.mst_quitefast_sesqui_kd_tree(X, M, max_leaf_size=16),
+    quitefast_dual_kd_tree       = lambda X, M: msts.mst_quitefast_dual_kd_tree(X, M),
     # quitefast_brute             = lambda X, M: msts.mst_quitefast_brute(X, M),
     # mlpack                     = lambda X, M: msts.mst_mlpack(X, M),
     wangyiqiu                  = lambda X, M: msts.mst_wangyiqiu(X, M),

@@ -292,6 +292,9 @@ protected:
 
     const Py_ssize_t max_leaf_size;  //< unless in pathological cases
 
+    Py_ssize_t nleaves;  //< number of leaves in the tree
+
+
     inline void compute_bounding_box(NODE*& root)
     {
         const FLOAT* y = data+root->idx_from*D;
@@ -328,6 +331,7 @@ protected:
 
         if (idx_to - idx_from <= max_leaf_size) {
             // this will be a leaf node; nothing more to do
+            ++nleaves;
             return;
         }
 
@@ -434,6 +438,7 @@ public:
 
         QUITEFASTMST_PROFILER_START
         QUITEFASTMST_ASSERT(nodes.size()==0);
+        nleaves = 0;
         nodes.push_back(NODE());
         build_tree(&nodes[0], 0, n);
         QUITEFASTMST_PROFILER_STOP("build_tree")

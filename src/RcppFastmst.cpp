@@ -326,8 +326,8 @@ List knn_euclid(
 //' amongst others, it has good locality of reference (at the cost of making
 //' a copy of the input dataset), features the sliding
 //' midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
-//' and a node pruning strategy inspired by the discussion
-//' by Sample et al. (2001).
+//' node pruning strategies inspired by some ideas from (Sample et al. ,2001),
+//' and a couple of further tuneups proposed by the current author.
 //'
 //' The "single-tree" version of the Borůvka algorithm is naively
 //' parallelisable: in every iteration, it seeks each point's nearest "alien",
@@ -335,9 +335,14 @@ List knn_euclid(
 //' The "dual-tree" Borůvka version of the algorithm is, in principle, based
 //' on (March et al., 2010). As far as our implementation is concerned,
 //' the dual-tree approach is often only faster in 2- and 3-dimensional spaces,
-//' for \eqn{M\leq 2}, and in a single-threaded setting.  For another (approximate)
-//' adaptation of the dual-tree algorithm to the mutual reachability distance,
-//' see (McInnes and Healy, 2017).
+//' for \eqn{M\leq 2}, and in a single-threaded setting.  For another
+//' (approximate) adaptation of the dual-tree algorithm to the mutual
+//' reachability distance, see (McInnes and Healy, 2017).
+//'
+//' The "sesqui-tree" variant (by the current author) is a mixture of the two
+//' approaches:  it compares leaves against the full tree.  It is usually
+//' faster than the single- and dual-tree methods in very low dimensional
+//' spaces and usually not much slower than the single-tree variant otherwise.
 //'
 //' Nevertheless, it is well-known that K-d trees perform well only in spaces
 //' of low intrinsic dimensionality (a.k.a. the "curse").  For high \code{d},
@@ -399,16 +404,15 @@ List knn_euclid(
 //' @param M the degree of the mutual reachability distance
 //'    (should be rather small, say, \eqn{\leq 20}).
 //'    \eqn{M\leq 2} denotes the ordinary Euclidean distance
-//' @param algorithm \code{"auto"}, \code{"kd_tree_single"}
-//'    \code{"kd_tree_dual"} or \code{"brute"};
+//' @param algorithm \code{"auto"}, \code{"single_kd_tree"}
+//'    \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"} or \code{"brute"};
 //'    K-d trees can only be used for d between 2 and 20 only;
-//'    \code{"auto"} selects \code{"kd_tree_dual"} for \eqn{d\leq 3},
-//'    \eqn{M\leq 2}, and in a single-threaded setting only.
-//'    \code{"kd_tree_single"} is used otherwise, unless \eqn{d>20}.
+//'    \code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 3}.
+//'    \code{"single_kd_tree"} is used otherwise, unless \eqn{d>20}.
 //' @param max_leaf_size maximal number of points in the K-d tree leaves;
 //'    smaller leaves use more memory, yet are not necessarily faster;
 //'    use \code{0} to select the default value, currently set to 32 for the
-//'    single-tree and 8 for the dual-tree Borůvka algorithm
+//'    single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm
 //' @param first_pass_max_brute_size minimal number of points in a node to
 //'    treat it as a leaf (unless it's actually a leaf) in the first
 //'    iteration of the algorithm; use \code{0} to select the default value,
@@ -475,39 +479,46 @@ List mst_euclid(
     Py_ssize_t n = (Py_ssize_t)_X.nrow();
     Py_ssize_t d = (Py_ssize_t)_X.ncol();
     bool use_kdtree;
-    bool use_dtb;
+    FLOAT boruvka_variant;
 
     if (n < 1 || d <= 1)  stop("X is ill-shaped");
     if (M < 1 || M > n-1) stop("incorrect M");
 
     if (algorithm == "auto") {
         if (2 <= d && d <= 20) {
-            if (Comp_get_max_threads() == 1 && d <= 3 && M <= 2)
-                algorithm = "kd_tree_dual";
+            if (d <= 3)
+                algorithm = "sesqui_kd_tree";
             else
-                algorithm = "kd_tree_single";
+                algorithm = "single_kd_tree";
         }
         else
             algorithm = "brute";
     }
 
-    if (algorithm == "kd_tree_dual" || algorithm == "kd_tree_single") {
+    if (algorithm == "single_kd_tree" || algorithm == "sesqui_kd_tree" || algorithm == "dual_kd_tree") {
         if (d < 2 || d > 20) stop("K-d trees can only be used for 2 <= d <= 20");
         use_kdtree = true;
 
-        if (algorithm == "kd_tree_single") {
+        if (algorithm == "single_kd_tree") {
             if (max_leaf_size == 0)
                 max_leaf_size = 32;  // the current default
             if (first_pass_max_brute_size == 0)
                 first_pass_max_brute_size = 32;  // the current default
-            use_dtb = false;
+            boruvka_variant = 1.0;
+        }
+        else if (algorithm == "sesqui_kd_tree") {
+            if (max_leaf_size == 0)
+                max_leaf_size = 32;  // the current default
+            if (first_pass_max_brute_size == 0)
+                first_pass_max_brute_size = 32;  // the current default
+            boruvka_variant = 1.5;
         }
         else {
             if (max_leaf_size == 0)
                 max_leaf_size = 8;  // the current default
             if (first_pass_max_brute_size == 0)
                 first_pass_max_brute_size = 32;  // the current default
-            use_dtb = true;
+            boruvka_variant = 2.0;
         }
 
         if (max_leaf_size <= 0)
@@ -537,7 +548,7 @@ List mst_euclid(
         Cmst_euclid_kdtree(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
             (M==1)?nullptr:nn_dist.data(), (M==1)?nullptr:nn_ind.data(),
-            max_leaf_size, first_pass_max_brute_size, use_dtb,
+            max_leaf_size, first_pass_max_brute_size, boruvka_variant,
             mutreach_adj, verbose
         );
     else
