@@ -1,8 +1,8 @@
 Package: quitefastmst
 Type: Package
-Title: TO DO
-Version: 0.99.9666
-Date: 2025-07-18
+Title: Euclidean and Mutual Reachability Distance Minimum Spanning Trees
+Version: 0.9.0
+Date: 2025-07-21
 Authors@R: c(
     person("Marek", "Gagolewski",
         role = c("aut", "cre", "cph"),

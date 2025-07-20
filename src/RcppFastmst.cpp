@@ -389,7 +389,7 @@ List knn_euclid(
 //' on hierarchical density estimates, \emph{Lecture Notes in Computer Science}
 //' 7819, 2013, 160–172. \doi{10.1007/978-3-642-37456-2_14}.
 //'
-//' R.J.G.B. Campello, D. Moulavi, A. Zimek. J. Sander, Hierarchical
+//' R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
 //' density estimates for data clustering, visualization, and outlier detection,
 //' \emph{ACM Transactions on Knowledge Discovery from Data (TKDD)} 10(1),
 //' 2015, 1–51, \doi{10.1145/2733381}.

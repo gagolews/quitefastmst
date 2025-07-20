@@ -8,7 +8,7 @@
 
 
 
-### *quitefastmst*: Euclidean Minimum Spanning Trees (also wrt Mutual Reachability Distances) and Nearest Neighbours
+### *quitefastmst*: Euclidean and Mutual Reachability Distance Minimum Spanning Trees
 
 
 ![quitefastmst for Python](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20Python/badge.svg)
@@ -28,6 +28,21 @@ at <https://quitefastmst.gagolewski.com/>.
 ## About
 
 TO DO
+
+Package features:
+
+* Euclidean Minimum Spanning Trees using single, sesqui, and
+dual-tree Boruvka algorithms – fast in spaces of low intrinsic dimensionality
+
+* support for mutual reachability distances based on the Euclidean metric
+(like in the HDBSCAN\* algorithm)
+
+* Euclidean nearest neighbours with nicely-optimised K-d trees (support
+parallel processing)
+
+* fallback algorithms for spaces of higher dimensionality
+
+
 
 
 ## Examples, Tutorials, and Documentation
@@ -59,7 +74,7 @@ TO DO
 ### Other
 
 The core functionality is implemented in the form of a header-only
-C++ library. It can thus be easily adapted for use in other environments.
+C++ library. It can thus be easily adapted for use in other projects.
 
 New contributions are welcome, e.g., Julia, Matlab/GNU Octave wrappers.
 
@@ -85,6 +100,23 @@ received a copy of the License along with this program. If not, see
 
 ## References
 
+Borůvka O., O jistém problému minimálním,
+Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58.
+
+Bentley J.L., Multidimensional binary search trees used for associative
+searching, Communications of the ACM 18(9), 509–517, 1975,
+DOI:10.1145/361002.361007.
+
+Campello R.J.G.B., Moulavi D., Zimek A., Sander J., Hierarchical
+density estimates for data clustering, visualization, and outlier detection,
+ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
+2015, 1–51, DOI:10.1145/2733381.
+
+Campello R.J.G.B., Moulavi D., Sander J.,
+Density-based clustering based on hierarchical density estimates,
+*Lecture Notes in Computer Science* **7819**, 2013, 160–172.
+[DOI: 10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14).
+
 Gagolewski M., Cena A., Bartoszuk M., Brzozowski L.,
 Clustering with minimum spanning trees: How good can it be?,
 *Journal of Classification* **42**, 2025, 90–112.
@@ -95,10 +127,29 @@ Gagolewski M., A framework for benchmarking clustering algorithms,
 [DOI: 10.1016/j.softx.2022.101270](https://doi.org/10.1016/j.softx.2022.101270).
 <https://clustering-benchmarks.gagolewski.com/>.
 
-Campello R.J.G.B., Moulavi D., Sander J.,
-Density-based clustering based on hierarchical density estimates,
-*Lecture Notes in Computer Science* **7819**, 2013, 160–172.
-[DOI: 10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14).
+Jarník V., O jistém problému minimálním,
+Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63.
+
+Maneewongvatana S., Mount D.M., It's okay to be skinny, if your friends
+are fat, The 4th CGC Workshop on Computational Geometry, 1999.
+
+March W.B., Parikshit R., Gray A.G., Fast Euclidean minimum spanning
+tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
+Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612.
+Olson C.F., Parallel algorithms for hierarchical clustering,
+Parallel Computing 21(8), 1995, 1313–1325.
+
+McInnes L., Healy J., Accelerated hierarchical density-based
+clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
+DOI:10.1109/ICDMW.2017.12.
+
+Prim R., Shortest connection networks and some generalizations,
+The Bell System Technical Journal 36(6), 1957, 1389–1401.
+
+Sample N., Haines M., Arnold M., Purcell T., Optimizing search
+strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
+Communications & Computers (CSCC'01), 2001.
+
 
 See the package's [homepage](https://quitefastmst.gagolewski.com/) for more
 references.

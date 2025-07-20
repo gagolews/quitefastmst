@@ -24,8 +24,8 @@ mst_euclid(
 \item{algorithm}{\code{"auto"}, \code{"single_kd_tree"}
 \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"} or \code{"brute"};
 K-d trees can only be used for d between 2 and 20 only;
-\code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 3}.
-\code{"single_kd_tree"} is used otherwise, unless \eqn{d>20}.}
+\code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 20}.
+\code{"brute"} is used otherwise}
 
 \item{max_leaf_size}{maximal number of points in the K-d tree leaves;
 smaller leaves use more memory, yet are not necessarily faster;
@@ -186,7 +186,7 @@ R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
 on hierarchical density estimates, \emph{Lecture Notes in Computer Science}
 7819, 2013, 160–172. \doi{10.1007/978-3-642-37456-2_14}.
 
-R.J.G.B. Campello, D. Moulavi, A. Zimek. J. Sander, Hierarchical
+R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
 density estimates for data clustering, visualization, and outlier detection,
 \emph{ACM Transactions on Knowledge Discovery from Data (TKDD)} 10(1),
 2015, 1–51, \doi{10.1145/2733381}.
