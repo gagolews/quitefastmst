@@ -9,7 +9,7 @@ postprocess_contents <- function(contents)
 {
     stopifnot(is.character(contents), length(contents)==1, !is.na(contents))
 
-    author <- "\\href{https://www.gagolewski.com/}{Marek Gagolewski}s\n"
+    author <- "\\href{https://www.gagolewski.com/}{Marek Gagolewski}\n"
 
     seealso <- stringi::stri_paste(
         "The official online manual of \\pkg{quitefastmst} at ",

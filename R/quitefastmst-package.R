@@ -24,6 +24,11 @@
 #' @description
 #' See \code{\link{mst_euclid}()} for more details.
 #'
+#' @details
+#' For best speed, consider building the package from sources
+#' using, e.g., \code{-O3 -march=native} compiler flags and with OpenMP
+#' support on.
+#'
 #' @useDynLib quitefastmst, .registration=TRUE
 #' @importFrom Rcpp evalCpp
 #' @keywords internal

@@ -10,7 +10,7 @@ omp_set_num_threads(n_threads)
 omp_get_max_threads()
 }
 \arguments{
-\item{n_threads}{maximum number of threads to use;}
+\item{n_threads}{maximum number of threads to use}
 }
 \value{
 \code{omp_get_max_threads} returns the maximal number
@@ -27,7 +27,7 @@ can be used by \code{\link{knn_euclid}} and \code{\link{mst_euclid}},
 amongst others.
 }
 \author{
-\href{https://www.gagolewski.com/}{Marek Gagolewski}s
+\href{https://www.gagolewski.com/}{Marek Gagolewski}
 }
 \seealso{
 The official online manual of \pkg{quitefastmst} at \url{https://quitefastmst.gagolewski.com/}

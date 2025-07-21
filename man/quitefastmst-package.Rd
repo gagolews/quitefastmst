@@ -4,16 +4,22 @@
 \name{quitefastmst-package}
 \alias{quitefastmst}
 \alias{quitefastmst-package}
-\title{Euclidean Minimum Spanning Trees (also wrt Mutual Reachability Distances) and Nearest Neighbours}
+\title{Euclidean and Mutual Reachability Minimum Spanning Trees}
 \description{
 See \code{\link{mst_euclid}()} for more details.
+}
+\details{
+For best speed, consider building the package from sources
+using, e.g., \code{-O3 -march=native} compiler flags and with OpenMP
+support on.
 }
 \seealso{
 The official online manual of \pkg{quitefastmst} at \url{https://quitefastmst.gagolewski.com/}
 
 Useful links:
 \itemize{
-  \item \url{https://quitefastmst.gagolewski.com/ https://github.com/gagolews/quitefastmst}
+  \item \url{https://quitefastmst.gagolewski.com/}
+  \item \url{https://github.com/gagolews/quitefastmst}
   \item Report bugs at \url{https://github.com/gagolews/quitefastmst/issues}
 }
 

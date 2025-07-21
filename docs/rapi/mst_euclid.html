@@ -1,0 +1,482 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="omp: Get or Set the Number of Threads" href="omp.html" /><link rel="prev" title="knn_euclid: Euclidean Nearest Neighbours" href="knn_euclid.html" />
+        <link rel="canonical" href="https://quitefastmst.gagolewski.com/rapi/mst_euclid.html" />
+
+    <link rel="shortcut icon" href="https://www.gagolewski.com/_static/img/quitefastmst.png"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees - Python and R Package quitefastmst</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1981fb80" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 95%;
+  --admonition-title-font-size: 95%;
+  --color-brand-primary: red;
+  --color-brand-content: #CC3333;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --admonition-font-size: 95%;
+  --admonition-title-font-size: 95%;
+  --color-brand-primary: #ff2b53;
+  --color-brand-content: #dd3333;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --admonition-font-size: 95%;
+  --admonition-title-font-size: 95%;
+  --color-brand-primary: #ff2b53;
+  --color-brand-content: #dd3333;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Python and R Package quitefastmst</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto colour theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky">
+<div class="sidebar-logo-container">
+  <a class="sidebar-brand" href="../index.html"><img class="sidebar-logo" src="https://www.gagolewski.com/_static/img/quitefastmst.png" alt="Logo"/></a>
+</div>
+
+<span class="sidebar-brand-text">
+<a class="sidebar-brand" href="../index.html">quitefastmst</a>
+</span>
+<div class="sidebar-brand">
+0.9.0
+</div>
+<form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">quitefastmst</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">About</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.gagolewski.com/">Author</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/gagolews/quitefastmst">Source Code (GitHub)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/gagolews/quitefastmst/issues">Bug Tracker and Feature Suggestions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/quitefastmst">PyPI Entry</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://CRAN.R-project.org/package=quitefastmst">CRAN Entry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference Manual</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../pythonapi.html">Python Package <cite>quitefastmst</cite> Reference</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of R Package quitefastmst Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="knn_euclid.html">knn_euclid: Euclidean Nearest Neighbours</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omp.html">omp: Get or Set the Number of Threads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quitefastmst-package.html">quitefastmst-package: Euclidean and Mutual Reachability Minimum Spanning Trees</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Other</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://genieclust.gagolewski.com/">genieclust</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://clustering-benchmarks.gagolewski.com/">Clustering Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://datawranglingpy.gagolewski.com/">Minimalist Data Wrangling in Python</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://deepr.gagolewski.com/">Deep R Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../z_bibliography.html">References</a></li>
+</ul>
+
+</div></div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/gagolews/quitefastmst/issues/" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto colour theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section class="tex2jax_ignore mathjax_ignore" id="mst-euclid-euclidean-and-mutual-reachability-minimum-spanning-trees">
+<h1>mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees<a class="headerlink" href="#mst-euclid-euclidean-and-mutual-reachability-minimum-spanning-trees" title="Link to this heading">¶</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>The function determines the/a(*) minimum spanning tree (MST) of a set of <span class="math notranslate nohighlight">\(n\)</span> points, i.e., an acyclic undirected graph whose vertices represent the points, and <span class="math notranslate nohighlight">\(n-1\)</span> edges with the minimal sum of weights, given by the pairwise distances. MSTs have many uses in, amongst others, topological data analysis (clustering, dimensionality reduction, etc.).</p>
+<p>For <span class="math notranslate nohighlight">\(M\leq 2\)</span>, we get a spanning tree that minimises the sum of Euclidean distances between the points. If <span class="math notranslate nohighlight">\(M=2\)</span>, the function additionally returns the distance to each point’s nearest neighbour.</p>
+<p>If <span class="math notranslate nohighlight">\(M&gt;2\)</span>, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}\)</span>, where <span class="math notranslate nohighlight">\(d(i,j)\)</span> is the Euclidean distance between the <span class="math notranslate nohighlight">\(i\)</span>-th and the <span class="math notranslate nohighlight">\(j\)</span>-th point, and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th <span class="math notranslate nohighlight">\(M\)</span>-core distance defined as the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\((M-1)\)</span>-th nearest neighbour (not including the query points themselves). In clustering and density estimation, M plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mst_euclid</span><span class="p">(</span>
+<span class="w">  </span><span class="n">X</span><span class="p">,</span>
+<span class="w">  </span><span class="n">M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1L</span><span class="p">,</span>
+<span class="w">  </span><span class="n">algorithm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;auto&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">max_leaf_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0L</span><span class="p">,</span>
+<span class="w">  </span><span class="n">first_pass_max_brute_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0L</span><span class="p">,</span>
+<span class="w">  </span><span class="n">mutreach_adj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1.00000011920929</span><span class="p">,</span>
+<span class="w">  </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
+<td><p>the “database”; a matrix of shape (n,d)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">M</span></code></p></td>
+<td><p>the degree of the mutual reachability distance (should be rather small, say, <span class="math notranslate nohighlight">\(\leq 20\)</span>). <span class="math notranslate nohighlight">\(M\leq 2\)</span> denotes the ordinary Euclidean distance</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">algorithm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;single_kd_tree&quot;</span></code> <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dual_kd_tree&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>; K-d trees can only be used for d between 2 and 20 only; <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code> for <span class="math notranslate nohighlight">\(d\leq 20\)</span>. <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code> is used otherwise</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_leaf_size</span></code></p></td>
+<td><p>maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32 for the single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">first_pass_max_brute_size</span></code></p></td>
+<td><p>minimal number of points in a node to treat it as a leaf (unless it’s actually a leaf) in the first iteration of the algorithm; use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code></p></td>
+<td><p>adjustment for mutual reachability distance ambiguity (for <span class="math notranslate nohighlight">\(M&gt;2\)</span>) whose fractional part should be close to 0: values in <span class="math notranslate nohighlight">\((-1,0)\)</span> prefer connecting to farther NNs, values in <span class="math notranslate nohighlight">\((0, 1)\)</span> fall for closer NNs (which is what many other implementations provide), values in <span class="math notranslate nohighlight">\((-2,-1)\)</span> prefer connecting to points with smaller core distances, values in <span class="math notranslate nohighlight">\((1, 2)\)</span> favour larger core distances; see above for more details</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><p>whether to print diagnostic messages</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="details">
+<h2>Details<a class="headerlink" href="#details" title="Link to this heading">¶</a></h2>
+<p>(*) We note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances. To make the definition less ambiguous (albeit with no guarantees), internally, the brute-force algorithm relies on the adjusted distance: <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)\)</span> or <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}\)</span>, where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is close to 0. |<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>|&lt;1 selects the former formula (ε=<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>) whilst 1&lt;|<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>|&lt;2 chooses the latter (ε=<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>±1). For the K-d tree-based methods, on the other hand, <code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code> indicates the preference towards connecting to farther/closer points wrt the original metric or having smaller/larger core distances if a point <span class="math notranslate nohighlight">\(i\)</span> has multiple nearest-neighbour candidates <span class="math notranslate nohighlight">\(j'\)</span>, <span class="math notranslate nohighlight">\(j''\)</span> with <span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j'),  c_M(j')\}`\)</span> and <span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}`\)</span>. Generally, the smaller the <code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>, the more leaves there will be in the tree (note that there are only four types of adjustments, though).</p>
+<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <code class="docutils literal notranslate"><span class="pre">M</span></code> is rather small; say, <span class="math notranslate nohighlight">\(M \leq 20\)</span>.</p>
+<p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al. ,2001), and a couple of further tuneups proposed by the current author.</p>
+<p>The “single-tree” version of the Borůvka algorithm is naively parallelisable: in every iteration, it seeks each point’s nearest “alien”, i.e., the nearest point thereto from another cluster. The “dual-tree” Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for <span class="math notranslate nohighlight">\(M\leq 2\)</span>, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to the mutual reachability distance, see (McInnes and Healy, 2017).</p>
+<p>The “sesqui-tree” variant (by the current author) is a mixture of the two approaches: it compares leaves against the full tree. It is usually faster than the single- and dual-tree methods in very low dimensional spaces and usually not much slower than the single-tree variant otherwise.</p>
+<p>Nevertheless, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality (a.k.a. the “curse”). For high <code class="docutils literal notranslate"><span class="pre">d</span></code>, the “brute-force” algorithm is recommended. Here, we provided a parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a. Prim (1957) or Dijkstra) algorithm, where the distances are computed on the fly (only once for <code class="docutils literal notranslate"><span class="pre">M&lt;=2</span></code>).</p>
+<p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable or via the <a class="reference internal" href="omp.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">omp_set_num_threads</span></code></span></a> function at runtime. For best speed, consider building the package from sources using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
+</section>
+<section id="value">
+<h2>Value<a class="headerlink" href="#value" title="Link to this heading">¶</a></h2>
+<p>A list with two (M=1) or four (M&gt;1) elements, <code class="docutils literal notranslate"><span class="pre">mst.index</span></code> and <code class="docutils literal notranslate"><span class="pre">mst.dist</span></code>, and additionally <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mst.index</span></code> is a matrix with <span class="math notranslate nohighlight">\(n-1\)</span> rows and <code class="docutils literal notranslate"><span class="pre">2</span></code> columns, whose rows define the tree edges.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mst.dist</span></code> is a vector of length <code class="docutils literal notranslate"><span class="pre">n-1</span></code> giving the weights of the corresponding edges.</p>
+<p>The tree edges are ordered w.r.t. weights nondecreasingly, and then by the indexes (lexicographic ordering of the <code class="docutils literal notranslate"><span class="pre">(weight,</span> <span class="pre">index1,</span> <span class="pre">index2)</span></code> triples). For each <code class="docutils literal notranslate"><span class="pre">i</span></code>, it holds <code class="docutils literal notranslate"><span class="pre">mst_ind[i,1]&lt;mst_ind[i,2]</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nn.index</span></code> is an <code class="docutils literal notranslate"><span class="pre">n</span></code> by <code class="docutils literal notranslate"><span class="pre">M-1</span></code> matrix giving the indexes of each point’s nearest neighbours. <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> provides the corresponding distances.</p>
+</section>
+<section id="author-s">
+<h2>Author(s)<a class="headerlink" href="#author-s" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="https://www.gagolewski.com/">Marek Gagolewski</a></p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<p>V. Jarník, O jistém problému minimálním, <em>Práce Moravské Přírodovědecké Společnosti</em> 6, 1930, 57–63.</p>
+<p>C.F. Olson, Parallel algorithms for hierarchical clustering, Parallel Computing 21(8), 1995, 1313–1325.</p>
+<p>R. Prim, Shortest connection networks and some generalizations, <em>The Bell System Technical Journal</em> 36(6), 1957, 1389–1401.</p>
+<p>O. Borůvka, O jistém problému minimálním, <em>Práce Moravské Přírodovědecké Společnosti</em> 3, 1926, 37–58.</p>
+<p>W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning tree: Algorithm, analysis, and applications, <em>Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD ‘10)</em>, 2010, 603–612.</p>
+<p>J.L. Bentley, Multidimensional binary search trees used for associative searching, <em>Communications of the ACM</em> 18(9), 509–517, 1975, <a class="reference external" href="https://doi.org/10.1145/361002.361007">doi:10.1145/361002.361007</a>.</p>
+<p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends are fat, <em>4th CGC Workshop on Computational Geometry</em>, 1999.</p>
+<p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search strategies in K-d Trees, <em>5th WSES/IEEE Conf. on Circuits, Systems, Communications &amp; Computers</em> (CSCC’01), 2001.</p>
+<p>R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based on hierarchical density estimates, <em>Lecture Notes in Computer Science</em> 7819, 2013, 160–172. <a class="reference external" href="https://doi.org/10.1007/978-3-642-37456-2_14">doi:10.1007/978-3-642-37456-2_14</a>.</p>
+<p>R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical density estimates for data clustering, visualization, and outlier detection, <em>ACM Transactions on Knowledge Discovery from Data (TKDD)</em> 10(1), 2015, 1–51, <a class="reference external" href="https://doi.org/10.1145/2733381">doi:10.1145/2733381</a>.</p>
+<p>L. McInnes, J. Healy, Accelerated hierarchical density-based clustering, <em>IEEE Intl. Conf. Data Mining Workshops (ICMDW)</em>, 2017, 33–42, <a class="reference external" href="https://doi.org/10.1109/ICDMW.2017.12">doi:10.1109/ICDMW.2017.12</a>.</p>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
+<p>The official online manual of <span class="pkg">quitefastmst</span> at <a class="reference external" href="https://quitefastmst.gagolewski.com/">https://quitefastmst.gagolewski.com/</a></p>
+<p><a class="reference internal" href="knn_euclid.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">knn_euclid</span></code></span></a></p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="s">&quot;datasets&quot;</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="s">&quot;iris&quot;</span><span class="p">)</span>
+<span class="n">X</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">jitter</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">iris</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">]))</span><span class="w">  </span><span class="c1"># some data</span>
+<span class="bp">T</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mst_euclid</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w">                 </span><span class="c1"># Euclidean MST of X</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">asp</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">las</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+<span class="nf">segments</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="bp">T</span><span class="o">$</span><span class="n">mst.index</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">X</span><span class="p">[</span><span class="bp">T</span><span class="o">$</span><span class="n">mst.index</span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="m">2</span><span class="p">],</span>
+<span class="w">         </span><span class="n">X</span><span class="p">[</span><span class="bp">T</span><span class="o">$</span><span class="n">mst.index</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">X</span><span class="p">[</span><span class="bp">T</span><span class="o">$</span><span class="n">mst.index</span><span class="p">[,</span><span class="w"> </span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="m">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><img alt="plot of chunk mst_euclid" src="../_images/mst_euclid-1.png" /></p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="omp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">omp: Get or Set the Number of Threads</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="knn_euclid.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">knn_euclid: Euclidean Nearest Neighbours</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+              
+              
+              Copyright &#169; 2025–2025 by <a href="https://www.gagolewski.com">Marek Gagolewski</a>.
+              Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
+              Built with <a href="https://sphinx-doc.org/">Sphinx</a>
+              and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
+              Last updated on 2025-07-21T17:42:51+0200.
+              This site will never display any ads: it is a non-profit project.
+              It does not collect any data.
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            In this section
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#details">Details</a></li>
+<li><a class="reference internal" href="#value">Value</a></li>
+<li><a class="reference internal" href="#author-s">Author(s)</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

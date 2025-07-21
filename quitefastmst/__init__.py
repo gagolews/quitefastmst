@@ -1,5 +1,9 @@
 """
-quitefastmst Python Package
+quitefastmst Python Package:
+Euclidean and Mutual Reachability Minimum Spanning Trees
+
+For best speed, consider building the package from sources
+using, e.g., ``-O3 -march=native`` compiler flags and with OpenMP support on.
 """
 
 

@@ -9,7 +9,7 @@
 #' can be used by \code{\link{knn_euclid}} and \code{\link{mst_euclid}},
 #' amongst others.
 #'
-#' @param n_threads maximum number of threads to use;
+#' @param n_threads maximum number of threads to use
 #'
 #' @return
 #' \code{omp_get_max_threads} returns the maximal number
@@ -33,7 +33,7 @@ omp_get_max_threads <- function() {
     .Call(`_quitefastmst_Romp_get_max_threads`)
 }
 
-#' @title Quite Fast Euclidean Nearest Neighbours
+#' @title Euclidean Nearest Neighbours
 #'
 #' @description
 #' If \code{Y} is \code{NULL}, then the function determines the first \code{k}
@@ -117,13 +117,13 @@ omp_get_max_threads <- function() {
 #'
 #' @seealso \code{\link{mst_euclid}}
 #'
-#' @rdname fastknn
+#' @rdname knn_euclid
 #' @export
 knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 0L, squared = FALSE, verbose = FALSE) {
     .Call(`_quitefastmst_knn_euclid`, X, k, Y, algorithm, max_leaf_size, squared, verbose)
 }
 
-#' @title Quite Fast Euclidean Minimum Spanning Trees (Also WRT Mutual Reachability Distances)
+#' @title Euclidean and Mutual Reachability Minimum Spanning Trees
 #'
 #' @description
 #' The function determines the/a(*) minimum spanning tree (MST) of a set
@@ -306,7 +306,7 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #'
 #' @seealso \code{\link{knn_euclid}}
 #'
-#' @rdname fastmst
+#' @rdname mst_euclid
 #' @export
 mst_euclid <- function(X, M = 1L, algorithm = "auto", max_leaf_size = 0L, first_pass_max_brute_size = 0L, mutreach_adj = -1.00000011920928955078125, verbose = FALSE) {
     .Call(`_quitefastmst_mst_euclid`, X, M, algorithm, max_leaf_size, first_pass_max_brute_size, mutreach_adj, verbose)

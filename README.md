@@ -1,10 +1,7 @@
 <a href="https://quitefastmst.gagolewski.com"><img src="https://www.gagolewski.com/_static/img/quitefastmst.png" align="right" height="128" width="128" /></a>
 # [*quitefastmst*](https://quitefastmst.gagolewski.com/) Package for R and Python
 
-**TO DO: this package is a work in progress** – **check back later**
-
-
-### *quitefastmst*: Euclidean and Mutual Reachability Minimum Spanning Trees
+## Euclidean and Mutual Reachability Minimum Spanning Trees
 
 
 ![quitefastmst for Python](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20Python/badge.svg)
@@ -22,8 +19,9 @@ Package **features**:
     using single-, sesqui-, and dual-tree Borůvka algorithms – quite fast
     in spaces of low intrinsic dimensionality,
 
-* support for mutual reachability distances based on the Euclidean metric
-    (like in the HDBSCAN\* algorithm; see Campello, Moulavi, Sander, 2013),
+* Minimum spanning trees with respect to mutual reachability distances based
+    on the Euclidean metric (used in the definition of the HDBSCAN\* algorithm;
+    see Campello, Moulavi, Sander, 2013),
 
 * Euclidean nearest neighbours with nicely-optimised K-d trees,
 
@@ -39,7 +37,8 @@ for the reference manual, tutorials, examples, and benchmarks.
 
 
 Possible applications in data analysis:
-clustering (HDBSCAN\*, Genie, Single linkage, etc.),
+clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
+[Genie](https://genieclust.gagolewski.com/), Lumbermark, Single linkage, etc.),
 classification and regression (k-nearest neighbours),
 outlier and noise point detection, and many more.
 

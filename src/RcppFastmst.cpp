@@ -35,7 +35,7 @@ using namespace Rcpp;
 //' can be used by \code{\link{knn_euclid}} and \code{\link{mst_euclid}},
 //' amongst others.
 //'
-//' @param n_threads maximum number of threads to use;
+//' @param n_threads maximum number of threads to use
 //'
 //' @return
 //' \code{omp_get_max_threads} returns the maximal number
@@ -67,7 +67,7 @@ int Romp_get_max_threads()
 
 
 
-//' @title Quite Fast Euclidean Nearest Neighbours
+//' @title Euclidean Nearest Neighbours
 //'
 //' @description
 //' If \code{Y} is \code{NULL}, then the function determines the first \code{k}
@@ -151,7 +151,7 @@ int Romp_get_max_threads()
 //'
 //' @seealso \code{\link{mst_euclid}}
 //'
-//' @rdname fastknn
+//' @rdname knn_euclid
 //' @export
 // [[Rcpp::export("knn_euclid")]]
 List knn_euclid(
@@ -275,7 +275,7 @@ List knn_euclid(
 
 
 
-//' @title Quite Fast Euclidean Minimum Spanning Trees (Also WRT Mutual Reachability Distances)
+//' @title Euclidean and Mutual Reachability Minimum Spanning Trees
 //'
 //' @description
 //' The function determines the/a(*) minimum spanning tree (MST) of a set
@@ -458,7 +458,7 @@ List knn_euclid(
 //'
 //' @seealso \code{\link{knn_euclid}}
 //'
-//' @rdname fastmst
+//' @rdname mst_euclid
 //' @export
 // [[Rcpp::export("mst_euclid")]]
 List mst_euclid(

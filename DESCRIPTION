@@ -10,8 +10,14 @@ Authors@R: c(
         comment = c(ORCID = "0000-0003-0637-6028"))
     )
 Description:
-    TO DO
-    The 'Python' version of 'quitefastmst' is available via 'PyPI'.
+    Functions to compute Euclidean Minimum Spanning Trees using single-,
+    sesqui-, and dual-tree Boruvka algorithms.  Thanks to K-d trees, they are
+    fast in spaces of low intrinsic dimensionality.  Mutual reachability
+    distances (used in the definition of the 'HDBSCAN*' algorithm)
+    are also supported.  The package also features relatively fast fallback
+    minimum spanning tree and nearest-neighbours algorithms for spaces of
+    higher dimensionality.  The 'Python' version of 'quitefastmst' is available
+    via 'PyPI'.
 BugReports: https://github.com/gagolews/quitefastmst/issues
 URL:
     https://quitefastmst.gagolewski.com/,

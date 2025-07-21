@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{knn_euclid}
 \alias{knn_euclid}
-\title{Quite Fast Euclidean Nearest Neighbours}
+\title{Euclidean Nearest Neighbours}
 \usage{
 knn_euclid(
   X,
@@ -104,5 +104,5 @@ The official online manual of \pkg{quitefastmst} at \url{https://quitefastmst.ga
 \code{\link{mst_euclid}}
 }
 \author{
-\href{https://www.gagolewski.com/}{Marek Gagolewski}s
+\href{https://www.gagolewski.com/}{Marek Gagolewski}
 }

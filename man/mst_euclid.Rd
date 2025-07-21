@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{mst_euclid}
 \alias{mst_euclid}
-\title{Quite Fast Euclidean Minimum Spanning Trees (Also WRT Mutual Reachability Distances)}
+\title{Euclidean and Mutual Reachability Minimum Spanning Trees}
 \usage{
 mst_euclid(
   X,
@@ -201,5 +201,5 @@ The official online manual of \pkg{quitefastmst} at \url{https://quitefastmst.ga
 \code{\link{knn_euclid}}
 }
 \author{
-\href{https://www.gagolewski.com/}{Marek Gagolewski}s
+\href{https://www.gagolewski.com/}{Marek Gagolewski}
 }
