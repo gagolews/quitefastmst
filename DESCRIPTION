@@ -14,15 +14,13 @@ Description:
     The 'Python' version of 'quitefastmst' is available via 'PyPI'.
 BugReports: https://github.com/gagolews/quitefastmst/issues
 URL:
-    https://quitefastmst.gagolewski.com/
+    https://quitefastmst.gagolewski.com/,
     https://github.com/gagolews/quitefastmst
 License: AGPL-3
 Imports:
-    Rcpp (>= 1.0.4),
-    stats,
-    utils
+    Rcpp
 Suggests:
-    datasets,
+    datasets
 LinkingTo: Rcpp
 Encoding: UTF-8
 SystemRequirements: OpenMP, C++17

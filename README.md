@@ -10,7 +10,10 @@
 ![quitefastmst for Python](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20Python/badge.svg)
 ![quitefastmst for R](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20R/badge.svg)
 
-
+**Keywords**: Euclidean minimum spanning tree, MST, EMST,
+mutual reachability distance, nearest neighbours, k-nn, k-d tree,
+Boruvka, Prim, Jarnik, Kruskal, Genie, HDBSCAN\*, DBSCAN,
+clustering, outlier detection.
 
 
 Package **features**:

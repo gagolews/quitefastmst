@@ -19,7 +19,7 @@
 
 
 
-#' @title Euclidean Minimum Spanning Trees (also wrt Mutual Reachability Distances) and Nearest Neighbours
+#' @title Euclidean and Mutual Reachability Minimum Spanning Trees
 #'
 #' @description
 #' See \code{\link{mst_euclid}()} for more details.
