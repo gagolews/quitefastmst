@@ -1,0 +1,23 @@
+name: quitefastmst for R
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        #sudo apt-get update
+        #sudo apt-get -y upgrade
+        sudo apt-get -y install libcurl4-openssl-dev r-base-dev
+        sudo Rscript -e "install.packages(c('Rcpp', 'tinytest'))"
+    - name: Test and check R
+      run: |
+        #sudo make r-check
+        cd .. && sudo R CMD build quitefastmst && sudo R_DEFAULT_INTERNET_TIMEOUT=240 _R_CHECK_CRAN_INCOMING_REMOTE_=FALSE _R_CHECK_FORCE_SUGGESTS_=0 R CMD check `ls -t quitefastmst*.tar.gz | head -1` --as-cran --no-manual

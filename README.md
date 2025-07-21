@@ -1,59 +1,44 @@
 <a href="https://quitefastmst.gagolewski.com"><img src="https://www.gagolewski.com/_static/img/quitefastmst.png" align="right" height="128" width="128" /></a>
-# [**quitefastmst**](https://quitefastmst.gagolewski.com/) Package for R and Python
+# [*quitefastmst*](https://quitefastmst.gagolewski.com/) Package for R and Python
 
-**TO DO: this package is a work in progress**
-
-**check back later**
+**TO DO: this package is a work in progress** – **check back later**
 
 
-
-
-### *quitefastmst*: Euclidean and Mutual Reachability Distance Minimum Spanning Trees
+### *quitefastmst*: Euclidean and Mutual Reachability Minimum Spanning Trees
 
 
 ![quitefastmst for Python](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20Python/badge.svg)
 ![quitefastmst for R](https://github.com/gagolews/quitefastmst/workflows/quitefastmst%20for%20R/badge.svg)
 
 
-> A comprehensive tutorial, benchmarks, and a reference manual is available
-at <https://quitefastmst.gagolewski.com/>.
 
 
+Package **features**:
 
-## Author and Contributors
-
-**Author and Maintainer**: [Marek Gagolewski](https://www.gagolewski.com/)
-
-
-## About
-
-TO DO
-
-Package features:
-
-* Euclidean Minimum Spanning Trees using single, sesqui, and
-dual-tree Boruvka algorithms – fast in spaces of low intrinsic dimensionality
+* [Euclidean Minimum Spanning Trees](https://en.wikipedia.org/wiki/Euclidean_minimum_spanning_tree)
+    using single-, sesqui-, and dual-tree Borůvka algorithms – quite fast
+    in spaces of low intrinsic dimensionality,
 
 * support for mutual reachability distances based on the Euclidean metric
-(like in the HDBSCAN\* algorithm)
+    (like in the HDBSCAN\* algorithm; see Campello, Moulavi, Sander, 2013),
 
-* Euclidean nearest neighbours with nicely-optimised K-d trees (support
-parallel processing)
+* Euclidean nearest neighbours with nicely-optimised K-d trees,
 
-* fallback algorithms for spaces of higher dimensionality
+* relatively fast fallback algorithms for spaces of higher dimensionality,
+
+* supports multiprocessing via OpenMP.
 
 
+Refer to the package **homepage** at <https://quitefastmst.gagolewski.com/>
+for the reference manual, tutorials, examples, and benchmarks.
+
+**Author and maintainer**: [Marek Gagolewski](https://www.gagolewski.com/)
 
 
-## Examples, Tutorials, and Documentation
-
-TO DO
-
-*To learn more about R, check out Marek's open-access (free!) textbook*
-[Deep R Programming](https://deepr.gagolewski.com/).
-
-*To learn more about Python, check out Marek's recent open-access (free!) textbook*
-[Minimalist Data Wrangling in Python](https://datawranglingpy.gagolewski.com/).
+Possible applications in data analysis:
+clustering (HDBSCAN\*, Genie, Single linkage, etc.),
+classification and regression (k-nearest neighbours),
+outlier and noise point detection, and many more.
 
 
 
@@ -61,23 +46,36 @@ TO DO
 
 ### Python Version
 
-TO DO
+To install from [PyPI](https://pypi.org/project/quitefastmst), call:
+
+```bash
+pip3 install quitefastmst  # python3 -m pip install quitefastmst
+```
+
+*To learn more about Python, check out my open-access textbook*
+[Minimalist Data Wrangling in Python](https://datawranglingpy.gagolewski.com/).
+
 
 
 ### R Version
 
-TO DO
+To install from [CRAN](https://CRAN.R-project.org/package=quitefastmst), call:
 
+```r
+install.packages("quitefastmst")
+```
+
+*To learn more about R, check out my open-access textbook*
+[Deep R Programming](https://deepr.gagolewski.com/).
 
 
 
 ### Other
 
-The core functionality is implemented in the form of a header-only
-C++ library. It can thus be easily adapted for use in other projects.
+The core functionality is implemented in the form of a C++ library.
+It can thus be easily adapted for use in other projects.
 
 New contributions are welcome, e.g., Julia, Matlab/GNU Octave wrappers.
-
 
 
 
@@ -100,56 +98,58 @@ received a copy of the License along with this program. If not, see
 
 ## References
 
-Borůvka O., O jistém problému minimálním,
-Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58.
+Borůvka, O., O jistém problému minimálním,
+*Práce Moravské Přírodovědecké Společnosti* **3**, 1926, 37–58.
 
-Bentley J.L., Multidimensional binary search trees used for associative
-searching, Communications of the ACM 18(9), 509–517, 1975,
-DOI:10.1145/361002.361007.
+Bentley, J.L., Multidimensional binary search trees used for associative
+searching, *Communications of the ACM* **18**(9), 509–517, 1975,
+[DOI: 10.1145/361002.361007](https://doi.org/10.1145/361002.361007).
 
-Campello R.J.G.B., Moulavi D., Zimek A., Sander J., Hierarchical
+Campello, R.J.G.B., Moulavi, D., Zimek, A., Sander, J., Hierarchical
 density estimates for data clustering, visualization, and outlier detection,
-ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
-2015, 1–51, DOI:10.1145/2733381.
+*ACM Transactions on Knowledge Discovery from Data (TKDD)* **10**(1),
+2015, 1–51, [DOI: 10.1145/2733381](https://doi.org/10.1145/2733381).
 
-Campello R.J.G.B., Moulavi D., Sander J.,
+Campello, R.J.G.B., Moulavi, D., Sander, J.,
 Density-based clustering based on hierarchical density estimates,
 *Lecture Notes in Computer Science* **7819**, 2013, 160–172.
 [DOI: 10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14).
 
-Gagolewski M., Cena A., Bartoszuk M., Brzozowski L.,
+Gagolewski, M., Cena, A., Bartoszuk, M., Brzozowski, L.,
 Clustering with minimum spanning trees: How good can it be?,
 *Journal of Classification* **42**, 2025, 90–112.
 [DOI: 10.1007/s00357-024-09483-1](https://doi.org/10.1007/s00357-024-09483-1).
 
-Gagolewski M., A framework for benchmarking clustering algorithms,
+Gagolewski, M., A framework for benchmarking clustering algorithms,
 *SoftwareX* **20**, 2022, 101270.
 [DOI: 10.1016/j.softx.2022.101270](https://doi.org/10.1016/j.softx.2022.101270).
 <https://clustering-benchmarks.gagolewski.com/>.
 
-Jarník V., O jistém problému minimálním,
-Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63.
+Jarník, V., O jistém problému minimálním,
+*Práce Moravské Přírodovědecké Společnosti* **6**, 1930, 57–63.
 
-Maneewongvatana S., Mount D.M., It's okay to be skinny, if your friends
-are fat, The 4th CGC Workshop on Computational Geometry, 1999.
+Maneewongvatana, S., Mount, D.M., It's okay to be skinny, if your friends
+are fat, *The 4th CGC Workshop on Computational Geometry*, 1999.
 
-March W.B., Parikshit R., Gray A.G., Fast Euclidean minimum spanning
-tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
-Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612.
+March, W.B., Parikshit, R., Gray, A.G., Fast Euclidean minimum spanning
+tree: Algorithm, analysis, and applications,
+*Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD '10)*, 2010, 603–612.
+
 Olson C.F., Parallel algorithms for hierarchical clustering,
-Parallel Computing 21(8), 1995, 1313–1325.
+*Parallel Computing* **21**(8), 1995, 1313–1325.
 
-McInnes L., Healy J., Accelerated hierarchical density-based
-clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
-DOI:10.1109/ICDMW.2017.12.
+McInnes, L., Healy, J., Accelerated hierarchical density-based
+clustering, *IEEE Intl. Conf. Data Mining Workshops (ICMDW)*, 2017, 33–42,
+[DOI: 10.1109/ICDMW.2017.12](https://doi.org/10.1109/ICDMW.2017.12).
 
-Prim R., Shortest connection networks and some generalizations,
-The Bell System Technical Journal 36(6), 1957, 1389–1401.
+Prim, R., Shortest connection networks and some generalizations,
+*The Bell System Technical Journal* **36**(6), 1957, 1389–1401.
 
-Sample N., Haines M., Arnold M., Purcell T., Optimizing search
-strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
-Communications & Computers (CSCC'01), 2001.
+Sample, N., Haines, M., Arnold, M., Purcell, T.,
+Optimizing search strategies in K-d Trees,
+*5th WSES/IEEE Conf. on Circuits, Systems, Communications & Computers (CSCC'01)*,
+2001.
 
 
-See the package's [homepage](https://quitefastmst.gagolewski.com/) for more
-references.
+See the package's [homepage](https://quitefastmst.gagolewski.com/)
+for more references.

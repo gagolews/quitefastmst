@@ -66,7 +66,7 @@ weave:
 news:
 	cd .devel/sphinx && cp ../../NEWS news.md
 
-html: python r news weave rd2myst weave-examples
+html: news weave rd2myst weave-examples
 	rm -rf .devel/sphinx/_build/
 	cd .devel/sphinx && make html
 	.devel/sphinx/fix-html.sh .devel/sphinx/_build/html/rapi/
@@ -75,7 +75,7 @@ html: python r news weave rd2myst weave-examples
 	@echo "*** Browse the generated documentation at"\
 	    "file://`pwd`/.devel/sphinx/_build/html/index.html"
 
-docs: html
+docs: python r html
 	@echo "*** Making 'docs' is only recommended when publishing the "\
 	    "official release, because it updates the package homepage."
 	@echo "*** Therefore, we check if the package version is like 1.2.3 "\

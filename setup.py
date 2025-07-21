@@ -142,7 +142,7 @@ with open("quitefastmst/__init__.py", "r") as fh:
 setuptools.setup(
     name="quitefastmst",
     version=__version__,
-    description="quitefastmst: Euclidean and Mutual Reachability Distance Minimum Spanning Trees",
+    description="quitefastmst: Euclidean and Mutual Reachability Minimum Spanning Trees",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Marek Gagolewski",
