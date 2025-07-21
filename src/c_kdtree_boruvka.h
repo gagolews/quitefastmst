@@ -363,7 +363,9 @@ protected:
     std::vector<FLOAT> Mnn_dist;     // M-1 nearest neighbours of each point if M>1
     std::vector<Py_ssize_t> Mnn_ind;
 
+    #if OPENMP_IS_ENABLED
     omp_lock_t omp_lock;
+    #endif
     int omp_nthreads;
 
 
