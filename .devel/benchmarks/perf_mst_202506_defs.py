@@ -11,9 +11,9 @@ import subprocess
 import re
 
 
-max_n_slow_methods = 300_000
+max_n_slow_methods   = 250_000
 max_n_medium_methods = 1_000_000
-max_n_brute = 300_000
+max_n_brute          = 100_000
 
 import rpy2
 from rpy2.robjects.packages import importr
@@ -77,7 +77,7 @@ def mst_wangyiqiu(X, M):
     # )
 
 
-def mst_r_mlpack(X, M, leaf_size=1):
+def mst_r_mlpack(X, M, n_jobs=1, leaf_size=1):
     if M > 1 or n_jobs > 1:
         return None
 
@@ -103,7 +103,7 @@ def mst_r_quitefast_default(X, M):
 
 
 # BallTreeBoruvkaAlgorithm - much slower
-def mst_hdbscan_kdtree(X, M, leaf_size=40, leaf_size_div=3):
+def mst_hdbscan_kdtree(X, M, n_jobs=1, leaf_size=40, leaf_size_div=3):
     if X.shape[0] > max_n_slow_methods: return None
     tree = KDTree(X, metric='euclidean', leaf_size=leaf_size)
     alg = KDTreeBoruvkaAlgorithm(
@@ -145,7 +145,7 @@ def mst_fasthdbscan_kdtree(X, M, leaf_size=40, leaf_size_div=3):
     return (tree_w, tree_e)
 
 
-def mst_mlpack(X, M, leaf_size=1):
+def mst_mlpack(X, M, n_jobs=1, leaf_size=1):
     if M > 1 or n_jobs > 1:
         return None
 

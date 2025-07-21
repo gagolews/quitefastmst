@@ -1,5 +1,5 @@
 n_jobs = 10
-n_trials = 1
+n_trials = 3
 seed = 123
 
 """
@@ -13,7 +13,7 @@ CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.pa
 """
 
 
-n = 2**16
+n = 10_000_000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -35,18 +35,18 @@ scenarios = [
     # (n, 5, 2, "norm"),
     # (1208592, -3, 10,  "thermogauss_scan001"),
     # (1208592, -3,  1,  "thermogauss_scan001"),
-    (12085920,  2, 10,  "norm"),
-    (12085920,  2,  1,  "norm"),
-    (12085920,  5, 10,  "norm"),
-    (12085920,  5,  1,  "norm"),
+    # (12085920,  2, 10,  "norm"),
+    # (12085920,  2,  1,  "norm"),
+    # (12085920,  5, 10,  "norm"),
+    # (12085920,  5,  1,  "norm"),
     # (1208592,  2, 10,  "norm"),
     # (1208592,  2,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  3,  1,  "norm"),
-    # (n, 2, 1, "norm"),
-    # (n, 2, 10, "norm"),
-    # (n, 5, 1, "norm"),
-    # (n, 5, 10, "norm"),
+    (n, 2, 1, "norm"),
+    (n, 2, 10, "norm"),
+    (n, 5, 1, "norm"),
+    (n, 5, 10, "norm"),
     # (1208592,  3,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  5,  1,  "norm"),
@@ -116,17 +116,16 @@ for m in modules:
 import perf_mst_202506_defs as msts
 
 cases = dict(
-    quitefast_single_kd_tree       = lambda X, M: msts.mst_quitefast_single_kd_tree(X, M),
-    quitefast_sesqui_kd_tree       = lambda X, M: msts.mst_quitefast_sesqui_kd_tree(X, M),
-    quitefast_sesqui_kd_tree_16    = lambda X, M: msts.mst_quitefast_sesqui_kd_tree(X, M, max_leaf_size=16),
-    # quitefast_dual_kd_tree         = lambda X, M: msts.mst_quitefast_dual_kd_tree(X, M),
-    wangyiqiu                      = lambda X, M: msts.mst_wangyiqiu(X, M),
-    # quitefast_brute            = lambda X, M: msts.mst_quitefast_brute(X, M),
-    # mlpack                     = lambda X, M: msts.mst_mlpack(X, M),
-    # fasthdbscan_kdtree         = lambda X, M: msts.mst_fasthdbscan_kdtree(X, M),
-    # hdbscan_kdtree             = lambda X, M: msts.mst_hdbscan_kdtree(X, M),
-    # r_mlpack                   = lambda X, M: msts.mst_r_mlpack(X, M),
-    # r_quitefast_default        = lambda X, M: msts.mst_r_quitefast_default(X, M),
+    quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
+    quitefast_sesqui_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_sesqui_kd_tree(X, M),
+    # quitefast_dual_kd_tree         = lambda X, M, n_jobs: msts.mst_quitefast_dual_kd_tree(X, M),
+    # wangyiqiu                      = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
+    # quitefast_brute                = lambda X, M, n_jobs: msts.mst_quitefast_brute(X, M),
+    # mlpack                         = lambda X, M, n_jobs: msts.mst_mlpack(X, M, n_jobs),
+    # fasthdbscan_kdtree             = lambda X, M, n_jobs: msts.mst_fasthdbscan_kdtree(X, M),
+    # hdbscan_kdtree                 = lambda X, M, n_jobs: msts.mst_hdbscan_kdtree(X, M, n_jobs),
+    # r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
+    r_quitefast_default            = lambda X, M, n_jobs: msts.mst_r_quitefast_default(X, M),
 )
 
 
@@ -167,7 +166,7 @@ for n, d, M, s in scenarios:
 
     # preflight (e.g., for fast_hdbscan)
     for name, generator in cases.items():
-        generator(X[:100, :].copy(), M)
+        generator(X[:100, :].copy(), M, n_jobs)
 
     for _trial in range(1, n_trials+1):
         results = []
@@ -175,7 +174,7 @@ for n, d, M, s in scenarios:
         _res_ref = None
         for case, generator in cases.items():
             t0 = timeit.time.time()
-            _res = generator(X, M)
+            _res = generator(X, M, n_jobs)
             if _res is None: continue
 
             if len(_res) == 3:
