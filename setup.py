@@ -76,6 +76,7 @@ class quitefastmst_build_ext(build_ext):
                 e.extra_compile_args += ['-openmp', '-std=c++17']
                 e.extra_link_args += ['-openmp']
         elif sys.platform == "darwin":  # and 'openmp' in os.getenv('CPPFLAGS', ''):
+            # https://github.com/scikit-learn/scikit-learn/blob/d640b7fc61ce716af9d113a7c92c953c1ec3e36f/sklearn/_build_utils/openmp_helpers.py
             # -fopenmp can't be passed as compile flag when using Apple-clang.
             # OpenMP support has to be enabled during preprocessing.
             #
@@ -128,11 +129,11 @@ ext_kwargs = dict(
 )
 
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 
-with open("quitefastmst/__init__.py", "r") as fh:
+with open("quitefastmst/__init__.py", "r", encoding="utf8") as fh:
     __version__ = re.search("(?m)^\\s*__version__\\s*=\\s*[\"']([0-9.]+)[\"']", fh.read())
     if __version__ is None:
         raise ValueError("the package version could not be read")

@@ -29,7 +29,7 @@ Package **features**:
 
 * relatively fast fallback algorithms for spaces of higher dimensionality,
 
-* supports multiprocessing via OpenMP.
+* supports multiprocessing via OpenMP (on selected platforms).
 
 
 Refer to the package **homepage** at <https://quitefastmst.gagolewski.com/>
@@ -60,6 +60,19 @@ pip3 install quitefastmst  # python3 -m pip install quitefastmst
 
 
 
+For best performance, advanced users will benefit from compiling the package
+from sources:
+
+```bash
+CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quitefastmst"
+```
+
+🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin?
+
+🚧 TO DO (help needed): How to enable OpenMP support on Windows?
+
+
+
 ### R Version
 
 To install from [CRAN](https://CRAN.R-project.org/package=quitefastmst), call:
@@ -70,6 +83,18 @@ install.packages("quitefastmst")
 
 *To learn more about R, check out my open-access textbook*
 [Deep R Programming](https://deepr.gagolewski.com/).
+
+
+
+
+For best performance, advanced users will benefit from compiling the package
+from sources:
+
+```r
+Sys.setenv(CXX_DEFS="-O3 -march=native")  # for gcc and clang
+install.packages("quitefastmst", type="source")
+```
+
 
 
 
