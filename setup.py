@@ -1,5 +1,5 @@
 """
-quitefastmst Pyhon Package
+quitefastmst Python Package
 """
 
 # ############################################################################ #
@@ -77,11 +77,10 @@ class quitefastmst_build_ext(build_ext):
                 e.extra_link_args += ['-openmp']
         elif sys.platform == "darwin":  # and 'openmp' in os.getenv('CPPFLAGS', ''):
             # https://github.com/scikit-learn/scikit-learn/blob/d640b7fc61ce716af9d113a7c92c953c1ec3e36f/sklearn/_build_utils/openmp_helpers.py
-            # -fopenmp can't be passed as compile flag when using Apple-clang.
+            # says: "-fopenmp can't be passed as compile flag when using Apple-clang.
             # OpenMP support has to be enabled during preprocessing.
-            #
             # For example, our macOS wheel build jobs use the following environment
-            # variables to build with Apple-clang and the brew installed "libomp":
+            # variables to build with Apple-clang and the brew installed "libomp":"
             #
             # export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
             # export CFLAGS="$CFLAGS -I/usr/local/opt/libomp/include"

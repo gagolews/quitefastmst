@@ -67,9 +67,7 @@ from sources:
 CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quitefastmst"
 ```
 
-🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin?
-
-🚧 TO DO (help needed): How to enable OpenMP support on Windows?
+🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin in `setup.py`?
 
 
 

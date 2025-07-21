@@ -181,7 +181,7 @@ template void Cknn2_euclid_kdtree<float>(
     const float* Y, const Py_ssize_t m,
     const Py_ssize_t d, const Py_ssize_t k,
     float* nn_dist, Py_ssize_t* nn_ind,
-    Py_ssize_t max_leaf_size=32, bool squared, bool verbose
+    Py_ssize_t max_leaf_size, bool squared, bool verbose
 );
 
 template void Cknn2_euclid_kdtree<double>(
@@ -189,7 +189,7 @@ template void Cknn2_euclid_kdtree<double>(
     const double* Y, const Py_ssize_t m,
     const Py_ssize_t d, const Py_ssize_t k,
     double* nn_dist, Py_ssize_t* nn_ind,
-    Py_ssize_t max_leaf_size=32, bool squared, bool verbose
+    Py_ssize_t max_leaf_size, bool squared, bool verbose
 );
 
 
@@ -197,7 +197,7 @@ template void Cknn1_euclid_kdtree<float>(
     float* X, const Py_ssize_t n,
     const Py_ssize_t d, const Py_ssize_t k,
     float* nn_dist, Py_ssize_t* nn_ind,
-    Py_ssize_t max_leaf_size=32, bool squared, bool verbose
+    Py_ssize_t max_leaf_size, bool squared, bool verbose
 );
 
 
@@ -205,5 +205,5 @@ template void Cknn1_euclid_kdtree<double>(
     double* X, const Py_ssize_t n,
     const Py_ssize_t d, const Py_ssize_t k,
     double* nn_dist, Py_ssize_t* nn_ind,
-    Py_ssize_t max_leaf_size=32, bool squared, bool verbose
+    Py_ssize_t max_leaf_size, bool squared, bool verbose
 );
