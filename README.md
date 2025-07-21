@@ -159,7 +159,8 @@ are fat, *The 4th CGC Workshop on Computational Geometry*, 1999.
 
 March, W.B., Parikshit, R., Gray, A.G., Fast Euclidean minimum spanning
 tree: Algorithm, analysis, and applications,
-*Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD '10)*, 2010, 603–612.
+*Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD '10)*,
+2010, 603–612.
 
 Olson C.F., Parallel algorithms for hierarchical clustering,
 *Parallel Computing* **21**(8), 1995, 1313–1325.
@@ -177,5 +178,5 @@ Optimizing search strategies in K-d Trees,
 2001.
 
 
-See the package's [homepage](https://quitefastmst.gagolewski.com/)
+See **quitefastmst**'s [homepage](https://quitefastmst.gagolewski.com/)
 for more references.

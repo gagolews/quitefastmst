@@ -900,7 +900,7 @@ protected:
         #if OPENMP_IS_ENABLED
         #pragma omp parallel for schedule(static)
         #endif
-        for (size_t l=0; l<leaves.size(); ++l) {
+        for (Py_ssize_t l=0; l<this->nleaves; ++l) {
             NODE* curleaf = leaves[l];
 
             if (curleaf->cluster_repr >= 0 && curleaf->idx_to - curleaf->idx_from > 1)  // all elems in the same cluster

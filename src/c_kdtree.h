@@ -347,7 +347,7 @@ protected:
             }
         }
         // The sliding midpoint rule:
-        FLOAT split_val = 0.5*(root->bbox_min[split_dim] + root->bbox_max[split_dim]);  // midrange
+        FLOAT split_val = 0.5f*(root->bbox_min[split_dim] + root->bbox_max[split_dim]);  // midrange
 
         // this doesn't improve:
         // size_t cnt = 0;
