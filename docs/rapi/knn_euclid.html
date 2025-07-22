@@ -290,7 +290,7 @@
 <h1>knn_euclid: Euclidean Nearest Neighbours<a class="headerlink" href="#knn-euclid-euclidean-nearest-neighbours" title="Link to this heading">¶</a></h1>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">Y</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, then the function determines the first <code class="docutils literal notranslate"><span class="pre">k</span></code> amongst the nearest neighbours of each point in <code class="docutils literal notranslate"><span class="pre">X</span></code> with respect to the Euclidean distance. It is assumed that each query point is not its own neighbour.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">Y</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, then the function determines the first <code class="docutils literal notranslate"><span class="pre">k</span></code> nearest neighbours of each point in <code class="docutils literal notranslate"><span class="pre">X</span></code> with respect to the Euclidean distance. It is assumed that each query point is not its own neighbour.</p>
 <p>Otherwise, for each point in <code class="docutils literal notranslate"><span class="pre">Y</span></code>, this function determines the <code class="docutils literal notranslate"><span class="pre">k</span></code> nearest points thereto from <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p>
 </section>
 <section id="usage">
@@ -318,22 +318,22 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
-<td><p>the “database”; a matrix of shape (n,d)</p></td>
+<td><p>the “database”; a matrix of shape <span class="math notranslate nohighlight">\(n\times d\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">k</span></code></p></td>
-<td><p>number of nearest neighbours (should be rather small, say, &lt;= 20)</p></td>
+<td><p>requested number of nearest neighbours (should be rather small)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Y</span></code></p></td>
-<td><p>the “query points”; <code class="docutils literal notranslate"><span class="pre">NULL</span></code> or a matrix of shape (m,d); note that setting <code class="docutils literal notranslate"><span class="pre">Y=X</span></code>, contrary to <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, will include the query points themselves amongst their own neighbours</p></td>
+<td><p>the “query points”; <code class="docutils literal notranslate"><span class="pre">NULL</span></code> or a matrix of shape <span class="math notranslate nohighlight">\(m\times d\)</span>; note that setting <code class="docutils literal notranslate"><span class="pre">Y=X</span></code>, contrary to <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, will include the query points themselves amongst their own neighbours</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">algorithm</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>; K-d trees can only be used for d between 2 and 20 only; <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code> in low-dimensional spaces</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>; K-d trees can be used for <code class="docutils literal notranslate"><span class="pre">d</span></code> between 2 and 20 only; <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code> in low-dimensional spaces</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_leaf_size</span></code></p></td>
 <td><p>maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">squared</span></code></p></td>
-<td><p>whether to return the squared Euclidean distance</p></td>
+<td><p>whether the output <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> should be based on the squared Euclidean distance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
 <td><p>whether to print diagnostic messages</p></td>
@@ -344,15 +344,16 @@
 </section>
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Link to this heading">¶</a></h2>
-<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <code class="docutils literal notranslate"><span class="pre">k</span></code> is rather small; say, <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">&lt;=</span> <span class="pre">20</span></code>.</p>
-<p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference, features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), and a node pruning strategy inspired by the discussion by Sample et al. (2001). Still, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality. Thus, due to the so-called curse of dimensionality, for high <code class="docutils literal notranslate"><span class="pre">d</span></code>, the brute-force algorithm is recommended.</p>
+<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(k\)</span> is rather small, say, <span class="math notranslate nohighlight">\(k \leq 20\)</span>.</p>
+<p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author. Still, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality. Thus, due to the so-called curse of dimensionality, for high <code class="docutils literal notranslate"><span class="pre">d</span></code>, the brute-force algorithm is recommended.</p>
 <p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable or via the <a class="reference internal" href="omp.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">omp_set_num_threads</span></code></span></a> function at runtime. For best speed, consider building the package from sources using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 </section>
 <section id="value">
 <h2>Value<a class="headerlink" href="#value" title="Link to this heading">¶</a></h2>
-<p>A list with two elements, <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> has shape (n,k) or (m,k); <code class="docutils literal notranslate"><span class="pre">nn.dist[i,]</span></code> is sorted nondecreasingly for all <code class="docutils literal notranslate"><span class="pre">i</span></code>. <code class="docutils literal notranslate"><span class="pre">nn.dist[i,j]</span></code> gives the weight of the edge <code class="docutils literal notranslate"><span class="pre">{i,</span> <span class="pre">ind[i,j]}</span></code>, i.e., the distance between the <code class="docutils literal notranslate"><span class="pre">i</span></code>-th point and its <code class="docutils literal notranslate"><span class="pre">j</span></code>-th NN.</p>
-<p><code class="docutils literal notranslate"><span class="pre">nn.index</span></code> is of the same shape. <code class="docutils literal notranslate"><span class="pre">nn.index[i,j]</span></code> is the index (between <code class="docutils literal notranslate"><span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code>) of the <code class="docutils literal notranslate"><span class="pre">j</span></code>-th nearest neighbour of <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
+<p>A list with two elements, <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code>, is returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> have shape <span class="math notranslate nohighlight">\(n\times k\)</span> or <span class="math notranslate nohighlight">\(m\times k\)</span>, depending whether <code class="docutils literal notranslate"><span class="pre">Y</span></code> is given.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nn.index[i,j]</span></code> is the index (between <span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(n\)</span>) of the <span class="math notranslate nohighlight">\(j\)</span>-th nearest neighbour of <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nn.dist[i,j]</span></code> gives the weight of the edge <code class="docutils literal notranslate"><span class="pre">{i,</span> <span class="pre">nn.index[i,j]}</span></code>, i.e., the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\(j\)</span>-th nearest neighbour, <span class="math notranslate nohighlight">\(j=1,\dots,k\)</span>. <code class="docutils literal notranslate"><span class="pre">nn.dist[i,]</span></code> is sorted nondecreasingly for all <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </section>
 <section id="author-s">
 <h2>Author(s)<a class="headerlink" href="#author-s" title="Link to this heading">¶</a></h2>
@@ -428,7 +429,7 @@
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-07-22T13:02:07+0200.
+              Last updated on 2025-07-22T16:10:11+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -474,5 +475,7 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

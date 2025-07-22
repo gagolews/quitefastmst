@@ -22,7 +22,7 @@ omp_get_max_threads()
 
 `omp_get_max_threads` returns the maximal number of threads that will be used during the next call to a parallelised function, not the maximal number of threads possibly available. It there is no built-in support for OpenMP, 1 is always returned.
 
-For `omp_set_num_threads`, the previous value of `max_threads` is output.
+For `omp_set_num_threads`, the previous value of `max_threads` is returned.
 
 ## Author(s)
 

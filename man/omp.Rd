@@ -20,7 +20,7 @@ function, not the maximal number of threads possibly available.
 It there is no built-in support for OpenMP, 1 is always returned.
 
 For \code{omp_set_num_threads}, the previous value of \code{max_threads}
-is output.
+is returned.
 }
 \description{
 These functions get or set the maximal number of OpenMP threads that

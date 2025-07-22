@@ -6,11 +6,11 @@ The function determines the/a(\*) minimum spanning tree (MST) of a set of $n$ po
 
 MSTs have many uses in, amongst others, topological data analysis (clustering, density estimation, dimensionality reduction, outlier detection, etc.).
 
-In clustering and density estimation, the parameter `M` plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion. It corresponds to the <span class="pkg">hdbscan</span> Python package\'s `min_samples=M-1`.
+In clustering and density estimation, the parameter `M` plays the role of a smoothing factor; for discussion, see (Campello et al., 2015) and the references therein. `M` corresponds to the <span class="pkg">hdbscan</span> Python package\'s `min_samples=M-1`.
 
-For $M\leq 2$, we get a spanning tree that minimises the sum of uclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If $M=2$, the function additionally returns the distance to each point\'s nearest neighbour.
+For $M\leq 2$, we get a spanning tree that minimises the sum of Euclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If $M=2$, the function additionally returns the distance to each point\'s nearest neighbour.
 
-If $M>2$, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by $d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}$, where $d(i,j)$ is the Euclidean distance between the $i$-th and the $j$-th point, and $c_M(i)$ is the $i$-th $M$-core distance defined as the distance between the $i$-th point and its $(M-1)$-th nearest neighbour (not including the query points themselves).
+If $M>2$, the spanning tree is the smallest with respect to the degree-$M$ mutual reachability distance (Campello et al., 2013) given by $d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}$, where $d(i,j)$ is the standard Euclidean distance between the $i$-th and the $j$-th point, and $c_M(i)$ is the $i$-th $M$-core distance defined as the distance between the $i$-th point and its $(M-1)$-th nearest neighbour (not including the query point itself).
 
 ## Usage
 
@@ -30,41 +30,47 @@ mst_euclid(
 
 |  |  |
 |----|----|
-| `X` | the \"database\"; a matrix of shape (n,d) |
-| `M` | the degree of the mutual reachability distance (should be rather small, say, $\leq 20$). $M\leq 2$ denotes the ordinary Euclidean distance |
-| `algorithm` | `"auto"`, `"single_kd_tree"` `"sesqui_kd_tree"`, `"dual_kd_tree"` or `"brute"`; K-d trees can only be used for d between 2 and 20 only; `"auto"` selects `"sesqui_kd_tree"` for $d\leq 20$. `"brute"` is used otherwise |
+| `X` | the \"database\"; a matrix of shape $n\times d$ |
+| `M` | the degree of the mutual reachability distance (should be rather small). $M\leq 2$ denotes the ordinary Euclidean distance |
+| `algorithm` | `"auto"`, `"single_kd_tree"`, `"sesqui_kd_tree"`, `"dual_kd_tree"`, or `"brute"`; K-d trees can only be used for $d$ between 2 and 20 only; `"auto"` selects `"sesqui_kd_tree"` for $d\leq 20$. `"brute"` is used otherwise |
 | `max_leaf_size` | maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use `0` to select the default value, currently set to 32 for the single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm |
-| `first_pass_max_brute_size` | minimal number of points in a node to treat it as a leaf (unless it\'s actually a leaf) in the first iteration of the algorithm; use `0` to select the default value, currently set to 32 |
-| `mutreach_adj` | adjustment for mutual reachability distance ambiguity (for $M>2$) whose fractional part should be close to 0: values in $(-1,0)$ prefer connecting to farther NNs, values in $(0, 1)$ fall for closer NNs (which is what many other implementations provide), values in $(-2,-1)$ prefer connecting to points with smaller core distances, values in $(1, 2)$ favour larger core distances; see above for more details |
+| `first_pass_max_brute_size` | minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use `0` to select the default value, currently set to 32 |
+| `mutreach_adj` | adjustment for mutual reachability distance ambiguity (for $M>2$) whose fractional part should be close to 0: values in $(-1,0)$ prefer connecting to farther nearest neighbours, values in $(0, 1)$ fall for closer NNs (which is what many other implementations provide), values in $(-2,-1)$ prefer connecting to points with smaller core distances, values in $(1, 2)$ favour larger core distances; see below for more details |
 | `verbose` | whether to print diagnostic messages |
 
 ## Details
 
-(\*) We note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances. To make the definition less ambiguous (albeit with no guarantees), internally, the brute-force algorithm relies on the adjusted distance: $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)$ or $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}$, where $\varepsilon$ is close to 0. \|`mutreach_adj`\|\<1 selects the former formula (ε=`mutreach_adj`) whilst 1\<\|`mutreach_adj`\|\<2 chooses the latter (ε=`mutreach_adj`±1). For the K-d tree-based methods, on the other hand, `mutreach_adj` indicates the preference towards connecting to farther/closer points wrt the original metric or having smaller/larger core distances if a point $i$ has multiple nearest-neighbour candidates $j'$, $j''$ with $c_M(i) \geq \max\{d(i, j'),  c_M(j')\}`$ and $c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}`$. Generally, the smaller the `mutreach_adj`, the more leaves there will be in the tree (note that there are only four types of adjustments, though).
+(\*) We note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances.
 
-The implemented algorithms, see the `algorithm` parameter, assume that `M` is rather small; say, $M \leq 20$.
+To make the definition less ambiguous (albeit with no guarantees), internally, the brute-force algorithm relies on the adjusted distance: $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)$ or $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}$, where $\varepsilon$ is close to $0$. \|`mutreach_adj`\|\<1 selects the former formula ($\varepsilon$=`mutreach_adj`) whilst 1\<\|`mutreach_adj`\|\<2 chooses the latter ($\varepsilon$=`mutreach_adj`±1).
 
-Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al. ,2001), and a couple of further tuneups proposed by the current author.
+For the K-d tree-based methods, on the other hand, `mutreach_adj` indicates the preference towards connecting to farther/closer points with respect to the original metric or having smaller/larger core distances if a point $i$ has multiple nearest-neighbour candidates $j'$, $j''$ with $c_M(i) \geq \max\{d(i, j'),  c_M(j')\}$ and $c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}$.
 
-The \"single-tree\" version of the Borůvka algorithm is naively parallelisable: in every iteration, it seeks each point\'s nearest \"alien\", i.e., the nearest point thereto from another cluster. The \"dual-tree\" Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for $M\leq 2$, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to the mutual reachability distance, see (McInnes and Healy, 2017).
+Generally, the smaller the `mutreach_adj`, the more leaves should be in the tree (note that there are only four types of adjustments, though).
 
-The \"sesqui-tree\" variant (by the current author) is a mixture of the two approaches: it compares leaves against the full tree. It is usually faster than the single- and dual-tree methods in very low dimensional spaces and usually not much slower than the single-tree variant otherwise.
+The implemented algorithms, see the `algorithm` parameter, assume that $M$ is rather small; say, $M \leq 20$.
 
-Nevertheless, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality (a.k.a. the \"curse\"). For high `d`, the \"brute-force\" algorithm is recommended. Here, we provided a parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a. Prim (1957) or Dijkstra) algorithm, where the distances are computed on the fly (only once for `M<=2`).
+Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author.
+
+The \"single-tree\" version of the Borůvka algorithm is parallelised: in every iteration, it seeks each point\'s nearest \"alien\", i.e., the nearest point thereto from another cluster. The \"dual-tree\" Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for $M\leq 2$, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to mutual reachability distances, see (McInnes and Healy, 2017).
+
+The \"sesqui-tree\" variant (by the current author) is a mixture of the two approaches: it compares leaves against the full tree and can be run in parallel. It is usually faster than the single- and dual-tree methods in very low dimensional spaces and usually not much slower than the single-tree variant otherwise.
+
+Nevertheless, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality (the \"curse\"). For high $d$, the \"brute-force\" algorithm is recommended. Here, we provided a parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a. Prim, 1957) algorithm, where the distances are computed on the fly (only once for $M\leq 2$).
 
 The number of threads used is controlled via the `OMP_NUM_THREADS` environment variable or via the [`omp_set_num_threads`](omp.md) function at runtime. For best speed, consider building the package from sources using, e.g., `-O3 -march=native` compiler flags.
 
 ## Value
 
-A list with two (M=1) or four (M\>1) elements, `mst.index` and `mst.dist`, and additionally `nn.index` and `nn.dist`.
+A list with two $(M=1)$ or four $(M>1)$ elements, `mst.index` and `mst.dist`, and additionally `nn.index` and `nn.dist`.
 
-`mst.index` is a matrix with $n-1$ rows and `2` columns, whose rows define the tree edges.
+`mst.index` is a matrix with $n-1$ rows and $2$ columns, whose rows define the tree edges.
 
-`mst.dist` is a vector of length `n-1` giving the weights of the corresponding edges.
+`mst.dist` is a vector of length $n-1$ giving the weights of the corresponding edges.
 
-The tree edges are ordered w.r.t. weights nondecreasingly, and then by the indexes (lexicographic ordering of the `(weight, index1, index2)` triples). For each `i`, it holds `mst_ind[i,1]<mst_ind[i,2]`.
+The tree edges are ordered with respect to weights nondecreasingly, and then by the indexes (lexicographic ordering of the `(weight, index1, index2)` triples). For each `i`, it holds `mst_ind[i,1]<mst_ind[i,2]`.
 
-`nn.index` is an `n` by `M-1` matrix giving the indexes of each point\'s nearest neighbours. `nn.dist` provides the corresponding distances.
+`nn.index` is an $n$ by $M-1$ matrix giving the indexes of each point\'s nearest neighbours with respect to the Euclidean distance. `nn.dist` provides the corresponding distances.
 
 ## Author(s)
 

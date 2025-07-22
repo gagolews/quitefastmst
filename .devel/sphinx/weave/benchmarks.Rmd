@@ -1,1 +1,130 @@
 # Benchmarks
+
+::::{note}
+This section is a work in progress.
+Below we present some preliminary results.
+::::
+
+
+
+## Platform
+
+All timings were performed on a mid-tier laptop with an
+Intel Core i7-1355U (AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU with 12MB cache
+and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1 SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.
+
+Python 3.13.5 [gcc] OpenBLAS 0.3.29;
+packages:
+**quitefastmst** 0.9.0,
+**numba** 0.61.2,
+**cython** 3.1.2,
+**numpy** 2.2.6,
+**scipy** 1.15.3,
+**sklearn** 1.7.0,
+<!-- **[mlpack](https://github.com/mlpack/mlpack)** 4.6.1, -->
+**[hdbscan](https://github.com/scikit-learn-contrib/hdbscan)** 0.8.40,
+**[fast_hdbscan](https://github.com/TutteInstitute/fast_hdbscan/)** 0.2.2+ (compiled via numba),
+**rpy2** 3.6.1.
+
+R version 4.5.1 (2025-06-13) Rblas;
+R packages (via **rpy2**):
+**[mlpack](https://github.com/mlpack/mlpack)** 4.6.2+.
+
+Other:
+**[wangyiqiu_hdbscan](https://github.com/wangyiqiu/hdbscan)** e120dcf+.
+
+*+* means that a package was compiled with `-O3 -march=native`
+using gcc 15.1.1 20250626
+
+
+
+## Experiment Setup
+
+For different $n$ and $d$, $n$ points in $\mathbb{R}^d$ were generated,
+with each coordinate sampled independently from the standard normal distribution.
+This is a pretty "difficult" setting for the spatial search data structures
+as data are very "unstructured".  Most real-world datasets are more well-behaving.
+
+We tested smoothing parameters $M=1$ (standard Euclidean MSTs) and $M=10$.
+
+Number of threads was set to 1 or 10.  Note that **mlpack** does not support
+parallel processing and only implements standard EMSTs.
+**[wangyiqiu_hdbscan](https://github.com/wangyiqiu/hdbscan)**
+required some trickery to be run from the terminal – it does not work out
+of the box.
+
+For each $n$, $d$, and $M$, three runs were performed and the smallest
+timing was recorded.  Moreover, there was a pre-run on a subset of the
+input dataset to ensure **fast_hdbscan** got compiled on-the-fly by **numba**.
+**hdbscan_kdtree** was not run for larger $n$s.
+
+See the relevant Python scripts:
+[`perf_mst_202506.py`](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506.py),
+[`perf_mst_202506_defs`.py](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py)
+
+
+
+## Results
+
+All timings are given in seconds.
+Less is better.
+
+
+```{python benchmark-imports,results="hide",echo=FALSE}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os.path, glob, re
+import scipy.stats
+from natsort import natsorted
+import seaborn as sns
+from tabulate import tabulate
+np.set_printoptions(precision=3, threshold=50, edgeitems=50)
+pd.set_option("display.min_rows", 200)
+pd.set_option("display.max_columns", 20)
+plt.style.use("bmh")
+plt.rcParams.update({
+    'font.size': 9,
+    'font.family': 'sans-serif',
+    'font.sans-serif': ['Ubuntu Condensed', 'Alegreya', 'Alegreya Sans']
+})
+res  = pd.read_csv("perf_mst_202506-apollo.csv", comment="#")
+res = res.loc[res.method.isin(['quitefast_sesqui_kd_tree',
+       'wangyiqiu',
+       'fasthdbscan_kdtree', 'hdbscan_kdtree', 'r_mlpack']), :]
+res = res.loc[res.n <= 2_500_000, :]
+```
+
+
+### 1 thread
+
+```{python results1,results="asis",echo=FALSE}
+_dat = res.loc[(res.nthreads==1) & res.n.isin([250000, 2500000]), :].groupby(["n", "d", "M", "method"]).elapsed.min().unstack().iloc[:, [2, 4, 0, 3, 1]].reset_index()
+#_dat = tabulate(_dat, _dat.columns, tablefmt="github", showindex=False)
+_dat["M"] = _dat["M"].astype(int)
+_dat["n"] = _dat["n"].astype(int)
+_dat["d"] = _dat["d"].astype(int)
+_dat.columns = ["n", "d", "M", "quitefastmst", "wangyiqiu", "fasthdbscan", "mlpack", "hdbscan"]
+_dat = _dat.to_markdown(floatfmt=[".0f", ".0f", ".0f", ".2f", ".2f", ".2f", ".2f", ".2f"], index=False)
+_dat = _dat.replace("nan", "")
+print(_dat, "\n\n")
+```
+
+
+
+### 10 threads
+
+```{python results2,results="asis",echo=FALSE}
+_dat = res.loc[(res.nthreads==10) & res.n.isin([250000, 2500000]), :].groupby(["n", "d", "M", "method"]).elapsed.min().unstack().iloc[:, [2, 3, 0, 1]].reset_index()
+#_dat = tabulate(_dat, _dat.columns, tablefmt="github", showindex=False)
+_dat["M"] = _dat["M"].astype(int)
+_dat["n"] = _dat["n"].astype(int)
+_dat["d"] = _dat["d"].astype(int)
+_dat.columns = ["n", "d", "M", "quitefastmst", "wangyiqiu", "fasthdbscan", "hdbscan"]
+_dat = _dat.to_markdown(floatfmt=[".0f", ".0f", ".0f", ".2f", ".2f", ".2f", ".2f", ".2f"], index=False)
+_dat = _dat.replace("nan", "")
+print(_dat, "\n\n")
+```
+
+
+Thanks.

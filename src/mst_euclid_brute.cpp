@@ -79,7 +79,7 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *  internally, we rely on the adjusted distance:
  *  :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}+\\varepsilon d(i, j)` or
  *  :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}-\\varepsilon \\min\\{c_M(i), c_M(j)\\}`,
- *  where :math:`\\varepsilon` is close to 0. ``|mutreach_adj| < 1`` selects
+ *  where ε is close to 0. ``|mutreach_adj| < 1`` selects
  *  the former (ε=``mutreach_adj``) whilst ``1 < |mutreach_adj| < 2``
  *  chooses the latter (ε=``mutreach_adj``±1).
  *

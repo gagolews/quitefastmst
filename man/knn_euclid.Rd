@@ -16,41 +16,45 @@ knn_euclid(
 )
 }
 \arguments{
-\item{X}{the "database"; a matrix of shape (n,d)}
+\item{X}{the "database"; a matrix of shape \eqn{n\times d}}
 
-\item{k}{number of nearest neighbours (should be rather small, say, <= 20)}
+\item{k}{requested number of nearest neighbours
+(should be rather small)}
 
-\item{Y}{the "query points"; \code{NULL} or a matrix of shape (m,d);
+\item{Y}{the "query points"; \code{NULL} or a matrix of shape \eqn{m\times d};
 note that setting \code{Y=X}, contrary to \code{NULL},
 will include the query points themselves amongst their own neighbours}
 
 \item{algorithm}{\code{"auto"}, \code{"kd_tree"} or \code{"brute"};
-K-d trees can only be used for d between 2 and 20 only;
+K-d trees can be used for \code{d} between 2 and 20 only;
 \code{"auto"} selects \code{"kd_tree"} in low-dimensional spaces}
 
 \item{max_leaf_size}{maximal number of points in the K-d tree leaves;
 smaller leaves use more memory, yet are not necessarily faster;
 use \code{0} to select the default value, currently set to 32}
 
-\item{squared}{whether to return the squared Euclidean distance}
+\item{squared}{whether the output \code{nn.dist} should be based on
+the squared Euclidean distance}
 
 \item{verbose}{whether to print diagnostic messages}
 }
 \value{
-A list with two elements, \code{nn.index} and \code{nn.dist}.
+A list with two elements, \code{nn.index} and \code{nn.dist}, is returned.
 
-\code{nn.dist} has shape (n,k) or (m,k);
-\code{nn.dist[i,]} is sorted nondecreasingly for all \code{i}.
-\code{nn.dist[i,j]} gives the weight of the edge \code{{i, ind[i,j]}},
-i.e., the distance between the \code{i}-th point and its \code{j}-th NN.
+\code{nn.dist} and \code{nn.index} have shape \eqn{n\times k}
+or \eqn{m\times k}, depending whether \code{Y} is given.
 
-\code{nn.index} is of the same shape.
-\code{nn.index[i,j]} is the index (between \code{1} and \code{n})
-of the \code{j}-th nearest neighbour of \code{i}.
+\code{nn.index[i,j]} is the index (between \eqn{1} and \eqn{n})
+of the \eqn{j}-th nearest neighbour of \eqn{i}.
+
+\code{nn.dist[i,j]} gives the weight of the edge \code{{i, nn.index[i,j]}},
+i.e., the distance between the \eqn{i}-th point and its \eqn{j}-th
+nearest neighbour, \eqn{j=1,\dots,k}.
+\code{nn.dist[i,]} is sorted nondecreasingly for all \eqn{i}.
 }
 \description{
 If \code{Y} is \code{NULL}, then the function determines the first \code{k}
-amongst the nearest neighbours of each point in \code{X} with respect
+nearest neighbours of each point in \code{X} with respect
 to the Euclidean distance. It is assumed that each query point is
 not its own neighbour.
 
@@ -59,13 +63,15 @@ nearest points thereto from \code{X}.
 }
 \details{
 The implemented algorithms, see the \code{algorithm} parameter, assume
-that \code{k} is rather small; say, \code{k <= 20}.
+that \eqn{k} is rather small, say, \eqn{k \leq 20}.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
-amongst others, it has good locality of reference, features the sliding
+amongst others, it has good locality of reference (at the cost of making
+a copy of the input dataset), features the sliding
 midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
-and a node pruning strategy inspired by the discussion
-by Sample et al. (2001).  Still, it is well-known that K-d trees
+node pruning strategies inspired by some ideas from (Sample et al., 2001),
+and a couple of further tuneups proposed by the current author.
+Still, it is well-known that K-d trees
 perform well only in spaces of low intrinsic dimensionality.  Thus,
 due to the so-called curse of dimensionality, for high \code{d},
 the brute-force algorithm is recommended.

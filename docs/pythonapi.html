@@ -292,10 +292,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quitefastmst.knn_euclid" title="quitefastmst.knn_euclid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quitefastmst.knn_euclid</span></code></a>(X[, k, Y, ...])</p></td>
-<td><p>If <cite>Y</cite> is None, then the function determines the first <cite>k</cite> amongst the nearest neighbours of each point in <cite>X</cite> with respect to the Euclidean distance.</p></td>
+<td><p>Euclidean Nearest Neighbours</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#quitefastmst.mst_euclid" title="quitefastmst.mst_euclid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quitefastmst.mst_euclid</span></code></a>(X[, M, algorithm, ...])</p></td>
-<td><p>The function determines the/a(*) minimum spanning tree (MST) of a set of <cite>n</cite> points, i.e., an acyclic undirected connected graph whose: vertices represent the points, edges are weighted by the distances between point pairs, and have minimal total weight.</p></td>
+<td><p>Euclidean and Mutual Reachability Minimum Spanning Trees</p></td>
 </tr>
 </tbody>
 </table>
@@ -307,42 +307,31 @@ using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</s
 <dl class="py function">
 <dt class="sig sig-object py" id="quitefastmst.knn_euclid">
 <span class="sig-prename descclassname"><span class="pre">quitefastmst.</span></span><span class="sig-name descname"><span class="pre">knn_euclid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_leaf_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squared</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quitefastmst.knn_euclid" title="Link to this definition">¶</a></dt>
-<dd><p>If <cite>Y</cite> is None, then the function determines the first <cite>k</cite> amongst the nearest
+<dd><p>Euclidean Nearest Neighbours</p>
+<p>If <cite>Y</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the function determines the first <cite>k</cite> nearest
 neighbours of each point in <cite>X</cite> with respect to the Euclidean distance.
 It is assumed that each query point is not its own neighbour.</p>
 <p>Otherwise, for each point in <cite>Y</cite>, this function determines the <cite>k</cite> nearest
 points thereto from <cite>X</cite>.</p>
-<p>The implemented algorithms, see the <cite>algorithm</cite> parameter, assume that
-<cite>k</cite> is rather small; say, <cite>k ≤ 20</cite>.</p>
-<p>Our implementation of K-d trees <a class="reference internal" href="#rf18073026008-1" id="id1">[1]</a> has been quite optimised; amongst
-others, it has good locality of reference, features the sliding midpoint
-(midrange) rule suggested in <a class="reference internal" href="#rf18073026008-2" id="id2">[2]</a>, and a node pruning strategy inspired
-by the discussion in <a class="reference internal" href="#rf18073026008-3" id="id3">[3]</a>.  Still, it is well-known that K-d trees
-perform well only in spaces of low intrinsic dimensionality.  Thus,
-due to the so-called curse of dimensionality, for high <cite>d</cite>, the brute-force
-algorithm is recommended.</p>
-<p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code>
-environment variable or via <code class="docutils literal notranslate"><span class="pre">quitefastmst.omp_set_num_threads</span></code>
-at runtime.  For best speed, consider building the package from sources
-using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
 <dt><strong>X</strong><span class="classifier">matrix, shape <cite>(n,d)</cite></span></dt><dd><p>the <cite>n</cite> input points in <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span> (the “database”)</p>
 </dd>
-<dt><strong>k</strong><span class="classifier">int <cite>&lt; n</cite></span></dt><dd><p>number of nearest neighbours (should be rather small, say, <cite>≤ 20</cite>)</p>
+<dt><strong>k</strong><span class="classifier">int <cite>&lt; n</cite></span></dt><dd><p>requested number of nearest neighbours
+(should be rather small, say, <cite>≤ 20</cite>)</p>
 </dd>
 <dt><strong>Y</strong><span class="classifier">None or an ndarray, shape <cite>(m,d)</cite></span></dt><dd><p>the “query points”; note that setting <code class="docutils literal notranslate"><span class="pre">Y=X</span></code>, contrary to <code class="docutils literal notranslate"><span class="pre">Y=None</span></code>,
 will include the query points themselves amongst their own neighbours</p>
 </dd>
-<dt><strong>algorithm</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>}, default=``”auto”``</span></dt><dd><p>K-d trees can only be used for <cite>d</cite> between 2 and 20 only.
+<dt><strong>algorithm</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>}, default <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code></span></dt><dd><p>K-d trees can only be used for <cite>d</cite> between 2 and 20.
 <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;kd_tree&quot;</span></code> in low-dimensional spaces</p>
 </dd>
 <dt><strong>max_leaf_size</strong><span class="classifier">int</span></dt><dd><p>maximal number of points in the K-d tree leaves;
 smaller leaves use more memory, yet are not necessarily faster;
 use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32.</p>
 </dd>
-<dt><strong>squared</strong><span class="classifier">False</span></dt><dd><p>whether to return the squared Euclidean distance</p>
+<dt><strong>squared</strong><span class="classifier">False</span></dt><dd><p>whether the output <code class="docutils literal notranslate"><span class="pre">dist</span></code> should use the squared Euclidean distance</p>
 </dd>
 <dt><strong>verbose: bool</strong></dt><dd><p>whether to print diagnostic messages</p>
 </dd>
@@ -350,15 +339,15 @@ use <code class="docutils literal notranslate"><span class="pre">0</span></code>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>pair</strong><span class="classifier">tuple</span></dt><dd><p>A pair <code class="docutils literal notranslate"><span class="pre">(dist,</span> <span class="pre">ind)</span></code> representing the k-NN graph, where:</p>
+<dt><strong>pair</strong><span class="classifier">tuple</span></dt><dd><p>A pair <code class="docutils literal notranslate"><span class="pre">(dist,</span> <span class="pre">ind)</span></code> representing the <cite>k</cite>-nearest neighbour graph, where:</p>
 <blockquote>
 <div><dl>
-<dt>dist<span class="classifier">a c_contiguous ndarray, shape <cite>(n,k)</cite> or <cite>(m,k)</cite>;</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dist[i,:]</span></code> is sorted nondecreasingly for all <cite>i</cite>,
+<dt>dist<span class="classifier">a c_contiguous ndarray, shape <cite>(n,k)</cite> or <cite>(m,k)</cite></span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dist[i,:]</span></code> is sorted nondecreasingly for all <cite>i</cite>,
 <code class="docutils literal notranslate"><span class="pre">dist[i,j]</span></code> gives the weight of the edge <code class="docutils literal notranslate"><span class="pre">{i,</span> <span class="pre">ind[i,j]}</span></code>,
-i.e., the distance between the <cite>i</cite>-th point and its <code class="docutils literal notranslate"><span class="pre">j</span></code>-th NN,</p>
+i.e., the distance between the <cite>i</cite>-th point and its <cite>j</cite>-th NN</p>
 </dd>
-<dt>ind<span class="classifier">a c_contiguous ndarray of the same shape;</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">ind[i,j]</span></code> is the index (between <cite>0</cite> and <cite>n-1</cite>)
-of the <cite>j</cite>-th nearest neighbour of <cite>i</cite>.</p>
+<dt>ind<span class="classifier">a c_contiguous ndarray of the same shape</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">ind[i,j]</span></code> is the index (between <cite>0</cite> and <cite>n-1</cite>)
+of the <cite>j</cite>-th nearest neighbour of <cite>i</cite></p>
 </dd>
 </dl>
 </div></blockquote>
@@ -366,6 +355,21 @@ of the <cite>j</cite>-th nearest neighbour of <cite>i</cite>.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that
+<cite>k</cite> is rather small; say, <cite>k ≤ 20</cite>.</p>
+<p>Our implementation of K-d trees <a class="reference internal" href="#rf18073026008-1" id="id1">[1]</a> has been quite optimised; amongst
+others, it has good locality of reference (at the cost of making a
+copy of the input dataset), features the sliding midpoint (midrange) rule
+suggested in <a class="reference internal" href="#rf18073026008-2" id="id2">[2]</a>, node pruning strategies inspired by some ideas
+from <a class="reference internal" href="#rf18073026008-3" id="id3">[3]</a>, and a couple of further tuneups proposed by the current author.
+Still, it is well-known that K-d trees perform well only in spaces of low
+intrinsic dimensionality.  Thus, due to the so-called curse of
+dimensionality, for high <cite>d</cite>, the brute-force algorithm is preferred.</p>
+<p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code>
+environment variable or via <code class="docutils literal notranslate"><span class="pre">quitefastmst.omp_set_num_threads</span></code>
+at runtime.  For best speed, consider building the package from sources
+using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 <p class="rubric">References</p>
 <div role="list" class="citation-list">
 <div class="citation" id="rf18073026008-1" role="doc-biblioentry">
@@ -391,7 +395,8 @@ Communications &amp; Computers (CSCC’01), 2001</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="quitefastmst.mst_euclid">
 <span class="sig-prename descclassname"><span class="pre">quitefastmst.</span></span><span class="sig-name descname"><span class="pre">mst_euclid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_leaf_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_pass_max_brute_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutreach_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.00000011920928955078125</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quitefastmst.mst_euclid" title="Link to this definition">¶</a></dt>
-<dd><p>The function determines the/a(*) minimum spanning tree (MST) of a set
+<dd><p>Euclidean and Mutual Reachability Minimum Spanning Trees</p>
+<p>The function determines the/a(*) minimum spanning tree (MST) of a set
 of <cite>n</cite> points, i.e., an acyclic undirected connected graph whose:
 vertices represent the points,
 edges are weighted by the distances between point pairs,
@@ -409,7 +414,7 @@ mutual reachability distance <a class="reference internal" href="#r9c4badab60be-
 is the Euclidean distance between the <cite>i</cite>-th and the <cite>j</cite>-th point,
 and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <cite>i</cite>-th <cite>M</cite>-core distance defined as the distance
 between the <cite>i</cite>-th point and its <cite>(M-1)</cite>-th nearest neighbour
-(not including the query points themselves).</p>
+(not including the query point itself).</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
@@ -418,7 +423,7 @@ between the <cite>i</cite>-th point and its <cite>(M-1)</cite>-th nearest neighb
 <dt><strong>M</strong><span class="classifier">int <cite>&lt; n</cite></span></dt><dd><p>the degree of the mutual reachability distance (should be rather small,
 say, <cite>≤ 20</cite>). <cite>M ≤ 2</cite> denotes the ordinary Euclidean distance</p>
 </dd>
-<dt><strong>algorithm</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;single_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dual_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>}, default=``”auto”``</span></dt><dd><p>K-d trees can only be used for <cite>d</cite> between 2 and 20 only.
+<dt><strong>algorithm</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;single_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dual_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>}, default <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code></span></dt><dd><p>K-d trees can only be used for <cite>d</cite> between 2 and 20 only.
 <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code> for <cite>d ≤ 20</cite>.
 <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code> is used otherwise</p>
 </dd>
@@ -428,7 +433,7 @@ use <code class="docutils literal notranslate"><span class="pre">0</span></code>
 single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm</p>
 </dd>
 <dt><strong>first_pass_max_brute_size</strong><span class="classifier">int</span></dt><dd><p>minimal number of points in a node to treat it as a leaf (unless
-it’s actually a leaf) in the first iteration of the algorithm;
+it actually is a leaf) in the first iteration of the algorithm;
 use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p>
 </dd>
 <dt><strong>mutreach_adj</strong><span class="classifier">float</span></dt><dd><p>adjustment for mutual reachability distance ambiguity (for M&gt;2)
@@ -445,26 +450,27 @@ core distances; see above for more details</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt>tuple</dt><dd><p>If <cite>M==1</cite>, a pair <code class="docutils literal notranslate"><span class="pre">(mst_dist,</span> <span class="pre">mst_index)</span></code> defining the <cite>n-1</cite> edges
+<dt>tuple</dt><dd><p>If <cite>M = 1</cite>, a pair <code class="docutils literal notranslate"><span class="pre">(mst_dist,</span> <span class="pre">mst_index)</span></code> defining the <cite>n-1</cite> edges
 of the computed spanning tree is returned:</p>
 <blockquote>
 <div><dl>
-<dt>mst_dist<span class="classifier">the <cite>(n-1)</cite>-ary array <code class="docutils literal notranslate"><span class="pre">mst_dist</span></code> is such that</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">mst_dist[i]</span></code> gives the weight of the <cite>i</cite>-th edge,</p>
+<dt>mst_dist<span class="classifier">an array of length <cite>(n-1)</cite></span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">mst_dist[i]</span></code> gives the weight of the <cite>i</cite>-th edge</p>
 </dd>
-<dt>mst_index<span class="classifier"><code class="docutils literal notranslate"><span class="pre">mst_index</span></code> is a matrix with <cite>n-1</cite> rows and <cite>2</cite></span></dt><dd><p>columns, where <code class="docutils literal notranslate"><span class="pre">{mst_index[i,0],</span> <span class="pre">mst_index[i,1]}</span></code> defines
-the <cite>i</cite>-th edge of the tree.</p>
+<dt>mst_index<span class="classifier">a matrix with <cite>n-1</cite> rows and <cite>2</cite> columns</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{mst_index[i,0],</span> <span class="pre">mst_index[i,1]}</span></code> defines the <cite>i</cite>-th edge
+of the tree</p>
 </dd>
 </dl>
 </div></blockquote>
 <p>The tree edges are ordered w.r.t. weights nondecreasingly, and then by
 the indexes (lexicographic ordering of the <code class="docutils literal notranslate"><span class="pre">(weight,</span> <span class="pre">index1,</span> <span class="pre">index2)</span></code>
 triples).  For each <cite>i</cite>, it holds <code class="docutils literal notranslate"><span class="pre">mst_index[i,0]&lt;mst_index[i,1]</span></code>.</p>
-<p>For <cite>M&gt;1</cite>, we additionally get:</p>
+<p>For <cite>M &gt; 1</cite>, we additionally get:</p>
 <blockquote>
 <div><dl>
-<dt>nn_dist<span class="classifier">an <cite>n</cite> by <cite>M-1</cite> matrix giving the distances between</span></dt><dd><p>each point and its <cite>M-1</cite> nearest neighbours,</p>
+<dt>nn_dist<span class="classifier">an <cite>n</cite> by <cite>M-1</cite> matrix</span></dt><dd><p>it gives the distances between
+each point and its <cite>M-1</cite> nearest neighbours</p>
 </dd>
-<dt>nn_index<span class="classifier">a matrix of the same shape <code class="docutils literal notranslate"><span class="pre">nn_index</span></code> providing</span></dt><dd><p>the corresponding indexes of the neighbours.</p>
+<dt>nn_index<span class="classifier">a matrix of the same shape</span></dt><dd><p>it provides the corresponding indexes of the neighbours</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -472,21 +478,69 @@ triples).  For each <cite>i</cite>, it holds <code class="docutils literal notra
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>(*) We note that if there are many pairs of equidistant points,
+there can be many minimum spanning trees. In particular, it is likely
+that there are point pairs with the same mutual reachability distances.</p>
+<p>To make the definition less ambiguous (albeit with no guarantees),
+internally, the brute-force algorithm relies on the adjusted distance:
+<span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)\)</span> or
+<span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}\)</span>,
+where ε is close to 0.
+<cite>|mutreach_adj| &lt; 1</cite> selects the former formula (<cite>ε=mutreach_adj</cite>)
+whilst <cite>1 &lt; |mutreach_adj| &lt; 2</cite> chooses the latter (<cite>ε=mutreach_adj±1</cite>).</p>
+<p>For the K-d tree-based methods, on the other hand, <cite>mutreach_adj</cite>
+indicates the preference towards connecting to farther/closer
+points wrt the original metric or having smaller/larger core distances
+if a point <cite>i</cite> has multiple nearest-neighbour candidates <cite>j’</cite>, <cite>j’’</cite> with
+<span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j'),  c_M(j')\}\)</span> and
+<span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j''), c_M(j'')\}\)</span>.
+Generally, the smaller the <cite>mutreach_adj</cite>, the more leaves there should
+be in the tree (note that there are only four types of adjustments, though).</p>
+<p>The implemented algorithms, see the <cite>algorithm</cite> parameter, assume that
+<cite>M</cite> is rather small; say, <cite>M ≤ 20</cite>.</p>
+<p>Our implementation of K-d trees <a class="reference internal" href="#r9c4badab60be-6" id="id8">[6]</a> has been quite optimised; amongst
+others, it has good locality of reference (at the cost of making a
+copy of the input dataset), features the sliding midpoint (midrange) rule
+suggested in <a class="reference internal" href="#r9c4badab60be-7" id="id9">[7]</a>, node pruning strategies inspired by some ideas
+from <a class="reference internal" href="#r9c4badab60be-8" id="id10">[8]</a>, and a couple of further tuneups proposed by the current author.</p>
+<p>The “single-tree” version of the Borůvka algorithm is naively
+parallelisable: in every iteration, it seeks each point’s nearest “alien”,
+i.e., the nearest point thereto from another cluster.
+The “dual-tree” Borůvka version of the algorithm is, in principle, based
+on <a class="reference internal" href="#r9c4badab60be-5" id="id11">[5]</a>.  As far as our implementation is concerned, the dual-tree approach
+is often only faster in 2- and 3-dimensional spaces, for <cite>M ≤ 2</cite>, and in
+a single-threaded setting.  For another (approximate) adaptation
+of the dual-tree algorithm to the mutual reachability distance, see <a class="reference internal" href="#r9c4badab60be-11" id="id12">[11]</a>.</p>
+<p>The “sesqui-tree” variant (by the current author) is a mixture of the two
+approaches:  it compares leaves against the full tree.  It is usually
+faster than the single- and dual-tree methods in very low dimensional
+spaces and usually not much slower than the single-tree variant otherwise.</p>
+<p>Nevertheless, it is well-known that K-d trees perform well only in spaces
+of low intrinsic dimensionality (a.k.a. the “curse”).  For high <cite>d</cite>,
+the “brute-force” algorithm is recommended.  Here, we provided a
+parallelised <a class="reference internal" href="#r9c4badab60be-2" id="id13">[2]</a> version of the Jarník <a class="reference internal" href="#r9c4badab60be-1" id="id14">[1]</a> (a.k.a.
+Prim <a class="reference internal" href="#r9c4badab60be-3" id="id15">[3]</a> or Dijkstra) algorithm, where the distances are computed
+on the fly (only once for <cite>M ≤ 2</cite>).</p>
+<p>The number of threads is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code>
+environment variable or via <code class="docutils literal notranslate"><span class="pre">quitefastmst.omp_set_num_threads</span></code>
+at runtime. For best speed, consider building the package from sources
+using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 <p class="rubric">References</p>
 <div role="list" class="citation-list">
 <div class="citation" id="r9c4badab60be-1" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">1</a><span class="fn-bracket">]</span></span>
 <p>V. Jarník, O jistém problému minimálním,
 Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63</p>
 </div>
 <div class="citation" id="r9c4badab60be-2" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">2</a><span class="fn-bracket">]</span></span>
 <p>C.F. Olson, Parallel algorithms for hierarchical clustering,
 Parallel Computing 21(8), 1995, 1313–1325,
 <a class="reference external" href="https://doi.org/10.1016/0167-8191(95)00017-I">https://doi.org/10.1016/0167-8191(95)00017-I</a></p>
 </div>
 <div class="citation" id="r9c4badab60be-3" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">3</a><span class="fn-bracket">]</span></span>
 <p>R. Prim, Shortest connection networks and some generalizations,
 The Bell System Technical Journal 36(6), 1957, 1389–1401,
 <a class="reference external" href="https://doi.org/10.1002/j.1538-7305.1957.tb01515.x">https://doi.org/10.1002/j.1538-7305.1957.tb01515.x</a></p>
@@ -497,24 +551,24 @@ The Bell System Technical Journal 36(6), 1957, 1389–1401,
 Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58</p>
 </div>
 <div class="citation" id="r9c4badab60be-5" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">5</a><span class="fn-bracket">]</span></span>
 <p>W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
 tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
 Conf. Knowledge Discovery and Data Mining (KDD ‘10), 2010, 603–612</p>
 </div>
 <div class="citation" id="r9c4badab60be-6" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">6</a><span class="fn-bracket">]</span></span>
 <p>J.L. Bentley, Multidimensional binary search trees used for associative
 searching, Communications of the ACM 18(9), 509–517, 1975,
 <a class="reference external" href="https://doi.org/10.1145/361002.361007">https://doi.org/10.1145/361002.361007</a></p>
 </div>
 <div class="citation" id="r9c4badab60be-7" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">7</a><span class="fn-bracket">]</span></span>
 <p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends
 are fat, The 4th CGC Workshop on Computational Geometry, 1999</p>
 </div>
 <div class="citation" id="r9c4badab60be-8" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">8</a><span class="fn-bracket">]</span></span>
 <p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
 strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
 Communications &amp; Computers (CSCC’01), 2001</p>
@@ -533,7 +587,7 @@ ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
 2015, 1–51, <a class="reference external" href="https://doi.org/10.1145/2733381">https://doi.org/10.1145/2733381</a></p>
 </div>
 <div class="citation" id="r9c4badab60be-11" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">11</a><span class="fn-bracket">]</span></span>
 <p>L. McInnes, J. Healy, Accelerated hierarchical density-based
 clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
 <a class="reference external" href="https://doi.org/10.1109/ICDMW.2017.12">https://doi.org/10.1109/ICDMW.2017.12</a></p>
@@ -578,7 +632,7 @@ clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-07-22T13:02:07+0200.
+              Last updated on 2025-07-22T16:10:11+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>

@@ -16,15 +16,15 @@ mst_euclid(
 )
 }
 \arguments{
-\item{X}{the "database"; a matrix of shape (n,d)}
+\item{X}{the "database"; a matrix of shape \eqn{n\times d}}
 
 \item{M}{the degree of the mutual reachability distance
-(should be rather small, say, \eqn{\leq 20}).
+(should be rather small).
 \eqn{M\leq 2} denotes the ordinary Euclidean distance}
 
-\item{algorithm}{\code{"auto"}, \code{"single_kd_tree"}
-\code{"sesqui_kd_tree"}, \code{"dual_kd_tree"} or \code{"brute"};
-K-d trees can only be used for d between 2 and 20 only;
+\item{algorithm}{\code{"auto"}, \code{"single_kd_tree"},
+\code{"sesqui_kd_tree"}, \code{"dual_kd_tree"}, or \code{"brute"};
+K-d trees can only be used for \eqn{d} between 2 and 20 only;
 \code{"auto"} selects \code{"sesqui_kd_tree"} for \eqn{d\leq 20}.
 \code{"brute"} is used otherwise}
 
@@ -34,38 +34,37 @@ use \code{0} to select the default value, currently set to 32 for the
 single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm}
 
 \item{first_pass_max_brute_size}{minimal number of points in a node to
-treat it as a leaf (unless it's actually a leaf) in the first
+treat it as a leaf (unless it actually is a leaf) in the first
 iteration of the algorithm; use \code{0} to select the default value,
 currently set to 32}
 
 \item{mutreach_adj}{adjustment for mutual reachability distance ambiguity
 (for \eqn{M>2}) whose fractional part should be close to 0:
-values in \eqn{(-1,0)} prefer connecting to farther NNs,
+values in \eqn{(-1,0)} prefer connecting to farther nearest neighbours,
 values in \eqn{(0, 1)} fall for closer NNs (which is what many other
-implementations provide),
-values in \eqn{(-2,-1)} prefer connecting to points with smaller core distances,
-values in \eqn{(1, 2)} favour larger core distances;
-see above for more details}
+implementations provide), values in \eqn{(-2,-1)} prefer connecting
+to points with smaller core distances, values in \eqn{(1, 2)} favour
+larger core distances; see below for more details}
 
 \item{verbose}{whether to print diagnostic messages}
 }
 \value{
-A list with two (M=1) or four (M>1) elements, \code{mst.index} and
+A list with two $(M=1)$ or four $(M>1)$ elements, \code{mst.index} and
 \code{mst.dist}, and additionally \code{nn.index} and \code{nn.dist}.
 
-\code{mst.index} is a matrix with \eqn{n-1} rows and \code{2} columns,
+\code{mst.index} is a matrix with \eqn{n-1} rows and \eqn{2} columns,
 whose rows define the tree edges.
 
 \code{mst.dist} is a vector of length
-\code{n-1} giving the weights of the corresponding edges.
+\eqn{n-1} giving the weights of the corresponding edges.
 
-The tree edges are ordered w.r.t. weights nondecreasingly, and then by
+The tree edges are ordered with respect to weights nondecreasingly, and then by
 the indexes (lexicographic ordering of the \code{(weight, index1, index2)}
 triples).  For each \code{i}, it holds \code{mst_ind[i,1]<mst_ind[i,2]}.
 
-\code{nn.index} is an \code{n} by \code{M-1} matrix giving the indexes
-of each point's nearest neighbours. \code{nn.dist} provides the
-corresponding distances.
+\code{nn.index} is an \eqn{n} by \eqn{M-1} matrix giving the indexes
+of each point's nearest neighbours with respect to the Euclidean distance.
+\code{nn.dist} provides the corresponding distances.
 }
 \description{
 The function determines the/a(*) minimum spanning tree (MST) of a set
@@ -79,74 +78,79 @@ MSTs have many uses in, amongst others, topological data analysis
 outlier detection, etc.).
 
 In clustering and density estimation, the parameter \code{M} plays the role
-of a smoothing factor; see (Campello et al. 2015) and the references therein
-for discussion.  It corresponds to the \pkg{hdbscan} Python package's
-\code{min_samples=M-1}.
+of a smoothing factor; for discussion, see (Campello et al., 2015)
+and the references therein.  \code{M} corresponds to the \pkg{hdbscan}
+Python package's \code{min_samples=M-1}.
 
 For \eqn{M\leq 2}, we get a spanning tree that minimises the sum of
-uclidean distances between the points, i.e., the classic Euclidean minimum
+Euclidean distances between the points, i.e., the classic Euclidean minimum
 spanning tree (EMST).   If \eqn{M=2}, the function additionally returns
 the distance to each point's nearest neighbour.
 
-If \eqn{M>2}, the spanning tree is the smallest wrt the degree-M
-mutual reachability distance (Campello et al., 2013) given by
+If \eqn{M>2}, the spanning tree is the smallest with respect to
+the degree-\eqn{M} mutual reachability distance (Campello et al., 2013) given by
 \eqn{d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}}, where \eqn{d(i,j)}
-is the Euclidean distance between the \eqn{i}-th and the \eqn{j}-th point,
+is the standard Euclidean distance between the \eqn{i}-th and the \eqn{j}-th point,
 and \eqn{c_M(i)} is the \eqn{i}-th \eqn{M}-core distance defined as the distance
 between the \eqn{i}-th point and its \eqn{(M-1)}-th nearest neighbour
-(not including the query points themselves).
+(not including the query point itself).
 }
 \details{
 (*) We note that if there are many pairs of equidistant points,
 there can be many minimum spanning trees. In particular, it is likely
 that there are point pairs with the same mutual reachability distances.
+
 To make the definition less ambiguous (albeit with no guarantees),
 internally, the brute-force algorithm relies on the adjusted distance:
 \eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)} or
 \eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}},
-where \eqn{\varepsilon} is close to 0.
-|\code{mutreach_adj}|<1 selects the former formula (ε=\code{mutreach_adj})
-whilst 1<|\code{mutreach_adj}|<2 chooses the latter (ε=\code{mutreach_adj}±1).
+where \eqn{\varepsilon} is close to \eqn{0}. |\code{mutreach_adj}|<1 selects
+the former formula (\eqn{\varepsilon}=\code{mutreach_adj})
+whilst 1<|\code{mutreach_adj}|<2 chooses the latter
+(\eqn{\varepsilon}=\code{mutreach_adj}±1).
+
 For the K-d tree-based methods, on the other hand, \code{mutreach_adj}
 indicates the preference towards connecting to farther/closer
-points wrt the original metric or having smaller/larger core distances
+points with respect to the original metric or having smaller/larger core distances
 if a point \eqn{i} has multiple nearest-neighbour candidates \eqn{j'}, \eqn{j''} with
-\eqn{c_M(i) \geq \max\{d(i, j'),  c_M(j')\}`} and
-\eqn{c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}`}.
-Generally, the smaller the \code{mutreach_adj}, the more leaves there will
+\eqn{c_M(i) \geq \max\{d(i, j'),  c_M(j')\}} and
+\eqn{c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}}.
+
+Generally, the smaller the \code{mutreach_adj}, the more leaves should
 be in the tree (note that there are only four types of adjustments, though).
 
 The implemented algorithms, see the \code{algorithm} parameter, assume
-that \code{M} is rather small; say, \eqn{M \leq 20}.
+that \eqn{M} is rather small; say, \eqn{M \leq 20}.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
 amongst others, it has good locality of reference (at the cost of making
 a copy of the input dataset), features the sliding
 midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
-node pruning strategies inspired by some ideas from (Sample et al. ,2001),
+node pruning strategies inspired by some ideas from (Sample et al., 2001),
 and a couple of further tuneups proposed by the current author.
 
-The "single-tree" version of the Borůvka algorithm is naively
-parallelisable: in every iteration, it seeks each point's nearest "alien",
+The "single-tree" version of the Borůvka algorithm is parallelised:
+in every iteration, it seeks each point's nearest "alien",
 i.e., the nearest point thereto from another cluster.
 The "dual-tree" Borůvka version of the algorithm is, in principle, based
 on (March et al., 2010). As far as our implementation is concerned,
 the dual-tree approach is often only faster in 2- and 3-dimensional spaces,
 for \eqn{M\leq 2}, and in a single-threaded setting.  For another
-(approximate) adaptation of the dual-tree algorithm to the mutual
-reachability distance, see (McInnes and Healy, 2017).
+(approximate) adaptation of the dual-tree algorithm to mutual
+reachability distances, see (McInnes and Healy, 2017).
 
 The "sesqui-tree" variant (by the current author) is a mixture of the two
-approaches:  it compares leaves against the full tree.  It is usually
-faster than the single- and dual-tree methods in very low dimensional
-spaces and usually not much slower than the single-tree variant otherwise.
+approaches:  it compares leaves against the full tree and can be run
+in parallel.  It is usually faster than the single- and dual-tree methods
+in very low dimensional spaces and usually not much slower than
+the single-tree variant otherwise.
 
 Nevertheless, it is well-known that K-d trees perform well only in spaces
-of low intrinsic dimensionality (a.k.a. the "curse").  For high \code{d},
+of low intrinsic dimensionality (the "curse").  For high \eqn{d},
 the "brute-force" algorithm is recommended.  Here, we provided a
 parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a.
-Prim (1957) or Dijkstra) algorithm, where the distances are computed
-on the fly (only once for \code{M<=2}).
+Prim, 1957) algorithm, where the distances are computed
+on the fly (only once for \eqn{M\leq 2}).
 
 The number of threads used is controlled via the \code{OMP_NUM_THREADS}
 environment variable or via the \code{\link{omp_set_num_threads}} function
