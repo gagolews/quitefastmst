@@ -13,7 +13,7 @@ CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.pa
 """
 
 
-n = 10_000_000
+n = 100_000_000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -72,7 +72,7 @@ import pandas as pd
 import timeit
 import time
 import quitefastmst
-
+import gc
 
 start_time = int(time.time())
 hostname = os.uname()[1]
@@ -125,7 +125,7 @@ cases = dict(
     # fasthdbscan_kdtree             = lambda X, M, n_jobs: msts.mst_fasthdbscan_kdtree(X, M),
     # hdbscan_kdtree                 = lambda X, M, n_jobs: msts.mst_hdbscan_kdtree(X, M, n_jobs),
     # r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
-    r_quitefast_default            = lambda X, M, n_jobs: msts.mst_r_quitefast_default(X, M),
+    # r_quitefast_default            = lambda X, M, n_jobs: msts.mst_r_quitefast_default(X, M),
 )
 
 
@@ -135,7 +135,6 @@ def tree_order(tree_w, tree_e):
     return quitefastmst.tree_order(tree_w, tree_e)
 
 
-
 if n_jobs > 0:
     numba.config.THREADING_LAYER = 'omp'
     numba.set_num_threads(n_jobs)
@@ -143,6 +142,7 @@ if n_jobs > 0:
 else:
     numba.set_num_threads(quitefastmst.omp_max_treads_original)
     quitefastmst.omp_set_num_threads(quitefastmst.omp_max_treads_original)
+
 
 for n, d, M, s in scenarios:
     np.random.seed(seed)
@@ -210,6 +210,8 @@ for n, d, M, s in scenarios:
                 time=start_time,
                 host=hostname,
             ))
+            _res = None
+            gc.collect()
 
         pd.DataFrame(results).to_csv(ofname, index=False, mode="a", header=False)
 
