@@ -1,5 +1,5 @@
 """
-quitefastmst Python Package:
+**quitefastmst** Python Package:
 Euclidean and Mutual Reachability Minimum Spanning Trees
 
 For best speed, consider building the package from sources

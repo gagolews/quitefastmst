@@ -1,6 +1,10 @@
 # Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com>
 
-FILES_RMD =
+FILES_RMD = \
+	definitions.Rmd \
+	benchmarks.Rmd \
+	python.Rmd \
+	r.Rmd
 
 RMD_MD_OUTPUTS=$(patsubst %.Rmd,%.md,$(FILES_RMD))
 

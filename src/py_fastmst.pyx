@@ -120,6 +120,25 @@ cdef extern from "../src/c_fastmst.h":
 cpdef int omp_set_num_threads(int n_threads):
     """
     quitefastmst.omp_set_num_threads(n_threads)
+
+    Sets the number of threads to be used in the subsequent calls to parallel
+    code regions managed by OpenMP.
+
+    The function has no effect if there is no built-in support for OpenMP.
+
+
+    Parameters
+    ----------
+
+    n_threads : int
+
+
+    Returns
+    -------
+
+    A single integer: the previous value of ``max_threads``
+    or 1 if OpenMP is disabled.
+
     """
     return Comp_set_num_threads(n_threads)
 
@@ -131,6 +150,16 @@ cpdef int omp_get_max_threads():
     The function's name is confusing: it returns the maximal number
     of threads that will be used during the next call to a parallelised
     function, not the maximal number of threads possibly available.
+
+    It there is no built-in support for OpenMP, 1 is always returned.
+
+
+    Returns
+    -------
+
+    A single integer.
+
+
     """
     return Comp_get_max_threads()
 
@@ -220,16 +249,19 @@ cpdef tuple knn_euclid(
     References
     ----------
 
-    [1] J.L. Bentley, Multidimensional binary search trees used for associative
-    searching, Communications of the ACM 18(9), 509–517, 1975,
-    DOI:10.1145/361002.361007.
+    .. [1]
+        J.L. Bentley, Multidimensional binary search trees used for associative
+        searching, Communications of the ACM 18(9), 509–517, 1975,
+        https://doi.org/10.1145/361002.361007
 
-    [2] S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
-    are fat, 4th CGC Workshop on Computational Geometry, 1999.
+    .. [2]
+        S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
+        are fat, 4th CGC Workshop on Computational Geometry, 1999
 
-    [3] N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
-    strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
-    Communications & Computers (CSCC'01), 2001.
+    .. [3]
+        N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
+        strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
+        Communications & Computers (CSCC'01), 2001
 
 
     Parameters
@@ -240,9 +272,9 @@ cpdef tuple knn_euclid(
     k : int `< n`
         number of nearest neighbours (should be rather small, say, `≤ 20`)
     Y : None or an ndarray, shape `(m,d)`
-        the "query points"; note that setting `Y=X`, contrary to `Y=None`,
+        the "query points"; note that setting ``Y=X``, contrary to ``Y=None``,
         will include the query points themselves amongst their own neighbours
-    algorithm : ``{"auto", "kd_tree", "brute"}``, default="auto"
+    algorithm : {``"auto"``, ``"kd_tree"``, ``"brute"``}, default= `"auto"``
         K-d trees can only be used for `d` between 2 and 20 only.
         ``"auto"`` selects ``"kd_tree"`` in low-dimensional spaces
     max_leaf_size : int
@@ -357,13 +389,18 @@ cpdef tuple mst_euclid(
     )
 
     The function determines the/a(\*) minimum spanning tree (MST) of a set
-    of `n` points, i.e., an acyclic undirected graph whose vertices represent
-    the points, and `n-1` edges with the minimal sum of weights, given by
-    the pairwise distances.  MSTs have many uses in, amongst others,
-    topological data analysis (clustering, dimensionality reduction, etc.).
+    of `n` points, i.e., an acyclic undirected connected graph whose:
+    vertices represent the points,
+    edges are weighted by the distances between point pairs,
+    and have minimal total weight.
+
+    MSTs have many uses in, amongst others, topological data analysis
+    (clustering, density estimation, dimensionality reduction,
+    outlier detection, etc.).
 
     For `M ≤ 2`, we get a spanning tree that minimises the sum of Euclidean
-    distances between the points. If `M==2`, the function additionally returns
+    distances between the points, i.e., the classic Euclidean minimum
+    spanning tree (EMST).  If `M = 2`, the function additionally returns
     the distance to each point's nearest neighbour.
 
     If `M > 2`, the spanning tree is the smallest wrt the degree-`M`
@@ -373,9 +410,7 @@ cpdef tuple mst_euclid(
     and :math:`c_M(i)` is the `i`-th `M`-core distance defined as the distance
     between the `i`-th point and its `(M-1)`-th nearest neighbour
     (not including the query points themselves).
-    In clustering and density estimation, `M` plays the role of a smoothing
-    factor; see [10]_ and the references therein for discussion. This parameter
-    corresponds to the *hdbscan* Python package's ``min_samples=M-1``.
+
 
 
     Implementation
@@ -440,45 +475,58 @@ cpdef tuple mst_euclid(
     References
     ----------
 
-    [1] V. Jarník, O jistém problému minimálním,
-    Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63.
+    .. [1]
+        V. Jarník, O jistém problému minimálním,
+        Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63
 
-    [2] C.F. Olson, Parallel algorithms for hierarchical clustering,
-    Parallel Computing 21(8), 1995, 1313–1325.
+    .. [2]
+        C.F. Olson, Parallel algorithms for hierarchical clustering,
+        Parallel Computing 21(8), 1995, 1313–1325,
+        https://doi.org/10.1016/0167-8191(95)00017-I
 
-    [3] R. Prim, Shortest connection networks and some generalizations,
-    The Bell System Technical Journal 36(6), 1957, 1389–1401.
+    .. [3]
+        R. Prim, Shortest connection networks and some generalizations,
+        The Bell System Technical Journal 36(6), 1957, 1389–1401,
+        https://doi.org/10.1002/j.1538-7305.1957.tb01515.x
 
-    [4] O. Borůvka, O jistém problému minimálním,
-    Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58.
+    .. [4]
+        O. Borůvka, O jistém problému minimálním,
+        Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58
 
-    [5] W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
-    tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
-    Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612.
+    .. [5]
+        W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
+        tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
+        Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612
 
-    [6] J.L. Bentley, Multidimensional binary search trees used for associative
-    searching, Communications of the ACM 18(9), 509–517, 1975,
-    DOI:10.1145/361002.361007.
+    .. [6]
+        J.L. Bentley, Multidimensional binary search trees used for associative
+        searching, Communications of the ACM 18(9), 509–517, 1975,
+        https://doi.org/10.1145/361002.361007
 
-    [7] S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
-    are fat, The 4th CGC Workshop on Computational Geometry, 1999.
+    .. [7]
+        S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
+        are fat, The 4th CGC Workshop on Computational Geometry, 1999
 
-    [8] N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
-    strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
-    Communications & Computers (CSCC'01), 2001.
+    .. [8]
+        N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
+        strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
+        Communications & Computers (CSCC'01), 2001
 
-    [9] R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
-    on hierarchical density estimates, Lecture Notes in Computer Science 7819,
-    2013, 160–172. DOI:10.1007/978-3-642-37456-2_14.
+    .. [9]
+        R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
+        on hierarchical density estimates, Lecture Notes in Computer Science 7819,
+        2013, 160–172, https://doi.org/10.1007/978-3-642-37456-2_14
 
-    [10] R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
-    density estimates for data clustering, visualization, and outlier detection,
-    ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
-    2015, 1–51, DOI:10.1145/2733381.
+    .. [10]
+        R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical density
+        estimates for data clustering, visualization, and outlier detection,
+        ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
+        2015, 1–51, https://doi.org/10.1145/2733381
 
-    [11] L. McInnes, J. Healy, Accelerated hierarchical density-based
-    clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
-    DOI:10.1109/ICDMW.2017.12.
+    .. [11]
+        L. McInnes, J. Healy, Accelerated hierarchical density-based
+        clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
+        https://doi.org/10.1109/ICDMW.2017.12
 
 
     Parameters
@@ -489,7 +537,7 @@ cpdef tuple mst_euclid(
     M : int `< n`
         the degree of the mutual reachability distance (should be rather small,
         say, `≤ 20`). `M ≤ 2` denotes the ordinary Euclidean distance
-    algorithm : ``{"auto", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "brute"}``, default="auto"
+    algorithm : {``"auto"``, ``"single_kd_tree"``, ``"sesqui_kd_tree"``, ``"dual_kd_tree"``, ``"brute"``}, default ``"auto"``
         K-d trees can only be used for `d` between 2 and 20 only.
         ``"auto"`` selects ``"sesqui_kd_tree"`` for `d ≤ 20`.
         ``"brute"`` is used otherwise
@@ -500,7 +548,7 @@ cpdef tuple mst_euclid(
         single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm
     first_pass_max_brute_size : int
         minimal number of points in a node to treat it as a leaf (unless
-        it's actually a leaf) in the first iteration of the algorithm;
+        it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
     mutreach_adj : float
         adjustment for mutual reachability distance ambiguity (for M>2)

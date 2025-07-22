@@ -226,9 +226,13 @@
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/quitefastmst">PyPI Entry</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://CRAN.R-project.org/package=quitefastmst">CRAN Entry</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference Manual</span></p>
+<p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../weave/definitions.html">Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weave/benchmarks.html">Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weave/python.html">Python Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pythonapi.html">Python Package <cite>quitefastmst</cite> Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../weave/r.html">R Examples</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of R Package quitefastmst Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="knn_euclid.html">knn_euclid: Euclidean Nearest Neighbours</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees</a></li>
@@ -286,9 +290,11 @@
 <h1>mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees<a class="headerlink" href="#mst-euclid-euclidean-and-mutual-reachability-minimum-spanning-trees" title="Link to this heading">¶</a></h1>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
-<p>The function determines the/a(*) minimum spanning tree (MST) of a set of <span class="math notranslate nohighlight">\(n\)</span> points, i.e., an acyclic undirected graph whose vertices represent the points, and <span class="math notranslate nohighlight">\(n-1\)</span> edges with the minimal sum of weights, given by the pairwise distances. MSTs have many uses in, amongst others, topological data analysis (clustering, dimensionality reduction, etc.).</p>
-<p>For <span class="math notranslate nohighlight">\(M\leq 2\)</span>, we get a spanning tree that minimises the sum of Euclidean distances between the points. If <span class="math notranslate nohighlight">\(M=2\)</span>, the function additionally returns the distance to each point’s nearest neighbour.</p>
-<p>If <span class="math notranslate nohighlight">\(M&gt;2\)</span>, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}\)</span>, where <span class="math notranslate nohighlight">\(d(i,j)\)</span> is the Euclidean distance between the <span class="math notranslate nohighlight">\(i\)</span>-th and the <span class="math notranslate nohighlight">\(j\)</span>-th point, and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th <span class="math notranslate nohighlight">\(M\)</span>-core distance defined as the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\((M-1)\)</span>-th nearest neighbour (not including the query points themselves). In clustering and density estimation, M plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion.</p>
+<p>The function determines the/a(*) minimum spanning tree (MST) of a set of <span class="math notranslate nohighlight">\(n\)</span> points, i.e., an acyclic undirected connected graph whose vertices represent the points, edges are weighted by the distances between point pairs, and have minimal total weight.</p>
+<p>MSTs have many uses in, amongst others, topological data analysis (clustering, density estimation, dimensionality reduction, outlier detection, etc.).</p>
+<p>In clustering and density estimation, the parameter <code class="docutils literal notranslate"><span class="pre">M</span></code> plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion. It corresponds to the <span class="pkg">hdbscan</span> Python package’s <code class="docutils literal notranslate"><span class="pre">min_samples=M-1</span></code>.</p>
+<p>For <span class="math notranslate nohighlight">\(M\leq 2\)</span>, we get a spanning tree that minimises the sum of uclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If <span class="math notranslate nohighlight">\(M=2\)</span>, the function additionally returns the distance to each point’s nearest neighbour.</p>
+<p>If <span class="math notranslate nohighlight">\(M&gt;2\)</span>, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}\)</span>, where <span class="math notranslate nohighlight">\(d(i,j)\)</span> is the Euclidean distance between the <span class="math notranslate nohighlight">\(i\)</span>-th and the <span class="math notranslate nohighlight">\(j\)</span>-th point, and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th <span class="math notranslate nohighlight">\(M\)</span>-core distance defined as the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\((M-1)\)</span>-th nearest neighbour (not including the query points themselves).</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
@@ -430,7 +436,7 @@
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-07-21T17:42:51+0200.
+              Last updated on 2025-07-22T13:02:07+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>

@@ -64,12 +64,7 @@ void _mst_euclid_kdtree(
 }
 
 
-/*! The function determines the/a(\*) minimum spanning tree (MST) of a set
- *  of `n` points, i.e., an acyclic undirected graph whose vertices represent
- *  the points, and `n-1` edges with the minimal sum of weights, given by
- *  the pairwise distances.  MSTs have many uses in, amongst others,
- *  topological data analysis (clustering, dimensionality reduction, etc.).
- *
+/*!
  *  For `M<=2`, we get a spanning tree that minimises the sum of Euclidean
  *  distances between the points. If `M==2`, the function additionally returns
  *  the distance to each point's nearest neighbour.

@@ -36,10 +36,10 @@ for the reference manual, tutorials, examples, and benchmarks.
 **Author and maintainer**: [Marek Gagolewski](https://www.gagolewski.com/)
 
 
-Possible applications in data analysis:
+Possible applications in topological data analysis:
 clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
 [Genie](https://genieclust.gagolewski.com/), Lumbermark, Single linkage, etc.),
-classification and regression (k-nearest neighbours),
+density estimation, dimensionality reduction,
 outlier and noise point detection, and many more.
 
 

@@ -2,11 +2,15 @@
 
 ## Description
 
-The function determines the/a(\*) minimum spanning tree (MST) of a set of $n$ points, i.e., an acyclic undirected graph whose vertices represent the points, and $n-1$ edges with the minimal sum of weights, given by the pairwise distances. MSTs have many uses in, amongst others, topological data analysis (clustering, dimensionality reduction, etc.).
+The function determines the/a(\*) minimum spanning tree (MST) of a set of $n$ points, i.e., an acyclic undirected connected graph whose vertices represent the points, edges are weighted by the distances between point pairs, and have minimal total weight.
 
-For $M\leq 2$, we get a spanning tree that minimises the sum of Euclidean distances between the points. If $M=2$, the function additionally returns the distance to each point\'s nearest neighbour.
+MSTs have many uses in, amongst others, topological data analysis (clustering, density estimation, dimensionality reduction, outlier detection, etc.).
 
-If $M>2$, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by $d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}$, where $d(i,j)$ is the Euclidean distance between the $i$-th and the $j$-th point, and $c_M(i)$ is the $i$-th $M$-core distance defined as the distance between the $i$-th point and its $(M-1)$-th nearest neighbour (not including the query points themselves). In clustering and density estimation, M plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion.
+In clustering and density estimation, the parameter `M` plays the role of a smoothing factor; see (Campello et al. 2015) and the references therein for discussion. It corresponds to the <span class="pkg">hdbscan</span> Python package\'s `min_samples=M-1`.
+
+For $M\leq 2$, we get a spanning tree that minimises the sum of uclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If $M=2$, the function additionally returns the distance to each point\'s nearest neighbour.
+
+If $M>2$, the spanning tree is the smallest wrt the degree-M mutual reachability distance (Campello et al., 2013) given by $d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}$, where $d(i,j)$ is the Euclidean distance between the $i$-th and the $j$-th point, and $c_M(i)$ is the $i$-th $M$-core distance defined as the distance between the $i$-th point and its $(M-1)$-th nearest neighbour (not including the query points themselves).
 
 ## Usage
 

@@ -22,6 +22,7 @@
 #'
 #'
 #' @rdname omp
+#' @encoding UTF-8
 #' @export
 omp_set_num_threads <- function(n_threads) {
     .Call(`_quitefastmst_Romp_set_num_threads`, n_threads)
@@ -118,6 +119,7 @@ omp_get_max_threads <- function() {
 #' @seealso \code{\link{mst_euclid}}
 #'
 #' @rdname knn_euclid
+#' @encoding UTF-8
 #' @export
 knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 0L, squared = FALSE, verbose = FALSE) {
     .Call(`_quitefastmst_knn_euclid`, X, k, Y, algorithm, max_leaf_size, squared, verbose)
@@ -127,13 +129,23 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #'
 #' @description
 #' The function determines the/a(*) minimum spanning tree (MST) of a set
-#' of \eqn{n} points, i.e., an acyclic undirected graph whose vertices represent
-#' the points, and \eqn{n-1} edges with the minimal sum of weights, given by
-#' the pairwise distances.  MSTs have many uses in, amongst others,
-#' topological data analysis (clustering, dimensionality reduction, etc.).
+#' of \eqn{n} points, i.e., an acyclic undirected connected graph whose
+#' vertices represent the points,
+#' edges are weighted by the distances between point pairs,
+#' and have minimal total weight.
 #'
-#' For \eqn{M\leq 2}, we get a spanning tree that minimises the sum of Euclidean
-#' distances between the points. If \eqn{M=2}, the function additionally returns
+#' MSTs have many uses in, amongst others, topological data analysis
+#' (clustering, density estimation, dimensionality reduction,
+#' outlier detection, etc.).
+#'
+#' In clustering and density estimation, the parameter \code{M} plays the role
+#' of a smoothing factor; see (Campello et al. 2015) and the references therein
+#' for discussion.  It corresponds to the \pkg{hdbscan} Python package's
+#' \code{min_samples=M-1}.
+#'
+#' For \eqn{M\leq 2}, we get a spanning tree that minimises the sum of
+#' uclidean distances between the points, i.e., the classic Euclidean minimum
+#' spanning tree (EMST).   If \eqn{M=2}, the function additionally returns
 #' the distance to each point's nearest neighbour.
 #'
 #' If \eqn{M>2}, the spanning tree is the smallest wrt the degree-M
@@ -143,8 +155,6 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #' and \eqn{c_M(i)} is the \eqn{i}-th \eqn{M}-core distance defined as the distance
 #' between the \eqn{i}-th point and its \eqn{(M-1)}-th nearest neighbour
 #' (not including the query points themselves).
-#' In clustering and density estimation, M plays the role of a smoothing
-#' factor; see (Campello et al. 2015) and the references therein for discussion.
 #'
 #'
 #' @details
@@ -307,6 +317,7 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #' @seealso \code{\link{knn_euclid}}
 #'
 #' @rdname mst_euclid
+#' @encoding UTF-8
 #' @export
 mst_euclid <- function(X, M = 1L, algorithm = "auto", max_leaf_size = 0L, first_pass_max_brute_size = 0L, mutreach_adj = -1.00000011920928955078125, verbose = FALSE) {
     .Call(`_quitefastmst_mst_euclid`, X, M, algorithm, max_leaf_size, first_pass_max_brute_size, mutreach_adj, verbose)

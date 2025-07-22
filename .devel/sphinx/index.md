@@ -24,71 +24,22 @@ Package **features**:
 * supports multiprocessing via OpenMP (on selected platforms).
 
 
-Possible applications in data analysis:
+Possible applications in topological data analysis:
 clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
 [Genie](https://genieclust.gagolewski.com/), Lumbermark, Single linkage, etc.),
-classification and regression (k-nearest neighbours),
+density estimation, dimensionality reduction,
 outlier and noise point detection, and many more.
-
-
-
-
-## How to Install
-
-### Python Version
-
-To install from [PyPI](https://pypi.org/project/quitefastmst), call:
-
-```bash
-pip3 install quitefastmst  # python3 -m pip install quitefastmst
-```
-
-*To learn more about Python, check out my open-access textbook*
-[Minimalist Data Wrangling in Python](https://datawranglingpy.gagolewski.com/).
-
-
-
-For best performance, advanced users will benefit from compiling the package
-from sources:
-
-```bash
-CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quitefastmst"
-```
-
-🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin in `setup.py`?
-
-
-
-### R Version
-
-To install from [CRAN](https://CRAN.R-project.org/package=quitefastmst), call:
-
-```r
-install.packages("quitefastmst")
-```
-
-*To learn more about R, check out my open-access textbook*
-[Deep R Programming](https://deepr.gagolewski.com/).
-
-
-
-
-For best performance, advanced users will benefit from compiling the package
-from sources:
-
-```r
-Sys.setenv(CXX_DEFS="-O3 -march=native")  # for gcc and clang
-install.packages("quitefastmst", type="source")
-```
-
-
 
 
 ## Contributing
 
-*quitefastmst* is distributed under the open source GNU AGPL v3 license
-and can be downloaded from [GitHub](https://github.com/gagolews/quitefastmst).
-The core functionality is implemented in the form of a C++ library,
+**quitefastmst** is distributed under the open source GNU AGPL v3 license.
+Its source code can be downloaded from [GitHub](https://github.com/gagolews/quitefastmst).
+
+The Python version is available from [PyPI](https://pypi.org/project/quitefastmst)
+and the R one from [CRAN](https://CRAN.R-project.org/package=quitefastmst).
+
+However, the core functionality is implemented in the form of a C++ library,
 so it may be adapted to new projects relatively easily:
 any valuable contributions are welcome (Julia or Matlab bindings, etc.).
 
@@ -114,10 +65,14 @@ CRAN Entry <https://CRAN.R-project.org/package=quitefastmst>
 
 ::::{toctree}
 :maxdepth: 1
-:caption: Reference Manual
+:caption: Documentation
 :hidden:
 
+weave/definitions
+weave/benchmarks
+weave/python
 pythonapi
+weave/r
 rapi
 ::::
 

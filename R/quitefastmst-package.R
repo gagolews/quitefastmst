@@ -31,5 +31,6 @@
 #'
 #' @useDynLib quitefastmst, .registration=TRUE
 #' @importFrom Rcpp evalCpp
+#' @encoding UTF-8
 #' @keywords internal
 "_PACKAGE"

@@ -1,0 +1,41 @@
+# Python Examples
+
+*To learn more about Python, check out my open-access textbook*
+[Minimalist Data Wrangling in Python](https://datawranglingpy.gagolewski.com/).
+
+
+
+
+## How to Install
+
+To install the package from [PyPI](https://pypi.org/project/quitefastmst), call:
+
+```bash
+pip3 install quitefastmst  # python3 -m pip install quitefastmst
+```
+
+
+For best performance, advanced users will benefit from compiling the package
+from sources:
+
+```bash
+CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quitefastmst"
+```
+
+🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin in `setup.py`?
+
+
+## Basic Use
+
+<!--
+```python3
+import quitefastmst
+quitefastmst.knn_euclid(X, k, ...)
+quitefastmst.mst_euclid(X, M=1, ...)
+```
+-->
+
+::::{note}
+This section is a work in progress.
+In the meantime, take a look at the examples in the [reference manual](../pythonapi).
+::::
