@@ -30,3 +30,11 @@ In the meantime, take a look at the
 [R](../rapi)
 package reference manual.
 ::::
+
+
+Relevant citations —
+the Jarnik-Prim algorithm: {cite}`jarnik`, {cite}`olson`, {cite}`prim`,
+the Boruvka algorithm: {cite}`boruvka`, {cite}`dualtreeboruvka`,
+K-d trees: {cite}`kdtrees`, {cite}`kdtreesmidrange`, {cite}`kdtreesoptim`,
+mutual reachability distance: {cite}`hdbscan`, {cite}`hdbscan2`.
+

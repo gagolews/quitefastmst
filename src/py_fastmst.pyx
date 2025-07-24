@@ -490,7 +490,7 @@ cpdef tuple mst_euclid(
 
     .. [1]
         V. Jarník, O jistém problému minimálním,
-        Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63
+        Práce Moravské Přírodovědecké Společnosti v Brné 6, 1930, 57–63
 
     .. [2]
         C.F. Olson, Parallel algorithms for hierarchical clustering,
@@ -504,7 +504,7 @@ cpdef tuple mst_euclid(
 
     .. [4]
         O. Borůvka, O jistém problému minimálním,
-        Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58
+        Práce Moravské Přírodovědecké Společnosti v Brné 3, 1926, 37–58
 
     .. [5]
         W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
