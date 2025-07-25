@@ -1,4 +1,4 @@
-<a href="https://quitefastmst.gagolewski.com"><img src="https://www.gagolewski.com/_static/img/quitefastmst.png" align="right" height="128" width="128" /></a>
+<a href="https://quitefastmst.gagolewski.com/"><img src="https://www.gagolewski.com/_static/img/quitefastmst.png" align="right" height="128" width="128" /></a>
 # [*quitefastmst*](https://quitefastmst.gagolewski.com/) Package for R and Python
 
 ## Euclidean and Mutual Reachability Minimum Spanning Trees
