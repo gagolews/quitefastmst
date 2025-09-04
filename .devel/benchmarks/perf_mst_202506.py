@@ -1,8 +1,12 @@
-n_jobs = 10
-n_trials = 3
-seed = 123
-
 """
+NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
+Run like: python3 ~/Python/quitefastmst/.devel/benchmarks/perf_mst_202506.py
+
+quitefastmst library and package for R and Python
+Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
+
+
+
 CPPFLAGS="-O3 -march=native" pip3 install fast_hdbscan --force --no-binary="fast_hdbscan" --verbose  # relies on numba, which forces -O3 -march=native anyway
 CPPFLAGS="-O3 -march=native" pip3 install pykdtree --force --no-binary="pykdtree" --verbose
 CPPFLAGS="-O3 -march=native" pip3 install numpy==2.2.6  --no-binary="numpy"  --ignore-installed # for numba
@@ -10,10 +14,14 @@ CPPFLAGS="-O3 -march=native" pip3 install ~/Python/quitefastmst --force --verbos
 CPPFLAGS="-O3 -march=native" pip3 install ~/Python/genieclust --force --verbose
 CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.packages(c("RANN", "Rnanoflann", "dbscan", "nabor", "reticulate", "mlpack"))'
 # mlpack's source distribution is not available from PyPI
+
 """
 
+n_jobs = 1
+n_trials = 3
+seed = 123
 
-n = 100_000_000
+n = 2_500_000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -116,7 +124,7 @@ for m in modules:
 import perf_mst_202506_defs as msts
 
 cases = dict(
-    quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
+    #quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
     quitefast_sesqui_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_sesqui_kd_tree(X, M),
     # quitefast_dual_kd_tree         = lambda X, M, n_jobs: msts.mst_quitefast_dual_kd_tree(X, M),
     # wangyiqiu                      = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
@@ -124,7 +132,7 @@ cases = dict(
     # mlpack                         = lambda X, M, n_jobs: msts.mst_mlpack(X, M, n_jobs),
     # fasthdbscan_kdtree             = lambda X, M, n_jobs: msts.mst_fasthdbscan_kdtree(X, M),
     # hdbscan_kdtree                 = lambda X, M, n_jobs: msts.mst_hdbscan_kdtree(X, M, n_jobs),
-    # r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
+    r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
     # r_quitefast_default            = lambda X, M, n_jobs: msts.mst_r_quitefast_default(X, M),
 )
 

@@ -5,13 +5,18 @@ This section is a work in progress.
 Below we present some preliminary results.
 ::::
 
+<!--
+TODO: copy perf_mst_*.py and *.csv before making any changes.
+NOTE: System has been updated - new software specs.
+-->
 
 
 ## Platform
 
-All timings were performed on a mid-tier laptop with an
-Intel Core i7-1355U (AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU with 12MB cache
-and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1 SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.
+All timings were performed on a mid-tier laptop with an Intel Core i7-1355U
+(AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU
+with 12MB cache and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1
+SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.
 
 Python 3.13.5 [gcc] OpenBLAS 0.3.29;
 packages:
@@ -45,9 +50,11 @@ with each coordinate sampled independently from the standard normal distribution
 This is a pretty "difficult" setting for the spatial search data structures
 as data are very "unstructured".  Most real-world datasets are more well-behaving.
 
-We tested smoothing parameters $M=1$ (standard Euclidean MSTs) and $M=10$.
+We tested smoothing parameters $M=1$ (standard Euclidean MSTs)
+and $M=10$ (mutual reachability MSTs wrt the Euclidean distance
+to the 9th nearest neighbour).
 
-Number of threads was set to 1 or 10.  Note that **mlpack** does not support
+The number of threads was set to 1 or 10.  Note that **mlpack** does not support
 parallel processing and only implements standard EMSTs.
 **[wangyiqiu_hdbscan](https://github.com/wangyiqiu/hdbscan)**
 required some trickery to be run from the terminal – it does not work out
@@ -69,7 +76,6 @@ See the relevant Python scripts:
 All timings are given in seconds.
 Less is better.
 
-
 ```{python benchmark-imports,results="hide",echo=FALSE}
 import numpy as np
 import pandas as pd
@@ -88,7 +94,7 @@ plt.rcParams.update({
     'font.family': 'sans-serif',
     'font.sans-serif': ['Ubuntu Condensed', 'Alegreya', 'Alegreya Sans']
 })
-res  = pd.read_csv("perf_mst_202506-apollo.csv", comment="#")
+res  = pd.read_csv("perf_mst_202506.csv", comment="#")
 res = res.loc[res.method.isin(['quitefast_sesqui_kd_tree',
        'wangyiqiu',
        'fasthdbscan_kdtree', 'hdbscan_kdtree', 'r_mlpack']), :]

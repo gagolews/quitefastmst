@@ -13,9 +13,10 @@ Below we present some preliminary results.
 
 ## Platform
 
-All timings were performed on a mid-tier laptop with an
-Intel Core i7-1355U (AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU with 12MB cache
-and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1 SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.
+All timings were performed on a mid-tier laptop with an Intel Core i7-1355U
+(AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU
+with 12MB cache and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1
+SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.
 
 Python 3.13.5 [gcc] OpenBLAS 0.3.29;
 packages:
@@ -48,9 +49,11 @@ with each coordinate sampled independently from the standard normal distribution
 This is a pretty "difficult" setting for the spatial search data structures
 as data are very "unstructured".  Most real-world datasets are more well-behaving.
 
-We tested smoothing parameters $M=1$ (standard Euclidean MSTs) and $M=10$.
+We tested smoothing parameters $M=1$ (standard Euclidean MSTs)
+and $M=10$ (mutual reachability MSTs wrt the Euclidean distance
+to the 9th nearest neighbour).
 
-Number of threads was set to 1 or 10.  Note that **mlpack** does not support
+The number of threads was set to 1 or 10.  Note that **mlpack** does not support
 parallel processing and only implements standard EMSTs.
 **[wangyiqiu_hdbscan](https://github.com/wangyiqiu/hdbscan)**
 required some trickery to be run from the terminal – it does not work out
@@ -75,7 +78,6 @@ Less is better.
 
 
 
-
 ### 1 thread
 
 |       n |   d |   M |   quitefastmst |   wangyiqiu |   fasthdbscan |   mlpack |   hdbscan |
@@ -84,9 +86,9 @@ Less is better.
 |  250000 |   2 |  10 |           0.39 |        1.41 |          2.26 |       |      6.22 |
 |  250000 |   5 |   1 |           1.26 |        6.61 |         19.80 |    10.77 |     37.28 |
 |  250000 |   5 |  10 |           1.50 |       19.29 |          5.67 |       |     26.70 |
-| 2500000 |   2 |   1 |           2.98 |        8.33 |         83.73 |       |        |
+| 2500000 |   2 |   1 |           2.98 |        8.33 |         83.73 |    11.77 |        |
 | 2500000 |   2 |  10 |           4.35 |       17.93 |         45.79 |       |        |
-| 2500000 |   5 |   1 |          14.21 |       67.87 |        460.17 |       |        |
+| 2500000 |   5 |   1 |          14.21 |       67.87 |        460.17 |   129.24 |        |
 | 2500000 |   5 |  10 |          16.59 |      217.54 |        141.18 |       |        | 
 
 

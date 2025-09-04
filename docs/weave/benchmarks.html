@@ -295,9 +295,10 @@ Below we present some preliminary results.</p>
 </div>
 <section id="platform">
 <h2>Platform<a class="headerlink" href="#platform" title="Link to this heading">¶</a></h2>
-<p>All timings were performed on a mid-tier laptop with an
-Intel Core i7-1355U (AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU with 12MB cache
-and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1 SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.</p>
+<p>All timings were performed on a mid-tier laptop with an Intel Core i7-1355U
+(AVX2-VNNI) (12 threads, 2 performance cores, 8 efficient cores) CPU
+with 12MB cache and 32 GB RAM, running GNU/Linux 6.15.5-1-default #1
+SMP PREEMPT_DYNAMIC (478c062) x86_64 openSUSE Tumbleweed.</p>
 <p>Python 3.13.5 [gcc] OpenBLAS 0.3.29;
 packages:
 <strong>quitefastmst</strong> 0.9.0,
@@ -323,8 +324,10 @@ using gcc 15.1.1 20250626</p>
 with each coordinate sampled independently from the standard normal distribution.
 This is a pretty “difficult” setting for the spatial search data structures
 as data are very “unstructured”.  Most real-world datasets are more well-behaving.</p>
-<p>We tested smoothing parameters <span class="math notranslate nohighlight">\(M=1\)</span> (standard Euclidean MSTs) and <span class="math notranslate nohighlight">\(M=10\)</span>.</p>
-<p>Number of threads was set to 1 or 10.  Note that <strong>mlpack</strong> does not support
+<p>We tested smoothing parameters <span class="math notranslate nohighlight">\(M=1\)</span> (standard Euclidean MSTs)
+and <span class="math notranslate nohighlight">\(M=10\)</span> (mutual reachability MSTs wrt the Euclidean distance
+to the 9th nearest neighbour).</p>
+<p>The number of threads was set to 1 or 10.  Note that <strong>mlpack</strong> does not support
 parallel processing and only implements standard EMSTs.
 <strong><a class="reference external" href="https://github.com/wangyiqiu/hdbscan">wangyiqiu_hdbscan</a></strong>
 required some trickery to be run from the terminal – it does not work out
@@ -399,7 +402,7 @@ Less is better.</p>
 <td class="text-right"><p>2.98</p></td>
 <td class="text-right"><p>8.33</p></td>
 <td class="text-right"><p>83.73</p></td>
-<td class="text-right"><p></p></td>
+<td class="text-right"><p>11.77</p></td>
 <td class="text-right"><p></p></td>
 </tr>
 <tr class="row-odd"><td class="text-right"><p>2500000</p></td>
@@ -417,7 +420,7 @@ Less is better.</p>
 <td class="text-right"><p>14.21</p></td>
 <td class="text-right"><p>67.87</p></td>
 <td class="text-right"><p>460.17</p></td>
-<td class="text-right"><p></p></td>
+<td class="text-right"><p>129.24</p></td>
 <td class="text-right"><p></p></td>
 </tr>
 <tr class="row-odd"><td class="text-right"><p>2500000</p></td>
@@ -555,7 +558,7 @@ Less is better.</p>
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-07-24T12:23:48+0200.
+              Last updated on 2025-09-04T16:14:22+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>

@@ -4,9 +4,9 @@
 
 *   Parallelise the K-d tree building procedure.
 
-*   [Python] Set up OpenMP on macOS.
+*   [Python] Set up OpenMP on macOS. (help needed)
 
-*   Extend the online documentation: tutorials, benchmarks, definitions.
+*   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 *   PyPI build for Python 3.14
 

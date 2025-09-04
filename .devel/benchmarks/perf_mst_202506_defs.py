@@ -1,3 +1,10 @@
+"""
+NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
+
+quitefastmst library and package for R and Python
+Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
+"""
+
 import numpy as np
 import numba
 import hdbscan
@@ -12,7 +19,7 @@ import re
 
 
 max_n_slow_methods   = 250_000
-max_n_medium_methods = 1_000_000
+max_n_medium_methods = 2_500_000
 max_n_brute          = 100_000
 
 import rpy2
