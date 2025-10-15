@@ -25,12 +25,12 @@ using, e.g., ``-O3 -march=native`` compiler flags and with OpenMP support on.
 # ############################################################################ #
 
 # version string, e.g., "1.0.0.9001" or "1.1.1"
-__version__ = "0.9.0"
+__version__ = "0.9.0.9001"
 
 from .quitefastmst import *
 
 
-# TODO: Why the OMP_NUM_THREADS envvar is not honoured automatically?
+# TODO: Why is the OMP_NUM_THREADS envvar not honoured automatically?
 import os
 _omp_max_threads_original = omp_get_max_threads()
 _omp_num_threads_envvar = int(os.getenv("OMP_NUM_THREADS", -1))

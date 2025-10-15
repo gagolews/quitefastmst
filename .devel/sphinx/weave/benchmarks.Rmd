@@ -50,8 +50,8 @@ with each coordinate sampled independently from the standard normal distribution
 This is a pretty "difficult" setting for the spatial search data structures
 as data are very "unstructured".  Most real-world datasets are more well-behaving.
 
-We tested smoothing parameters $M=1$ (standard Euclidean MSTs)
-and $M=10$ (mutual reachability MSTs wrt the Euclidean distance
+We tested smoothing parameters $M=0$ (standard Euclidean MSTs)
+and $M=9$ (mutual reachability MSTs with respect to the Euclidean distance
 to the 9th nearest neighbour).
 
 The number of threads was set to 1 or 10.  Note that **mlpack** does not support
@@ -68,13 +68,12 @@ input dataset to ensure **fast_hdbscan** got compiled on-the-fly by **numba**.
 See the relevant Python scripts:
 [`perf_mst_202506.py`](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506.py),
 [`perf_mst_202506_defs`.py](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py)
-
+(🚧🚧 TODO: next release: *M-1 → M* 🚧🚧)
 
 
 ## Results
 
-All timings are given in seconds.
-Less is better.
+All timings are given in seconds.  Less is better.
 
 ```{python benchmark-imports,results="hide",echo=FALSE}
 import numpy as np

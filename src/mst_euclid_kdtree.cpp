@@ -53,8 +53,8 @@ void _mst_euclid_kdtree(
     for (Py_ssize_t i=0; i<n-1; ++i)
         mst_dist[i] = sqrt(mst_dist[i]);
 
-    if (M>1) {
-        for (Py_ssize_t i=0; i<n*(M-1); ++i)
+    if (M >= 1) {
+        for (Py_ssize_t i=0; i<n*M; ++i)
             nn_dist[i] = sqrt(nn_dist[i]);
     }
 
@@ -65,20 +65,21 @@ void _mst_euclid_kdtree(
 
 
 /*!
- *  For `M<=2`, we get a spanning tree that minimises the sum of Euclidean
- *  distances between the points. If `M==2`, the function additionally returns
+ *  For `M<=1`, we get a spanning tree that minimises the sum of Euclidean
+ *  distances between the points. If `M==1`, the function additionally returns
  *  the distance to each point's nearest neighbour.
  *
- *  If `M>2`, the spanning tree is the smallest wrt the degree-`M`
+ *  If `M>1`, the spanning tree is the smallest w.r.t. the degree-`M`
  *  mutual reachability distance [9]_ given by
  *  :math:`d_M(i, j)=\\max\\{ c_M(i), c_M(j), d(i, j)\\}`, where :math:`d(i,j)`
  *  is the Euclidean distance between the `i`-th and the `j`-th point,
  *  and :math:`c_M(i)` is the `i`-th `M`-core distance defined as the distance
- *  between the `i`-th point and its `(M-1)`-th nearest neighbour
+ *  between the `i`-th point and its `M`-th nearest neighbour
  *  (not including the query points themselves).
  *  In clustering and density estimation, `M` plays the role of a smoothing
- *  factor; see [10]_ and the references therein for discussion. This parameter
- *  corresponds to the ``hdbscan`` Python package's ``min_samples=M-1``.
+ *  factor; see [10]_ and the references therein for discussion.
+ *
+ *  Note that [9]_ defines the core distance as the distance to the (M-1)-th NN.
  *
  *  (\*) We note that if there are many pairs of equidistant points,
  *  there can be many minimum spanning trees. In particular, it is likely
@@ -98,7 +99,7 @@ void _mst_euclid_kdtree(
  *  i.e., the nearest point thereto from another cluster.
  *  The "dual-tree" Borůvka version of the algorithm is, in principle, based
  *  on [5]_. As far as our implementation is concerned, the dual-tree approach
- *  is only faster in 2- and 3-dimensional spaces, for `M<=2`, and in
+ *  is only faster in 2- and 3-dimensional spaces, for `M<=1`, and in
  *  a single-threaded setting.  For another (approximate) adaptation
  *  of the dual-tree algorithm to the mutual reachability distance, see [11]_.
  *
@@ -149,24 +150,24 @@ void _mst_euclid_kdtree(
  * @param X [destroyable] a C-contiguous data matrix, shape n*d
  * @param n number of rows
  * @param d number of columns, 2<=d<=20
- * @param M the level of the "core" distance if M > 1
+ * @param M the degree of the "core" distance if M > 0
  * @param mst_dist [out] a vector of length n-1, gives weights of the
  *        resulting MST edges in nondecreasing order
  * @param mst_ind [out] a vector of length 2*(n-1), representing
  *        a c_contiguous array of shape (n-1,2), defining the edges
  *        corresponding to mst_d, with mst_i[j,0] < mst_i[j,1] for all j
- * @param nn_dist [out] NULL for M==1 or the n*(M-1) distances to the n points'
- *        (M-1) nearest neighbours
- * @param nn_ind [out] NULL for M==1 or the n*(M-1) indexes of the n points'
- *        (M-1) nearest neighbours
+ * @param nn_dist [out] NULL for M==0 or the n*M distances to the n points'
+ *        M nearest neighbours
+ * @param nn_ind [out] NULL for M==0 or the n*M indexes of the n points'
+ *        M nearest neighbours
  * @param max_leaf_size maximal number of points in the K-d tree's leaves
  * @param first_pass_max_brute_size minimal number of points in a node to treat
  *        it as a leaf (unless it's actually a leaf) in the first iteration
  *        of the algorithm
  * @param boruvka_variant whether a dual- (2.0), a single- (1.0) or
  *        a sesqui-tree (otherwise) Borůvka algorithm should be used
- * @param mutreach_adj (M>2 only) adjustment for mutual reachability distance
- *        ambiguity (for M>2):
+ * @param mutreach_adj (M>1 only) adjustment for mutual reachability distance
+ *        ambiguity (for M>1):
  *        values in `(-1,0)` prefer connecting to farther NNs,
  *        values in `(0, 1)` fall for closer NNs,
  *        values in `(-2,-1)` prefer connecting to points with smaller core distances,
@@ -188,8 +189,8 @@ void Cmst_euclid_kdtree(
 
     if (n <= 0)   throw std::domain_error("n <= 0");
     if (d <= 0)   throw std::domain_error("d <= 0");
-    if (M <= 0)   throw std::domain_error("M <= 0");
-    if (M-1 >= n) throw std::domain_error("M >= n-1");
+    if (M <  0)   throw std::domain_error("M < 0");
+    if (M >= n)   throw std::domain_error("M >= n");
     if (std::abs(mutreach_adj)>=2) throw std::domain_error("|mutreach_adj|>=2");
     QUITEFASTMST_ASSERT(mst_dist);
     QUITEFASTMST_ASSERT(mst_ind);
@@ -253,6 +254,7 @@ template void Cmst_euclid_kdtree<float>(
     float mutreach_adj,
     bool verbose
 );
+
 
 template void Cmst_euclid_kdtree<double>(
     double* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,

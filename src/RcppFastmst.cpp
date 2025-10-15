@@ -1,6 +1,6 @@
 /*  Functions to compute k-nearest neighbours and minimum spanning trees
  *  with respect to the Euclidean metric and the thereon-based mutual
- *  reachability distances. The module provides access to a quite fast
+ *  reachability distances. The module gives access to a quite fast
  *  implementation of K-d trees.
  *
  *  For best speed, consider building the package from sources
@@ -35,7 +35,7 @@ using namespace Rcpp;
 //' can be used by \code{\link{knn_euclid}} and \code{\link{mst_euclid}},
 //' amongst others.
 //'
-//' @param n_threads maximum number of threads to use
+//' @param n_threads maximal number of threads to use
 //'
 //' @return
 //' \code{omp_get_max_threads} returns the maximal number
@@ -89,12 +89,11 @@ int Romp_get_max_threads()
 //' midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
 //' node pruning strategies inspired by some ideas from (Sample et al., 2001),
 //' and a couple of further tuneups proposed by the current author.
-//' Still, it is well-known that K-d trees
-//' perform well only in spaces of low intrinsic dimensionality.  Thus,
-//' due to the so-called curse of dimensionality, for high \code{d},
-//' the brute-force algorithm is recommended.
+//' Still, it is well-known that K-d trees perform well only in spaces of low
+//' intrinsic dimensionality.  Thus, due to the so-called curse of
+//' dimensionality, for high \code{d}, the brute-force algorithm is recommended.
 //'
-//' The number of threads used is controlled via the \code{OMP_NUM_THREADS}
+//' The number of threads is controlled via the \code{OMP_NUM_THREADS}
 //' environment variable or via the \code{\link{omp_set_num_threads}} function
 //' at runtime. For best speed, consider building the package
 //' from sources using, e.g., \code{-O3 -march=native} compiler flags.
@@ -289,9 +288,8 @@ List knn_euclid(
 //' @description
 //' The function determines the/a(*) minimum spanning tree (MST) of a set
 //' of \eqn{n} points, i.e., an acyclic undirected connected graph whose
-//' vertices represent the points,
-//' edges are weighted by the distances between point pairs,
-//' and have minimal total weight.
+//' vertices represent the points, and edges are weighted by the distances
+//' between point pairs and have minimal total weight.
 //'
 //' MSTs have many uses in, amongst others, topological data analysis
 //' (clustering, density estimation, dimensionality reduction,
@@ -299,25 +297,28 @@ List knn_euclid(
 //'
 //' In clustering and density estimation, the parameter \code{M} plays the role
 //' of a smoothing factor; for discussion, see (Campello et al., 2015)
-//' and the references therein.  \code{M} corresponds to the \pkg{hdbscan}
-//' Python package's \code{min_samples=M-1}.
+//' and the references therein.
 //'
-//' For \eqn{M\leq 2}, we get a spanning tree that minimises the sum of
+//' For \eqn{M\leq 1}, we get a spanning tree that minimises the sum of
 //' Euclidean distances between the points, i.e., the classic Euclidean minimum
-//' spanning tree (EMST).   If \eqn{M=2}, the function additionally returns
+//' spanning tree (EMST).   If \eqn{M=1}, the function additionally returns
 //' the distance to each point's nearest neighbour.
 //'
-//' If \eqn{M>2}, the spanning tree is the smallest with respect to
+//' If \eqn{M>1}, the spanning tree is the smallest with respect to
 //' the degree-\eqn{M} mutual reachability distance (Campello et al., 2013) given by
 //' \eqn{d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}}, where \eqn{d(i,j)}
 //' is the standard Euclidean distance between the \eqn{i}-th and the \eqn{j}-th point,
 //' and \eqn{c_M(i)} is the \eqn{i}-th \eqn{M}-core distance defined as the distance
-//' between the \eqn{i}-th point and its \eqn{(M-1)}-th nearest neighbour
+//' between the \eqn{i}-th point and its \eqn{M}-th nearest neighbour
 //' (not including the query point itself).
+//'
+//' Note that (Campello et al., 2013) defines the core distance as the
+//' distance to the \eqn{(M-1)}-th nearest neighbour (or the \eqn{M}-th one,
+//' but including self).
 //'
 //'
 //' @details
-//' (*) We note that if there are many pairs of equidistant points,
+//' (*) Note that if there are many pairs of equidistant points,
 //' there can be many minimum spanning trees. In particular, it is likely
 //' that there are point pairs with the same mutual reachability distances.
 //'
@@ -356,7 +357,7 @@ List knn_euclid(
 //' The "dual-tree" Borůvka version of the algorithm is, in principle, based
 //' on (March et al., 2010). As far as our implementation is concerned,
 //' the dual-tree approach is often only faster in 2- and 3-dimensional spaces,
-//' for \eqn{M\leq 2}, and in a single-threaded setting.  For another
+//' for \eqn{M\leq 1}, and in a single-threaded setting.  For another
 //' (approximate) adaptation of the dual-tree algorithm to mutual
 //' reachability distances, see (McInnes and Healy, 2017).
 //'
@@ -371,7 +372,7 @@ List knn_euclid(
 //' the "brute-force" algorithm is recommended.  Here, we provided a
 //' parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a.
 //' Prim, 1957) algorithm, where the distances are computed
-//' on the fly (only once for \eqn{M\leq 2}).
+//' on the fly (only once for \eqn{M\leq 1}).
 //'
 //' The number of threads used is controlled via the \code{OMP_NUM_THREADS}
 //' environment variable or via the \code{\link{omp_set_num_threads}} function
@@ -423,9 +424,9 @@ List knn_euclid(
 //'
 //'
 //' @param X the "database"; a matrix of shape \eqn{n\times d}
-//' @param M the degree of the mutual reachability distance
-//'    (should be rather small).
-//'    \eqn{M\leq 2} denotes the ordinary Euclidean distance
+//' @param M the smoothing factor a.k.a. the degree of the mutual reachability
+//'    distance (should be rather small).
+//'    \eqn{M\leq 1} gives the ordinary Euclidean distance
 //' @param algorithm \code{"auto"}, \code{"single_kd_tree"},
 //'    \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"}, or \code{"brute"};
 //'    K-d trees can only be used for \eqn{d} between 2 and 20 only;
@@ -440,7 +441,7 @@ List knn_euclid(
 //'    iteration of the algorithm; use \code{0} to select the default value,
 //'    currently set to 32
 //' @param mutreach_adj adjustment for mutual reachability distance ambiguity
-//'    (for \eqn{M>2}) whose fractional part should be close to 0:
+//'    (for \eqn{M>1}) whose fractional part should be close to 0:
 //'    values in \eqn{(-1,0)} prefer connecting to farther nearest neighbours,
 //'    values in \eqn{(0, 1)} fall for closer NNs (which is what many other
 //'    implementations provide), values in \eqn{(-2,-1)} prefer connecting
@@ -450,7 +451,7 @@ List knn_euclid(
 //'
 //'
 //' @return
-//' A list with two $(M=1)$ or four $(M>1)$ elements, \code{mst.index} and
+//' A list with two $(M=0)$ or four $(M>0)$ elements, \code{mst.index} and
 //' \code{mst.dist}, and additionally \code{nn.index} and \code{nn.dist}.
 //'
 //' \code{mst.index} is a matrix with \eqn{n-1} rows and \eqn{2} columns,
@@ -463,9 +464,9 @@ List knn_euclid(
 //' the indexes (lexicographic ordering of the \code{(weight, index1, index2)}
 //' triples).  For each \code{i}, it holds \code{mst_ind[i,1]<mst_ind[i,2]}.
 //'
-//' \code{nn.index} is an \eqn{n} by \eqn{M-1} matrix giving the indexes
+//' \code{nn.index} is an \eqn{n} by \eqn{M} matrix giving the indexes
 //' of each point's nearest neighbours with respect to the Euclidean distance.
-//' \code{nn.dist} provides the corresponding distances.
+//' \code{nn.dist} provides the corresponding Euclidean distances.
 //'
 //'
 //' @examples
@@ -485,7 +486,7 @@ List knn_euclid(
 // [[Rcpp::export("mst_euclid")]]
 List mst_euclid(
     SEXP X,
-    int M=1,
+    int M=0,
     Rcpp::String algorithm="auto",
     int max_leaf_size=0,
     int first_pass_max_brute_size=0,
@@ -504,7 +505,7 @@ List mst_euclid(
     FLOAT boruvka_variant = 1.5;
 
     if (n < 1 || d <= 1)  stop("X is ill-shaped");
-    if (M < 1 || M > n-1) stop("incorrect M");
+    if (M < 0 || M >= n)   stop("incorrect M");
 
     if (algorithm == "auto") {
         if (2 <= d && d <= 20) {
@@ -563,22 +564,23 @@ List mst_euclid(
 
     std::vector<Py_ssize_t> mst_ind((n-1)*2);    // C-order
     std::vector<FLOAT>      mst_dist(n-1);       // TODO: use out_dist
-    std::vector<Py_ssize_t> nn_ind((M==1)?0:(n*(M-1)));
-    std::vector<FLOAT>      nn_dist((M==1)?0:(n*(M-1)));
+    std::vector<Py_ssize_t> nn_ind((M==0)?0:(n*M));
+    std::vector<FLOAT>      nn_dist((M==0)?0:(n*M));
 
     if (use_kdtree)
         Cmst_euclid_kdtree(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
-            (M==1)?nullptr:nn_dist.data(), (M==1)?nullptr:nn_ind.data(),
+            (M==0)?nullptr:nn_dist.data(), (M==0)?nullptr:nn_ind.data(),
             max_leaf_size, first_pass_max_brute_size, boruvka_variant,
             mutreach_adj, verbose
         );
     else
         Cmst_euclid_brute(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
-            (M==1)?nullptr:nn_dist.data(), (M==1)?nullptr:nn_ind.data(),
+            (M==0)?nullptr:nn_dist.data(), (M==0)?nullptr:nn_ind.data(),
             mutreach_adj, verbose
         );
+
 
     Rcpp::IntegerMatrix out_mst_ind(n-1, 2);
     Rcpp::NumericVector out_mst_dist(n-1);
@@ -588,18 +590,18 @@ List mst_euclid(
         out_mst_dist(i)    = mst_dist[i];
     }
 
-    if (M == 1) {
+    if (M == 0) {
         return Rcpp::List::create(
             Rcpp::Named("mst.index")=out_mst_ind,
             Rcpp::Named("mst.dist") =out_mst_dist
         );
     }
     else {
-        Rcpp::IntegerMatrix out_nn_ind(n, M-1);
-        Rcpp::NumericMatrix out_nn_dist(n, M-1);
+        Rcpp::IntegerMatrix out_nn_ind(n, M);
+        Rcpp::NumericMatrix out_nn_dist(n, M);
         Py_ssize_t u=0;
         for (Py_ssize_t i=0; i<n; ++i) {
-            for (Py_ssize_t j=0; j<M-1; ++j) {
+            for (Py_ssize_t j=0; j<M; ++j) {
                 out_nn_ind(i, j)  = nn_ind[u]+1;  // 1-based indexing
                 out_nn_dist(i, j) = nn_dist[u];
                 ++u;

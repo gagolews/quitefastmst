@@ -33,7 +33,7 @@ install.packages("quitefastmst", type="source")
 <!--
 ```r
 knn_euclid(X, k, ...)
-mst_euclid(X, M=1, ...)
+mst_euclid(X, M=0, ...)
 ```
 -->
 

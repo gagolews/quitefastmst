@@ -16,7 +16,7 @@ omp_get_max_threads()
 
 |             |                                  |
 |-------------|----------------------------------|
-| `n_threads` | maximum number of threads to use |
+| `n_threads` | maximal number of threads to use |
 
 ## Value
 

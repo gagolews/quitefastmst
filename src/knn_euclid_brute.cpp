@@ -25,14 +25,14 @@
 
 
 /*! Determine the k nearest neighbours of each point
- *  wrt the Euclidean distance
+ *  w.r.t. the Euclidean distance
  *
  *  Exactly n*(n-1)/2 distance computations are performed.
  *
  *  It is assumed that each query point is not its own neighbour.
  *
  *  Worst-case time complexity: O(n*(n-1)/2*d*k).
- *  So, use for small k, say, k<=20.
+ *  So, use for small k, say, k <= 20.
  *
  *
  *  @param X the n input points in R^d; a c_contiguous array, shape (n,d)
@@ -124,7 +124,7 @@ void Cknn1_euclid_brute(
 
 
 /*! Determine the k nearest neighbours of each point
- *  wrt the Euclidean distance
+ *  w.r.t. the Euclidean distance
  *
  *  Use for small k, say, k<=20.
  *

@@ -71,12 +71,11 @@ a copy of the input dataset), features the sliding
 midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999),
 node pruning strategies inspired by some ideas from (Sample et al., 2001),
 and a couple of further tuneups proposed by the current author.
-Still, it is well-known that K-d trees
-perform well only in spaces of low intrinsic dimensionality.  Thus,
-due to the so-called curse of dimensionality, for high \code{d},
-the brute-force algorithm is recommended.
+Still, it is well-known that K-d trees perform well only in spaces of low
+intrinsic dimensionality.  Thus, due to the so-called curse of
+dimensionality, for high \code{d}, the brute-force algorithm is recommended.
 
-The number of threads used is controlled via the \code{OMP_NUM_THREADS}
+The number of threads is controlled via the \code{OMP_NUM_THREADS}
 environment variable or via the \code{\link{omp_set_num_threads}} function
 at runtime. For best speed, consider building the package
 from sources using, e.g., \code{-O3 -march=native} compiler flags.

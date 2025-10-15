@@ -21,7 +21,7 @@ def mst_check(X, **kwargs):
     n = X.shape[0]
     d = X.shape[1]
 
-    for M in [1, 2, 3, 5, n-1]:
+    for M in [0, 1, 2, 3, 5, n-1]:
         res = []
         for algo in ["auto", "brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
             if d > 20 and algo in ["single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
@@ -34,7 +34,7 @@ def mst_check(X, **kwargs):
             assert np.allclose(res[0][0].sum(), res[-1][0].sum())
             assert np.allclose(res[0][0], res[-1][0])
 
-            if M == 1:
+            if M == 0:
                 assert len(res[-1]) == 2
                 assert np.all(res[0][1] == res[-1][1])  # is unique
             else:

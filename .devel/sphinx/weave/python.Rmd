@@ -31,7 +31,7 @@ CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quit
 ```python3
 import quitefastmst
 quitefastmst.knn_euclid(X, k, ...)
-quitefastmst.mst_euclid(X, M=1, ...)
+quitefastmst.mst_euclid(X, M=0, ...)
 ```
 -->
 

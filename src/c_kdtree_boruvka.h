@@ -1,12 +1,12 @@
-/*  Borůvka-type algorithms for finding minimum spanning trees
- *  wrt the Euclidean metric or the thereon-based mutual reachability distance.
+/*  Borůvka-type algorithms for finding minimum spanning trees w.r.t.
+ *  the Euclidean metric or the thereon-based mutual reachability distance.
  *
  *  The dual-tree Borůvka version is, in principle, based on
  *  "Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
  *  and Applications" by W.B. March, P. Ram, A.G. Gray published
  *  in ACM SIGKDD 2010.  As far as our implementation
  *  is concerned, the dual-tree approach is only faster in 2- and
- *  3-dimensional spaces, for M <= 2, and in a single-threaded setting
+ *  3-dimensional spaces, for M <= 1, and in a single-threaded setting
  *  (in the current implementation, only the first iteration is parallelised
  *  anyway).
  *
@@ -55,7 +55,7 @@ struct kdtree_node_clusterable : public kdtree_node_base<FLOAT, D>
 
     Py_ssize_t cluster_repr;  //< representative point index if all descendants are in the same cluster, -1 otherwise
 
-    struct t_dtb_data { FLOAT cluster_max_dist; FLOAT min_dcore /* M>2 */; };
+    struct t_dtb_data { FLOAT cluster_max_dist; FLOAT min_dcore /* M>1 */; };
     struct t_qtb_data { FLOAT lastbest_dist; Py_ssize_t lastbest_ind; Py_ssize_t lastbest_from; };
 
     union {
@@ -157,7 +157,7 @@ class kdtree_nearest_outsider
 private:
     const FLOAT* data;      ///< the dataset
     const FLOAT* dcore;     ///< the "core" distances
-    Py_ssize_t M;
+    Py_ssize_t M;           ///< the "smoothing factor
 
     const Py_ssize_t* ds_par;  ///< points' cluster IDs (par[i]==ds.find(i)!)
 
@@ -294,7 +294,7 @@ public:
         this->x = data+D*this->which;
         this->cluster = curleaf->cluster_repr;
 
-        if (M>2) find_nn_multi<true>(root);
+        if (M>1) find_nn_multi<true>(root);
         else find_nn_multi<false>(root);
     }
 
@@ -315,7 +315,7 @@ public:
         this->x = data+D*this->which;
         this->cluster = ds_par[this->which];
 
-        if (M>2) find_nn_single<true>(root);
+        if (M>1) find_nn_single<true>(root);
         else find_nn_single<false>(root);
     }
 
@@ -337,8 +337,8 @@ template <
 class kdtree_boruvka : public kdtree<FLOAT, D, DISTANCE, NODE>
 {
 protected:
-    FLOAT*  tree_dist;     ///< size n-1
-    Py_ssize_t* tree_ind;  ///< size 2*(n-1)
+    FLOAT*  tree_dist;       ///< size n-1
+    Py_ssize_t* tree_ind;    ///< size 2*(n-1)
     Py_ssize_t  tree_edges;  /// number of MST edges already found
     Py_ssize_t tree_iter;
     CDisjointSets ds;
@@ -353,14 +353,14 @@ protected:
     BORUVKA_TYPE boruvka_variant;
     bool reset_nns;
 
-    const FLOAT mutreach_adj;  // M>2 only
+    const FLOAT mutreach_adj;  // M>1 only
 
-    std::vector<FLOAT> lastbest_dist;   // !use_dtb only
+    std::vector<FLOAT> lastbest_dist;       // !use_dtb only
     std::vector<Py_ssize_t> lastbest_ind;   // !use_dtb only
 
     const Py_ssize_t M;              // mutual reachability distance - "smoothing factor"
-    std::vector<FLOAT> dcore;        // distances to the (M-1)-th nns of each point if M>1 or 1-NN for M==1
-    std::vector<FLOAT> Mnn_dist;     // M-1 nearest neighbours of each point if M>1
+    std::vector<FLOAT> dcore;        // distances to the M-th nns of each point if M>0 or 1-NN for M==0
+    std::vector<FLOAT> Mnn_dist;     // M nearest neighbours of each point if M>0
     std::vector<Py_ssize_t> Mnn_ind;
 
     #if OPENMP_IS_ENABLED
@@ -403,7 +403,7 @@ protected:
 
     void setup_min_dcore()
     {
-        QUITEFASTMST_ASSERT(M>=2);
+        QUITEFASTMST_ASSERT(M>=1);
         QUITEFASTMST_ASSERT(boruvka_variant == BORUVKA_DTB);
 
         for (auto curnode = this->nodes.rbegin(); curnode != this->nodes.rend(); ++curnode)
@@ -509,17 +509,16 @@ protected:
             }
         }
 
-        if (M > 2) {
-            // reuse M-1 NNs if d==dcore[i] as an initialiser to ncl_ind/dist/from;
+        if (M > 1) {
+            // reuse M NNs if d==dcore[i] as an initialiser to ncl_ind/dist/from;
             // good speed-up sometimes (we'll be happy with any match; leaves
             // are formed in the 1st iteration of the algorithm)
-            const Py_ssize_t k = M-1;
             for (Py_ssize_t i=0; i<this->n; ++i) {
                 Py_ssize_t ds_find_i = ds.get_parent(i);
                 if (ncl_dist[ds_find_i] <= lastbest_dist[i] || lastbest_dist[i] > dcore[i]) continue;
-                for (Py_ssize_t v=0; v<k; ++v)
+                for (Py_ssize_t v=0; v<M; ++v)
                 {
-                    Py_ssize_t j = Mnn_ind[i*(M-1)+((mutreach_adj<0.0)?(k-1-v):(v))];
+                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_adj<0.0)?(M-1-v):(v))];
                     if (ds_find_i == ds.get_parent(j) || dcore[i] < dcore[j]) continue;
 
                     ncl_dist[ds_find_i] = dcore[i];
@@ -548,7 +547,7 @@ protected:
 
     void find_mst_first_1()
     {
-        QUITEFASTMST_ASSERT(M <= 2);
+        QUITEFASTMST_ASSERT(M <= 1);
         const Py_ssize_t k = 1;
 
         for (Py_ssize_t i=0; i<this->n; ++i) ncl_dist[i] = INFINITY;
@@ -575,7 +574,7 @@ protected:
             lastbest_ind[i] = -1;  // inactive
             lastbest_dist[i] = ncl_dist[i];
 
-            if (M > 1) {
+            if (M > 0) {
                 dcore[i]    = ncl_dist[i];
                 Mnn_dist[i] = ncl_dist[i];
                 Mnn_ind[i]  = ncl_ind[i];
@@ -594,9 +593,8 @@ protected:
 
     void find_mst_first_M()
     {
-        QUITEFASTMST_ASSERT(M>1);
-        const Py_ssize_t k = M-1;
-        // find (M-1)-nns of each point
+        QUITEFASTMST_ASSERT(M>0);
+        // find the M NNs of each point
 
         for (size_t i=0; i<Mnn_dist.size(); ++i) Mnn_dist[i] = INFINITY;
         for (size_t i=0; i<Mnn_ind.size(); ++i)  Mnn_ind[i] = -1;
@@ -606,25 +604,25 @@ protected:
         #endif
         for (Py_ssize_t i=0; i<this->n; ++i) {
             kdtree_kneighbours<FLOAT, D, DISTANCE, NODE> nn(
-                this->data, nullptr, i, Mnn_dist.data()+k*i, Mnn_ind.data()+k*i, k,
+                this->data, nullptr, i, Mnn_dist.data()+M*i, Mnn_ind.data()+M*i, M,
                 first_pass_max_brute_size
             );
             nn.find(&this->nodes[0], /*reset=*/false);
-            dcore[i] = Mnn_dist[i*k+(k-1)];
+            dcore[i] = Mnn_dist[i*M+(M-1)];
 
             lastbest_dist[i] = dcore[i];  // merely a lower bound
-            lastbest_ind[i] = -M;
+            lastbest_ind[i] = -(M+1);
         }
 
 
-        // k-nns wrt Euclidean distances are not necessarily k-nns wrt M-mutreach
-        // k-nns have d_M >= d_core
+        // k-nns w.r.t. Euclidean distances are not necessarily
+        // k-nns w.r.t. M-mutreach; k-nns have d_M >= d_core
 
         // dcore[i] is definitely the smallest possible d_M(i, *); i!=*
         // we can only be sure that j is a NN if d_M(i, j) == dcore[i]
 
-        // but NNs wrt d_m might be ambiguous - we might want to pick,
-        // e.g., the farthest or the closest one wrt the original dist
+        // but NNs w.r.t. d_M might be ambiguous - we might want to pick,
+        // e.g., the farthest or the closest one w.r.t. the original dist
 
         // the correction for ambiguity is only applied at this stage!
 
@@ -635,9 +633,9 @@ protected:
 
                 Py_ssize_t bestj = -1;
                 FLOAT bestdcorej = (mutreach_adj <= -1)?INFINITY:(-INFINITY);
-                for (Py_ssize_t v=0; v<k; ++v)
+                for (Py_ssize_t v=0; v<M; ++v)
                 {
-                    Py_ssize_t j = Mnn_ind[i*k+v];
+                    Py_ssize_t j = Mnn_ind[i*M+v];
                     if (dcore[i] >= dcore[j] && ds.find(i) != ds.find(j)) {
                         if (
                             (mutreach_adj <= -1 && bestdcorej >= dcore[j]) ||
@@ -656,11 +654,11 @@ protected:
                 // connect with j whose d(i,j) is the smallest (1>mutreach_adj>0) or largest (-1<mutreach_adj<0)
                 // stops searching early, because the original distances are sorted
 
-                for (Py_ssize_t v=0; v<k; ++v)
+                for (Py_ssize_t v=0; v<M; ++v)
                 {
-                    Py_ssize_t j = Mnn_ind[i*k+((mutreach_adj<0.0)?(k-1-v):(v))];
+                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_adj<0.0)?(M-1-v):(v))];
                     if (dcore[i] >= dcore[j] && ds.find(i) != ds.find(j)) {
-                        // j is the nearest neighbour of i wrt mutreach dist.
+                        // j is the nearest neighbour of i w.r.t. mutreach dist.
                         tree_add(i, j, dcore[i]);
                         break;  // other candidates have d_M >= dcore[i] anyway
                     }
@@ -673,7 +671,7 @@ protected:
     void find_mst_first()
     {
         // the 1st iteration: connect nearest neighbours with each other
-        if (M <= 2) find_mst_first_1();
+        if (M <= 1) find_mst_first_1();
         else        find_mst_first_M();
     }
 
@@ -720,7 +718,7 @@ protected:
         if (roota->is_leaf()) {
             if (rootb->is_leaf()) {
 
-                if (M>2) leaf_vs_leaf_dtb<true>(roota, rootb);
+                if (M>1) leaf_vs_leaf_dtb<true>(roota, rootb);
                 else     leaf_vs_leaf_dtb<false>(roota, rootb);
 
                 if (roota->cluster_repr >= 0) {  // all points are in the same cluster
@@ -737,7 +735,7 @@ protected:
             }
             else {
                 // nearer node first -> faster!
-                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(roota, rootb->left, rootb->right, (M>2));
+                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(roota, rootb->left, rootb->right, (M>1));
 
                 // prune nodes too far away if we have better candidates
                 if (roota->dtb_data.cluster_max_dist > sel.nearer_dist) {
@@ -752,21 +750,21 @@ protected:
         }
         else {  // roota is not a leaf
             if (rootb->is_leaf()) {
-                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(rootb, roota->left, roota->right, (M>2));
+                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(rootb, roota->left, roota->right, (M>1));
                 if (sel.nearer_node->dtb_data.cluster_max_dist > sel.nearer_dist)
                     find_mst_next_dtb(sel.nearer_node, rootb);
                 if (sel.farther_node->dtb_data.cluster_max_dist > sel.farther_dist)  // separate if!
                     find_mst_next_dtb(sel.farther_node, rootb);
             }
             else {
-                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(roota->left, rootb->left, rootb->right, (M>2));
+                kdtree_node_orderer<FLOAT, D, DISTANCE, NODE> sel(roota->left, rootb->left, rootb->right, (M>1));
                 if (roota->left->dtb_data.cluster_max_dist > sel.nearer_dist) {
                     find_mst_next_dtb(roota->left, sel.nearer_node);
                     if (roota->left->dtb_data.cluster_max_dist > sel.farther_dist)
                         find_mst_next_dtb(roota->left, sel.farther_node);
                 }
 
-                sel = kdtree_node_orderer<FLOAT, D, DISTANCE, NODE>(roota->right, rootb->left, rootb->right, (M>2));
+                sel = kdtree_node_orderer<FLOAT, D, DISTANCE, NODE>(roota->right, rootb->left, rootb->right, (M>1));
                 if (roota->right->dtb_data.cluster_max_dist > sel.nearer_dist) {
                     find_mst_next_dtb(roota->right, sel.nearer_node);
                     if (roota->right->dtb_data.cluster_max_dist > sel.farther_dist)
@@ -790,7 +788,7 @@ protected:
 
     void find_nn_next_multi(NODE* curleaf)  // QTB
     {
-    QUITEFASTMST_ASSERT(curleaf->cluster_repr == ds.get_parent(curleaf->idx_from));
+        QUITEFASTMST_ASSERT(curleaf->cluster_repr == ds.get_parent(curleaf->idx_from));
         Py_ssize_t ds_find_i = curleaf->cluster_repr;
 
         // NOTE: assumption: no race condition/atomic read...
@@ -806,7 +804,7 @@ protected:
 
         if (curleaf->qtb_data.lastbest_ind < 0) {
             kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
-                this->data, (M>2)?(this->dcore.data()):NULL,
+                this->data, (M>1)?(this->dcore.data()):NULL,
                 M, ds.get_parents()
             );
             nn.find_multi(curleaf, &this->nodes[0], reset_nns?INFINITY:ncl_dist_cur);
@@ -845,17 +843,17 @@ protected:
 
     void find_nn_next_single(Py_ssize_t i)  // STB, QTB
     {
-        // Py_ssize_t i = (M<2)?u:ptperm[u];
+        // Py_ssize_t i = (M<1)?u:ptperm[u];
         Py_ssize_t ds_find_i = ds.get_parent(i);
 
         // NOTE: assumption: no race condition/atomic read...
         FLOAT ncl_dist_cur = ncl_dist[ds_find_i];
 
-        if (ncl_dist_cur <= lastbest_dist[i]) return;  // speeds up even for M==1
+        if (ncl_dist_cur <= lastbest_dist[i]) return;  // speeds up even for M==0
 
         if (lastbest_ind[i] < 0) {
             kdtree_nearest_outsider<FLOAT, D, DISTANCE, NODE> nn(
-                this->data, (M>2)?(this->dcore.data()):NULL,
+                this->data, (M>1)?(this->dcore.data()):NULL,
                 M, ds.get_parents()
             );
             nn.find_single(i, &this->nodes[0], reset_nns?INFINITY:ncl_dist_cur);
@@ -938,7 +936,7 @@ protected:
         find_mst_first();
         QUITEFASTMST_PROFILER_STOP("find_mst_first")
 
-        if (boruvka_variant == BORUVKA_DTB && M>2) {
+        if (boruvka_variant == BORUVKA_DTB && M>1) {
             QUITEFASTMST_PROFILER_START
             setup_min_dcore();
             QUITEFASTMST_PROFILER_STOP("setup_min_dcore")
@@ -1014,7 +1012,7 @@ public:
      * no need to repeat that here
      */
     kdtree_boruvka(
-        FLOAT* data, const Py_ssize_t n, const Py_ssize_t M=1,
+        FLOAT* data, const Py_ssize_t n, const Py_ssize_t M=0,
         const Py_ssize_t max_leaf_size=16,
         const Py_ssize_t first_pass_max_brute_size=16,
         const FLOAT boruvka_variant=1.5,
@@ -1025,12 +1023,12 @@ public:
         first_pass_max_brute_size(first_pass_max_brute_size),
         mutreach_adj(mutreach_adj), M(M)
     {
-        QUITEFASTMST_ASSERT(M>0);
+        QUITEFASTMST_ASSERT(M>=0);
 
-        if (M >= 2) {
+        if (M > 0) {
             dcore.resize(n);
-            Mnn_dist.resize(n*(M-1));
-            Mnn_ind.resize(n*(M-1));
+            Mnn_dist.resize(n*M);
+            Mnn_ind.resize(n*M);
         }
 
         lastbest_dist.resize(n);
@@ -1043,7 +1041,7 @@ public:
         else
             this->boruvka_variant = BORUVKA_QTB;  // 1.5 ;)
 
-        reset_nns = (M<=2);  // plain Euclidean MST benefits from this
+        reset_nns = (M<=1);  // plain Euclidean MST benefits from this
 
 
         #if OPENMP_IS_ENABLED
@@ -1085,17 +1083,17 @@ public:
 
     inline const FLOAT* get_Mnn_dist() const
     {
-        QUITEFASTMST_ASSERT(M>1);
+        QUITEFASTMST_ASSERT(M>0);
         return this->Mnn_dist.data();
     }
 
     inline const Py_ssize_t* get_Mnn_ind() const {
-        QUITEFASTMST_ASSERT(M>1);
+        QUITEFASTMST_ASSERT(M>0);
         return this->Mnn_ind.data();
     }
 
     inline const FLOAT* get_dcore() const {
-        QUITEFASTMST_ASSERT(M>1);
+        QUITEFASTMST_ASSERT(M>0);
         return this->dcore.data();
     }
 
@@ -1112,16 +1110,16 @@ public:
  * @param tree a pre-built K-d tree containing n points
  * @param tree_dist [out] size n*k
  * @param tree_ind [out] size n*k
- * @param nn_dist [out] distances to M-1 nns of each point
- * @param nn_ind  [out] indexes of M-1 nns of each point
+ * @param nn_dist [out] distances to M nns of each point
+ * @param nn_ind  [out] indexes of M nns of each point
  */
 template <typename FLOAT, Py_ssize_t D, typename DISTANCE, typename TREE>
 void mst(
     TREE& tree,
     FLOAT* tree_dist,           // size n-1
     Py_ssize_t* tree_ind,       // size 2*(n-1),
-    FLOAT* nn_dist=nullptr,     // size n*(M-1)
-    Py_ssize_t* nn_ind=nullptr  // size n*(M-1)
+    FLOAT* nn_dist=nullptr,     // size n*M
+    Py_ssize_t* nn_ind=nullptr  // size n*M
 ) {
     tree.mst(tree_dist, tree_ind);
 
@@ -1129,16 +1127,16 @@ void mst(
     Py_ssize_t M = tree.get_M();
     const Py_ssize_t* perm = tree.get_perm();
 
-    if (M > 1) {
+    if (M > 0) {
         QUITEFASTMST_ASSERT(nn_dist);
         QUITEFASTMST_ASSERT(nn_ind);
         const FLOAT*      _nn_dist = tree.get_Mnn_dist();
         const Py_ssize_t* _nn_ind  = tree.get_Mnn_ind();
 
         for (Py_ssize_t i=0; i<n; ++i) {
-            for (Py_ssize_t j=0; j<M-1; ++j) {
-                nn_dist[perm[i]*(M-1)+j] = _nn_dist[i*(M-1)+j];
-                nn_ind[perm[i]*(M-1)+j]  = perm[_nn_ind[i*(M-1)+j]];
+            for (Py_ssize_t j=0; j<M; ++j) {
+                nn_dist[perm[i]*M+j] = _nn_dist[i*M+j];
+                nn_ind[perm[i]*M+j]  = perm[_nn_ind[i*M+j]];
             }
         }
     }

@@ -28,7 +28,7 @@
 
 
 /*! Order the n-1 edges of a spanning tree of n points in place,
- * wrt the weights increasingly, resolving ties if needed based on
+ * w.r.t. the weights increasingly, resolving ties if needed based on
  * the points' IDs.
  *
  * @param n
@@ -62,15 +62,17 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
 
 /*! A Jarník (Prim/Dijkstra)-like algorithm for determining
  *  a(*) Euclidean minimum spanning tree (MST) or
- *  one wrt an M-mutual reachability distance.
+ *  one w.r.t. an M-mutual reachability distance.
  *
- *  If `M>2`, the spanning tree is the smallest wrt the degree-`M`
+ *  If `M>1`, the spanning tree is the smallest w.r.t. the degree-`M`
  *  mutual reachability distance [9]_ given by
  *  :math:`d_M(i, j)=\\max\\{ c_M(i), c_M(j), d(i, j)\\}`, where :math:`d(i,j)`
  *  is the Euclidean distance between the `i`-th and the `j`-th point,
  *  and :math:`c_M(i)` is the `i`-th `M`-core distance defined as the distance
- *  between the `i`-th point and its `(M-1)`-th nearest neighbour
+ *  between the `i`-th point and its `M`-th nearest neighbour
  *  (not including the query points themselves).
+ *
+ *  Note that [9]_ defines the core distance as the distance to the (M-1)-th NN.
  *
  *  (\*) We note that if there are many pairs of equidistant points,
  *  there can be many minimum spanning trees. In particular, it is likely
@@ -84,7 +86,7 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *  chooses the latter (ε=``mutreach_adj``±1).
  *
  *  Time complexity: O(n^2). It is assumed that M is rather small
- *  (say, M<=20). If M>2, all pairwise the distances are computed twice
+ *  (say, M <= 20). If M>1, all pairwise the distances are computed twice
  *  (first for the neighbours/core distance, then to determine the tree).
  *
  *  (*) Note that there might be multiple minimum trees spanning a given graph.
@@ -110,17 +112,18 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  * @param X [destroyable] a C-contiguous data matrix, shape n*d
  * @param n number of rows
  * @param d number of columns
- * @param M the level of the "core" distance if M > 1
+ * @param M the degree of the "core" distance if M > 0
  * @param mst_dist [out] vector of length n-1, gives weights of the
  *        resulting MST edges in nondecreasing order
  * @param mst_ind [out] vector of length 2*(n-1), representing
  *        a c_contiguous array of shape (n-1,2), defining the edges
  *        corresponding to mst_d, with mst_i[j,0] < mst_i[j,1] for all j
- * @param nn_dist [out] NULL for M==1 or the n*(M-1) distances to the n points'
- *        (M-1) nearest neighbours
- * @param nn_ind [out] NULL for M==1 or the n*(M-1) indexes of the n points'
- *        (M-1) nearest neighbours
- * @param mutreach_adj adjustment for mutual reachability distance ambiguity (for M>2) whose fractional part should be close to 0:
+ * @param nn_dist [out] NULL for M==0 or the n*M Euclidean distances
+ *        to the n points' M nearest neighbours
+ * @param nn_ind [out] NULL for M==0 or the n*M indexes of the n points'
+ *        M nearest neighbours
+ * @param mutreach_adj adjustment for mutual reachability distance ambiguity
+ *        (for M>1) whose fractional part should be close to 0:
  *        values in `(-1,0)` prefer connecting to farther NNs,
  *        values in `(0, 1)` fall for closer NNs,
  *        values in `(-2,-1)` prefer connecting to points with smaller core distances,
@@ -139,8 +142,8 @@ void Cmst_euclid_brute(
 ) {
     if (n <= 0)   throw std::domain_error("n <= 0");
     if (d <= 0)   throw std::domain_error("d <= 0");
-    if (M <= 0)   throw std::domain_error("M <= 0");
-    if (M-1 >= n) throw std::domain_error("M >= n-1");
+    if (M <  0)   throw std::domain_error("M <  0");
+    if (M >= n)   throw std::domain_error("M >= n");
     QUITEFASTMST_ASSERT(mst_dist);
     QUITEFASTMST_ASSERT(mst_ind);
 
@@ -151,19 +154,17 @@ void Cmst_euclid_brute(
         mutreach_adj = 0.0;
 
 
-
-
     std::vector<FLOAT> d_core;
-    if (M > 2) {
+    if (M > 1) {
         d_core.resize(n);
         QUITEFASTMST_ASSERT(nn_dist);
         QUITEFASTMST_ASSERT(nn_ind);
-        Cknn1_euclid_brute(X, n, d, M-1, nn_dist, nn_ind,
+        Cknn1_euclid_brute(X, n, d, M, nn_dist, nn_ind,
                            /*squared=*/true, verbose);
-        for (Py_ssize_t i=0; i<n; ++i) d_core[i] = nn_dist[i*(M-1)+(M-2)];
+        for (Py_ssize_t i=0; i<n; ++i) d_core[i] = nn_dist[i*M+M-1];
 
-        // for M==2, we can fetch d_core from MST, as nearest neighbours
-        // are connected by an edge (see below)
+        // for M==1, we can fetch d_core, nn_dist, nn_ind from the resulting MST,
+        // as nearest neighbours are connected by an edge (see below)
     }
 
     if (verbose) QUITEFASTMST_PRINT("[quitefastmst] Computing the MST... %3d%%", 0);
@@ -189,7 +190,7 @@ void Cmst_euclid_brute(
 #if 0
         // NOTE two-stage Euclidean distance computation: slower -> removed
 #else
-        if (M <= 2) {
+        if (M <= 1) {
             #if OPENMP_IS_ENABLED
             #pragma omp parallel for schedule(static,MST_OMP_CHUNK_SIZE)  /* chunks get smaller and smaller... */
             #endif
@@ -256,7 +257,7 @@ void Cmst_euclid_brute(
         for (Py_ssize_t u=0; u<d; ++u) std::swap(X[best_j*d+u], X[i*d+u]);
 
 
-        if (M > 2) {
+        if (M > 1) {
             std::swap(d_core[best_j], d_core[i]);
             if (mutreach_adj != 0.0) {
                 // recompute the distance without the ambiguity correction
@@ -294,12 +295,12 @@ void Cmst_euclid_brute(
         mst_ind[2*i+1] = mst[i].i2;
     }
 
-    if (M > 2) {
-        for (Py_ssize_t i=0; i<n*(M-1); ++i)
+    if (M > 1) {
+        for (Py_ssize_t i=0; i<n*M; ++i)
             nn_dist[i] = sqrt(nn_dist[i]);
     }
-    else if (M == 2) {
-        // for M==2 we just need the nearest neighbours,
+    else if (M == 1) {
+        // for M==1 we just need the nearest neighbours,
         // and the MST connects them with each other
         for (Py_ssize_t i=0; i<n; ++i)
             nn_dist[i] = INFINITY;

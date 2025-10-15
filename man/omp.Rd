@@ -11,7 +11,7 @@ omp_set_num_threads(n_threads)
 omp_get_max_threads()
 }
 \arguments{
-\item{n_threads}{maximum number of threads to use}
+\item{n_threads}{maximal number of threads to use}
 }
 \value{
 \code{omp_get_max_threads} returns the maximal number

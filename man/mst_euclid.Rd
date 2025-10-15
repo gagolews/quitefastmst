@@ -7,7 +7,7 @@
 \usage{
 mst_euclid(
   X,
-  M = 1L,
+  M = 0L,
   algorithm = "auto",
   max_leaf_size = 0L,
   first_pass_max_brute_size = 0L,
@@ -18,9 +18,9 @@ mst_euclid(
 \arguments{
 \item{X}{the "database"; a matrix of shape \eqn{n\times d}}
 
-\item{M}{the degree of the mutual reachability distance
-(should be rather small).
-\eqn{M\leq 2} denotes the ordinary Euclidean distance}
+\item{M}{the smoothing factor a.k.a. the degree of the mutual reachability
+distance (should be rather small).
+\eqn{M\leq 1} gives the ordinary Euclidean distance}
 
 \item{algorithm}{\code{"auto"}, \code{"single_kd_tree"},
 \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"}, or \code{"brute"};
@@ -39,7 +39,7 @@ iteration of the algorithm; use \code{0} to select the default value,
 currently set to 32}
 
 \item{mutreach_adj}{adjustment for mutual reachability distance ambiguity
-(for \eqn{M>2}) whose fractional part should be close to 0:
+(for \eqn{M>1}) whose fractional part should be close to 0:
 values in \eqn{(-1,0)} prefer connecting to farther nearest neighbours,
 values in \eqn{(0, 1)} fall for closer NNs (which is what many other
 implementations provide), values in \eqn{(-2,-1)} prefer connecting
@@ -49,7 +49,7 @@ larger core distances; see below for more details}
 \item{verbose}{whether to print diagnostic messages}
 }
 \value{
-A list with two $(M=1)$ or four $(M>1)$ elements, \code{mst.index} and
+A list with two $(M=0)$ or four $(M>0)$ elements, \code{mst.index} and
 \code{mst.dist}, and additionally \code{nn.index} and \code{nn.dist}.
 
 \code{mst.index} is a matrix with \eqn{n-1} rows and \eqn{2} columns,
@@ -62,16 +62,15 @@ The tree edges are ordered with respect to weights nondecreasingly, and then by
 the indexes (lexicographic ordering of the \code{(weight, index1, index2)}
 triples).  For each \code{i}, it holds \code{mst_ind[i,1]<mst_ind[i,2]}.
 
-\code{nn.index} is an \eqn{n} by \eqn{M-1} matrix giving the indexes
+\code{nn.index} is an \eqn{n} by \eqn{M} matrix giving the indexes
 of each point's nearest neighbours with respect to the Euclidean distance.
-\code{nn.dist} provides the corresponding distances.
+\code{nn.dist} provides the corresponding Euclidean distances.
 }
 \description{
 The function determines the/a(*) minimum spanning tree (MST) of a set
 of \eqn{n} points, i.e., an acyclic undirected connected graph whose
-vertices represent the points,
-edges are weighted by the distances between point pairs,
-and have minimal total weight.
+vertices represent the points, and edges are weighted by the distances
+between point pairs and have minimal total weight.
 
 MSTs have many uses in, amongst others, topological data analysis
 (clustering, density estimation, dimensionality reduction,
@@ -79,24 +78,27 @@ outlier detection, etc.).
 
 In clustering and density estimation, the parameter \code{M} plays the role
 of a smoothing factor; for discussion, see (Campello et al., 2015)
-and the references therein.  \code{M} corresponds to the \pkg{hdbscan}
-Python package's \code{min_samples=M-1}.
+and the references therein.
 
-For \eqn{M\leq 2}, we get a spanning tree that minimises the sum of
+For \eqn{M\leq 1}, we get a spanning tree that minimises the sum of
 Euclidean distances between the points, i.e., the classic Euclidean minimum
-spanning tree (EMST).   If \eqn{M=2}, the function additionally returns
+spanning tree (EMST).   If \eqn{M=1}, the function additionally returns
 the distance to each point's nearest neighbour.
 
-If \eqn{M>2}, the spanning tree is the smallest with respect to
+If \eqn{M>1}, the spanning tree is the smallest with respect to
 the degree-\eqn{M} mutual reachability distance (Campello et al., 2013) given by
 \eqn{d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}}, where \eqn{d(i,j)}
 is the standard Euclidean distance between the \eqn{i}-th and the \eqn{j}-th point,
 and \eqn{c_M(i)} is the \eqn{i}-th \eqn{M}-core distance defined as the distance
-between the \eqn{i}-th point and its \eqn{(M-1)}-th nearest neighbour
+between the \eqn{i}-th point and its \eqn{M}-th nearest neighbour
 (not including the query point itself).
+
+Note that (Campello et al., 2013) defines the core distance as the
+distance to the \eqn{(M-1)}-th nearest neighbour (or the \eqn{M}-th one,
+but including self).
 }
 \details{
-(*) We note that if there are many pairs of equidistant points,
+(*) Note that if there are many pairs of equidistant points,
 there can be many minimum spanning trees. In particular, it is likely
 that there are point pairs with the same mutual reachability distances.
 
@@ -135,7 +137,7 @@ i.e., the nearest point thereto from another cluster.
 The "dual-tree" Borůvka version of the algorithm is, in principle, based
 on (March et al., 2010). As far as our implementation is concerned,
 the dual-tree approach is often only faster in 2- and 3-dimensional spaces,
-for \eqn{M\leq 2}, and in a single-threaded setting.  For another
+for \eqn{M\leq 1}, and in a single-threaded setting.  For another
 (approximate) adaptation of the dual-tree algorithm to mutual
 reachability distances, see (McInnes and Healy, 2017).
 
@@ -150,7 +152,7 @@ of low intrinsic dimensionality (the "curse").  For high \eqn{d},
 the "brute-force" algorithm is recommended.  Here, we provided a
 parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a.
 Prim, 1957) algorithm, where the distances are computed
-on the fly (only once for \eqn{M\leq 2}).
+on the fly (only once for \eqn{M\leq 1}).
 
 The number of threads used is controlled via the \code{OMP_NUM_THREADS}
 environment variable or via the \code{\link{omp_set_num_threads}} function

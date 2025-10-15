@@ -49,8 +49,8 @@ with each coordinate sampled independently from the standard normal distribution
 This is a pretty "difficult" setting for the spatial search data structures
 as data are very "unstructured".  Most real-world datasets are more well-behaving.
 
-We tested smoothing parameters $M=1$ (standard Euclidean MSTs)
-and $M=10$ (mutual reachability MSTs wrt the Euclidean distance
+We tested smoothing parameters $M=0$ (standard Euclidean MSTs)
+and $M=9$ (mutual reachability MSTs with respect to the Euclidean distance
 to the 9th nearest neighbour).
 
 The number of threads was set to 1 or 10.  Note that **mlpack** does not support
@@ -67,13 +67,12 @@ input dataset to ensure **fast_hdbscan** got compiled on-the-fly by **numba**.
 See the relevant Python scripts:
 [`perf_mst_202506.py`](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506.py),
 [`perf_mst_202506_defs`.py](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py)
-
+(🚧🚧 TODO: next release: *M-1 → M* 🚧🚧)
 
 
 ## Results
 
-All timings are given in seconds.
-Less is better.
+All timings are given in seconds.  Less is better.
 
 
 
@@ -82,14 +81,14 @@ Less is better.
 
 |       n |   d |   M |   quitefastmst |   wangyiqiu |   fasthdbscan |   mlpack |   hdbscan |
 |--------:|----:|----:|---------------:|------------:|--------------:|---------:|----------:|
-|  250000 |   2 |   1 |           0.26 |        0.64 |          3.90 |     1.15 |      6.06 |
-|  250000 |   2 |  10 |           0.39 |        1.41 |          2.26 |       |      6.22 |
-|  250000 |   5 |   1 |           1.26 |        6.61 |         19.80 |    10.77 |     37.28 |
-|  250000 |   5 |  10 |           1.50 |       19.29 |          5.67 |       |     26.70 |
-| 2500000 |   2 |   1 |           2.98 |        8.33 |         83.73 |    11.77 |        |
-| 2500000 |   2 |  10 |           4.35 |       17.93 |         45.79 |       |        |
-| 2500000 |   5 |   1 |          14.21 |       67.87 |        460.17 |   129.24 |        |
-| 2500000 |   5 |  10 |          16.59 |      217.54 |        141.18 |       |        | 
+|  250000 |   2 |   0 |           0.26 |        0.64 |          3.90 |     1.15 |      6.06 |
+|  250000 |   2 |   9 |           0.39 |        1.41 |          2.26 |       |      6.22 |
+|  250000 |   5 |   0 |           1.26 |        6.61 |         19.80 |    10.77 |     37.28 |
+|  250000 |   5 |   9 |           1.50 |       19.29 |          5.67 |       |     26.70 |
+| 2500000 |   2 |   0 |           2.98 |        8.33 |         83.73 |    11.77 |        |
+| 2500000 |   2 |   9 |           4.35 |       17.93 |         45.79 |       |        |
+| 2500000 |   5 |   0 |          14.21 |       67.87 |        460.17 |   129.24 |        |
+| 2500000 |   5 |   9 |          16.59 |      217.54 |        141.18 |       |        | 
 
 
 
@@ -97,14 +96,14 @@ Less is better.
 
 |       n |   d |   M |   quitefastmst |   wangyiqiu |   fasthdbscan |   hdbscan |
 |--------:|----:|----:|---------------:|------------:|--------------:|----------:|
-|  250000 |   2 |   1 |           0.19 |        0.20 |          1.02 |      1.73 |
-|  250000 |   2 |  10 |           0.18 |        0.39 |          0.60 |      1.52 |
-|  250000 |   5 |   1 |           0.31 |        1.32 |          4.78 |     28.86 |
-|  250000 |   5 |  10 |           0.38 |        4.41 |          1.52 |     14.74 |
-| 2500000 |   2 |   1 |           2.08 |        2.65 |         25.18 |        |
-| 2500000 |   2 |  10 |           2.03 |        4.92 |         14.36 |        |
-| 2500000 |   5 |   1 |           4.41 |       15.81 |        149.27 |        |
-| 2500000 |   5 |  10 |           5.19 |       61.80 |         50.12 |        | 
+|  250000 |   2 |   0 |           0.19 |        0.20 |          1.02 |      1.73 |
+|  250000 |   2 |   9 |           0.18 |        0.39 |          0.60 |      1.52 |
+|  250000 |   5 |   0 |           0.31 |        1.32 |          4.78 |     28.86 |
+|  250000 |   5 |   9 |           0.38 |        4.41 |          1.52 |     14.74 |
+| 2500000 |   2 |   0 |           2.08 |        2.65 |         25.18 |        |
+| 2500000 |   2 |   9 |           2.03 |        4.92 |         14.36 |        |
+| 2500000 |   5 |   0 |           4.41 |       15.81 |        149.27 |        |
+| 2500000 |   5 |   9 |           5.19 |       61.80 |         50.12 |        | 
 
 
 Thanks.

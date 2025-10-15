@@ -1,4 +1,4 @@
-/*  An implementation of K-d trees wrt the squared Euclidean distance
+/*  An implementation of K-d trees w.r.t. the squared Euclidean distance
  *
  *  Supports finding k nearest neighbours of points within the same dataset;
  *  fast for small k and dimensionality d.

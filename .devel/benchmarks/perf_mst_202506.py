@@ -2,6 +2,9 @@
 NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
 Run like: python3 ~/Python/quitefastmst/.devel/benchmarks/perf_mst_202506.py
 
+TODO UPDATE: M-1 → M !!!  >= v0.9.1
+
+
 quitefastmst library and package for R and Python
 Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
 
@@ -51,7 +54,7 @@ scenarios = [
     # (1208592,  2,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  3,  1,  "norm"),
-    (n, 2, 1, "norm"),
+    (n, 2, 1, "norm"),  # TODO UPDATE: M-1 → M !!!  >= v0.9.1 🚧🚧🚧
     (n, 2, 10, "norm"),
     (n, 5, 1, "norm"),
     (n, 5, 10, "norm"),
