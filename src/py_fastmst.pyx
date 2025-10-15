@@ -102,13 +102,13 @@ cdef extern from "../src/c_fastmst.h":
         T* mst_dist, Py_ssize_t* mst_ind,
         T* nn_dist, Py_ssize_t* nn_ind,
         Py_ssize_t max_leaf_size, Py_ssize_t first_pass_max_brute_size,
-        T boruvka_variant, T mutreach_adj, bint verbose
+        T boruvka_variant, Py_ssize_t mutreach_ties, bint verbose
     ) except +
 
     void Cmst_euclid_brute[T](
         T* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,
         T* mst_dist, Py_ssize_t* mst_ind,
-        T* nn_dist, Py_ssize_t* nn_ind, T mutreach_adj, bint verbose
+        T* nn_dist, Py_ssize_t* nn_ind, Py_ssize_t mutreach_ties, bint verbose
     ) except +
 
 
@@ -386,13 +386,13 @@ cpdef tuple mst_euclid(
     str algorithm="auto",
     int max_leaf_size=0,
     int first_pass_max_brute_size=0,
-    floatT mutreach_adj=-1.00000011920928955078125,
+    str mutreach_ties="dcore_min",
     bint verbose=False
 ):
     """
     quitefastmst.mst_euclid(
         X, M=0, algorithm="auto", max_leaf_size=0,
-        first_pass_max_brute_size=0, mutreach_adj=-1.00000011920928955078125,
+        first_pass_max_brute_size=0, mutreach_ties="dcore_min",
         verbose=False
     )
 
@@ -436,21 +436,11 @@ cpdef tuple mst_euclid(
     that there are point pairs with the same mutual reachability distances.
 
     To make the definition less ambiguous (albeit with no guarantees),
-    internally, the brute-force algorithm relies on the adjusted distance:
-    :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}+\\varepsilon d(i, j)` or
-    :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}-\\varepsilon \\min\\{c_M(i), c_M(j)\\}`,
-    where ε is close to 0.
-    `|mutreach_adj| < 1` selects the former formula (`ε=mutreach_adj`)
-    whilst `1 < |mutreach_adj| < 2` chooses the latter (`ε=mutreach_adj±1`).
-
-    For the K-d tree-based methods, on the other hand, `mutreach_adj`
-    indicates the preference towards connecting to farther/closer
-    points w.r.t. the original metric or having smaller/larger core distances
-    if a point `i` has multiple nearest-neighbour candidates `j'`, `j''` with
-    :math:`c_M(i) \geq \\max\\{d(i, j'),  c_M(j')\\}` and
-    :math:`c_M(i) \geq \\max\\{d(i, j''), c_M(j'')\\}`.
-    Generally, the smaller the `mutreach_adj`, the more leaves there should
-    be in the tree (note that there are only four types of adjustments, though).
+    the `mutreach_ties` argument indicates the preference towards
+    connecting to farther/closer points with respect to the original metric
+    or having smaller/larger core distances in cases of tied distances.
+    For efficiency, the K-d tree-based methods use this adjustment
+    only in the first iteration of the algorithm.
 
     The implemented algorithms, see the `algorithm` parameter, assume that
     `M` is rather small; say, `M ≤ 20`.
@@ -568,14 +558,8 @@ cpdef tuple mst_euclid(
         minimal number of points in a node to treat it as a leaf (unless
         it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
-    mutreach_adj : float
+    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default ``"dcore_min"``
         adjustment for mutual reachability distance ambiguity (for M>1)
-        whose fractional part should be close to 0:
-        values in `(-1,0)` prefer connecting to farther NNs,
-        values in `(0, 1)` fall for closer NNs (which is what many other
-        implementations provide), values in `(-2,-1)` prefer connecting to
-        points with smaller core distances, values in `(1, 2)` favour larger
-        core distances; see above for more details
     verbose: bool
         whether to print diagnostic messages
 
@@ -616,6 +600,7 @@ cpdef tuple mst_euclid(
 
     cdef floatT boruvka_variant = 1.5
     cdef bool use_kdtree = True
+    cdef Py_ssize_t mutreach_ties_val = -2
 
     if algorithm == "auto":
         if 2 <= d <= 20:
@@ -625,6 +610,7 @@ cpdef tuple mst_euclid(
             #    algorithm = "single_kd_tree"
         else:
             algorithm = "brute"
+
 
     if algorithm in ("single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"):
         if not 2 <= d <= 20:
@@ -659,7 +645,19 @@ cpdef tuple mst_euclid(
     elif algorithm == "brute":
         use_kdtree = False
     else:
-        raise ValueError("invalid 'algorithm'")
+        raise ValueError("invalid 'mutreach_ties'")
+
+
+    if mutreach_ties == "dcore_min":
+        mutreach_ties_val = -2
+    elif mutreach_ties == "dist_max":
+        mutreach_ties_val = -1
+    elif mutreach_ties == "dist_min":
+        mutreach_ties_val = 1
+    elif mutreach_ties == "dcore_max":
+        mutreach_ties_val = 2
+    else:
+        raise ValueError("invalid 'mutreach_ties'")
 
     cdef np.ndarray[Py_ssize_t,ndim=2] mst_ind  = np.empty((n-1, 2),
         dtype=np.intp)
@@ -682,7 +680,7 @@ cpdef tuple mst_euclid(
             <floatT*>(0)     if M==0 else &nn_dist[0,0],
             <Py_ssize_t*>(0) if M==0 else &nn_ind[0,0],
             max_leaf_size, first_pass_max_brute_size,
-            boruvka_variant, mutreach_adj, verbose
+            boruvka_variant, mutreach_ties_val, verbose
         )
     else:
         Cmst_euclid_brute(
@@ -690,8 +688,7 @@ cpdef tuple mst_euclid(
             &mst_dist[0], &mst_ind[0,0],
             <floatT*>(0)     if M==0 else &nn_dist[0,0],
             <Py_ssize_t*>(0) if M==0 else &nn_ind[0,0],
-            mutreach_adj,
-            verbose
+            mutreach_ties_val, verbose
         )
 
     if M == 0:

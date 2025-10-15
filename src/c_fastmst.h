@@ -87,7 +87,7 @@ void Cmst_euclid_brute(
     FLOAT* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,
     FLOAT* mst_dist, Py_ssize_t* mst_ind,
     FLOAT* nn_dist, Py_ssize_t* nn_ind,
-    FLOAT mutreach_adj=-1.00000011920928955078125,
+    Py_ssize_t mutreach_ties=-2,
     bool verbose=false
 );
 
@@ -119,7 +119,7 @@ void Cmst_euclid_kdtree(
     Py_ssize_t max_leaf_size=32,
     Py_ssize_t first_pass_max_brute_size=32,
     FLOAT boruvka_variant=1.5,
-    FLOAT mutreach_adj=-1.00000011920928955078125,
+    Py_ssize_t mutreach_ties=-2,
     bool verbose=false
 );
 

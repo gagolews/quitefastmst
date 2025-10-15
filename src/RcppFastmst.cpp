@@ -323,23 +323,11 @@ List knn_euclid(
 //' that there are point pairs with the same mutual reachability distances.
 //'
 //' To make the definition less ambiguous (albeit with no guarantees),
-//' internally, the brute-force algorithm relies on the adjusted distance:
-//' \eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)} or
-//' \eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}},
-//' where \eqn{\varepsilon} is close to \eqn{0}. |\code{mutreach_adj}|<1 selects
-//' the former formula (\eqn{\varepsilon}=\code{mutreach_adj})
-//' whilst 1<|\code{mutreach_adj}|<2 chooses the latter
-//' (\eqn{\varepsilon}=\code{mutreach_adj}±1).
-//'
-//' For the K-d tree-based methods, on the other hand, \code{mutreach_adj}
-//' indicates the preference towards connecting to farther/closer
-//' points with respect to the original metric or having smaller/larger core distances
-//' if a point \eqn{i} has multiple nearest-neighbour candidates \eqn{j'}, \eqn{j''} with
-//' \eqn{c_M(i) \geq \max\{d(i, j'),  c_M(j')\}} and
-//' \eqn{c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}}.
-//'
-//' Generally, the smaller the \code{mutreach_adj}, the more leaves should
-//' be in the tree (note that there are only four types of adjustments, though).
+//' the \code{mutreach_ties} argument indicates the preference towards
+//' connecting to farther/closer points with respect to the original metric
+//' or having smaller/larger core distances in cases of tied distances.
+//' For efficiency, the K-d tree-based methods use this adjustment
+//' only in the first iteration of the algorithm.
 //'
 //' The implemented algorithms, see the \code{algorithm} parameter, assume
 //' that \eqn{M} is rather small; say, \eqn{M \leq 20}.
@@ -440,13 +428,9 @@ List knn_euclid(
 //'    treat it as a leaf (unless it actually is a leaf) in the first
 //'    iteration of the algorithm; use \code{0} to select the default value,
 //'    currently set to 32
-//' @param mutreach_adj adjustment for mutual reachability distance ambiguity
-//'    (for \eqn{M>1}) whose fractional part should be close to 0:
-//'    values in \eqn{(-1,0)} prefer connecting to farther nearest neighbours,
-//'    values in \eqn{(0, 1)} fall for closer NNs (which is what many other
-//'    implementations provide), values in \eqn{(-2,-1)} prefer connecting
-//'    to points with smaller core distances, values in \eqn{(1, 2)} favour
-//'    larger core distances; see below for more details
+//' @param mutreach_ties adjustment for mutual reachability distance ambiguity
+//'    (for \eqn{M>1}); one of \code{"dcore_min"} (default), \code{"dist_max"},
+//'    \code{"dist_min"}, or \code{"dcore_max"}
 //' @param verbose whether to print diagnostic messages
 //'
 //'
@@ -490,7 +474,7 @@ List mst_euclid(
     Rcpp::String algorithm="auto",
     int max_leaf_size=0,
     int first_pass_max_brute_size=0,
-    double mutreach_adj=-1.00000011920928955078125,
+    Rcpp::String mutreach_ties="dcore_min",
     bool verbose=false
 ) {
     using FLOAT = double;  // float is not faster..
@@ -503,8 +487,9 @@ List mst_euclid(
     Py_ssize_t d = (Py_ssize_t)_X.ncol();
     bool use_kdtree = true;
     FLOAT boruvka_variant = 1.5;
+    Py_ssize_t mutreach_ties_val = -2;
 
-    if (n < 1 || d <= 1)  stop("X is ill-shaped");
+    if (n < 1 || d <= 1)   stop("X is ill-shaped");
     if (M < 0 || M >= n)   stop("incorrect M");
 
     if (algorithm == "auto") {
@@ -555,6 +540,17 @@ List mst_euclid(
         stop("invalid 'algorithm'");
 
 
+    if (mutreach_ties == "dcore_min")
+        mutreach_ties_val = -2;
+    else if (mutreach_ties == "dist_max")
+        mutreach_ties_val = -1;
+    else if (mutreach_ties == "dist_min")
+        mutreach_ties_val = 1;
+    else if (mutreach_ties == "dcore_max")
+        mutreach_ties_val = 2;
+    else
+        stop("invalid 'mutreach_ties'");
+
     std::vector<FLOAT> XC(n*d);
     Py_ssize_t j = 0;
     for (Py_ssize_t i=0; i<n; ++i)
@@ -572,13 +568,13 @@ List mst_euclid(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
             (M==0)?nullptr:nn_dist.data(), (M==0)?nullptr:nn_ind.data(),
             max_leaf_size, first_pass_max_brute_size, boruvka_variant,
-            mutreach_adj, verbose
+            mutreach_ties_val, verbose
         );
     else
         Cmst_euclid_brute(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
             (M==0)?nullptr:nn_dist.data(), (M==0)?nullptr:nn_ind.data(),
-            mutreach_adj, verbose
+            mutreach_ties_val, verbose
         );
 
 

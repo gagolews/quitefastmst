@@ -25,7 +25,7 @@ using, e.g., ``-O3 -march=native`` compiler flags and with OpenMP support on.
 # ############################################################################ #
 
 # version string, e.g., "1.0.0.9001" or "1.1.1"
-__version__ = "0.9.0.9001"
+__version__ = "0.9.1"
 
 from .quitefastmst import *
 

@@ -78,12 +78,10 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *  there can be many minimum spanning trees. In particular, it is likely
  *  that there are point pairs with the same mutual reachability distances.
  *  To make the definition less ambiguous (albeit with no guarantees),
- *  internally, we rely on the adjusted distance:
- *  :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}+\\varepsilon d(i, j)` or
- *  :math:`d_M(i, j)=\\max\\{c_M(i), c_M(j), d(i, j)\\}-\\varepsilon \\min\\{c_M(i), c_M(j)\\}`,
- *  where ε is close to 0. ``|mutreach_adj| < 1`` selects
- *  the former (ε=``mutreach_adj``) whilst ``1 < |mutreach_adj| < 2``
- *  chooses the latter (ε=``mutreach_adj``±1).
+ *  internally, we resolve ties as follows.
+ *  The `mutreach_ties` argument indicates the preference towards
+ *  connecting to farther(-1)/closer(1) points with respect to the original metric
+ *  or having smaller(-2)/larger(2) core distances
  *
  *  Time complexity: O(n^2). It is assumed that M is rather small
  *  (say, M <= 20). If M>1, all pairwise the distances are computed twice
@@ -122,13 +120,10 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *        to the n points' M nearest neighbours
  * @param nn_ind [out] NULL for M==0 or the n*M indexes of the n points'
  *        M nearest neighbours
- * @param mutreach_adj adjustment for mutual reachability distance ambiguity
- *        (for M>1) whose fractional part should be close to 0:
- *        values in `(-1,0)` prefer connecting to farther NNs,
- *        values in `(0, 1)` fall for closer NNs,
- *        values in `(-2,-1)` prefer connecting to points with smaller core distances,
- *        values in `(1, 2)` favour larger core distances;
- *        see above for more details
+ * @param mutreach_ties adjustment for mutual reachability distance ambiguity
+ *        (for M>1): -2 and 2 prefer connecting to points with,
+ *        respectively, smaller and larger core distance; -1 and 1 prefer,
+ *        respectively, farther and closer nearest neighbours
  *
  * @param verbose should we output diagnostic/progress messages?
  */
@@ -137,7 +132,7 @@ void Cmst_euclid_brute(
     FLOAT* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,
     FLOAT* mst_dist, Py_ssize_t* mst_ind,
     FLOAT* nn_dist, Py_ssize_t* nn_ind,
-    FLOAT mutreach_adj,
+    Py_ssize_t mutreach_ties,
     bool verbose
 ) {
     if (n <= 0)   throw std::domain_error("n <= 0");
@@ -147,11 +142,8 @@ void Cmst_euclid_brute(
     QUITEFASTMST_ASSERT(mst_dist);
     QUITEFASTMST_ASSERT(mst_ind);
 
-    if (std::abs(mutreach_adj)>=2) throw std::domain_error("|mutreach_adj|>=2");
-    bool mutreach_adj_via_dcore = (std::abs(mutreach_adj) >= 1);
-    mutreach_adj = mutreach_adj - std::trunc(mutreach_adj);  // fractional part
-    if (std::abs(mutreach_adj) < 2.0*std::numeric_limits<FLOAT>::epsilon())
-        mutreach_adj = 0.0;
+    bool mutreach_adj_via_dcore = (std::abs(mutreach_ties) >= 2);
+    FLOAT mutreach_adj = 0.00000011920928955078125*((mutreach_ties<0)?-1:1);  // TODO: actually resolve ties using a modified comparer
 
 
     std::vector<FLOAT> d_core;
@@ -330,7 +322,7 @@ template void Cmst_euclid_brute<float>(
     float* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,
     float* mst_dist, Py_ssize_t* mst_ind,
     float* nn_dist, Py_ssize_t* nn_ind,
-    float mutreach_adj,
+    Py_ssize_t mutreach_ties,
     bool verbose
 );
 
@@ -338,6 +330,6 @@ template void Cmst_euclid_brute<double>(
     double* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,
     double* mst_dist, Py_ssize_t* mst_ind,
     double* nn_dist, Py_ssize_t* nn_ind,
-    double mutreach_adj,
+    Py_ssize_t mutreach_ties,
     bool verbose
 );

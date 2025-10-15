@@ -23,7 +23,7 @@ mst_euclid(
   algorithm = "auto",
   max_leaf_size = 0L,
   first_pass_max_brute_size = 0L,
-  mutreach_adj = -1.00000011920929,
+  mutreach_ties = "dcore_min",
   verbose = FALSE
 )
 ```
@@ -37,18 +37,14 @@ mst_euclid(
 | `algorithm` | `"auto"`, `"single_kd_tree"`, `"sesqui_kd_tree"`, `"dual_kd_tree"`, or `"brute"`; K-d trees can only be used for $d$ between 2 and 20 only; `"auto"` selects `"sesqui_kd_tree"` for $d\leq 20$. `"brute"` is used otherwise |
 | `max_leaf_size` | maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use `0` to select the default value, currently set to 32 for the single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm |
 | `first_pass_max_brute_size` | minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use `0` to select the default value, currently set to 32 |
-| `mutreach_adj` | adjustment for mutual reachability distance ambiguity (for $M>1$) whose fractional part should be close to 0: values in $(-1,0)$ prefer connecting to farther nearest neighbours, values in $(0, 1)$ fall for closer NNs (which is what many other implementations provide), values in $(-2,-1)$ prefer connecting to points with smaller core distances, values in $(1, 2)$ favour larger core distances; see below for more details |
+| `mutreach_ties` | adjustment for mutual reachability distance ambiguity (for $M>1$); one of `"dcore_min"` (default), `"dist_max"`, `"dist_min"`, or `"dcore_max"` |
 | `verbose` | whether to print diagnostic messages |
 
 ## Details
 
 (\*) Note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances.
 
-To make the definition less ambiguous (albeit with no guarantees), internally, the brute-force algorithm relies on the adjusted distance: $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)$ or $d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}$, where $\varepsilon$ is close to $0$. \|`mutreach_adj`\|\<1 selects the former formula ($\varepsilon$=`mutreach_adj`) whilst 1\<\|`mutreach_adj`\|\<2 chooses the latter ($\varepsilon$=`mutreach_adj`±1).
-
-For the K-d tree-based methods, on the other hand, `mutreach_adj` indicates the preference towards connecting to farther/closer points with respect to the original metric or having smaller/larger core distances if a point $i$ has multiple nearest-neighbour candidates $j'$, $j''$ with $c_M(i) \geq \max\{d(i, j'),  c_M(j')\}$ and $c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}$.
-
-Generally, the smaller the `mutreach_adj`, the more leaves should be in the tree (note that there are only four types of adjustments, though).
+To make the definition less ambiguous (albeit with no guarantees), the `mutreach_ties` argument indicates the preference towards connecting to farther/closer points with respect to the original metric or having smaller/larger core distances in cases of tied distances. For efficiency, the K-d tree-based methods use this adjustment only in the first iteration of the algorithm.
 
 The implemented algorithms, see the `algorithm` parameter, assume that $M$ is rather small; say, $M \leq 20$.
 

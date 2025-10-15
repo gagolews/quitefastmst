@@ -11,7 +11,7 @@ mst_euclid(
   algorithm = "auto",
   max_leaf_size = 0L,
   first_pass_max_brute_size = 0L,
-  mutreach_adj = -1.00000011920929,
+  mutreach_ties = "dcore_min",
   verbose = FALSE
 )
 }
@@ -38,13 +38,9 @@ treat it as a leaf (unless it actually is a leaf) in the first
 iteration of the algorithm; use \code{0} to select the default value,
 currently set to 32}
 
-\item{mutreach_adj}{adjustment for mutual reachability distance ambiguity
-(for \eqn{M>1}) whose fractional part should be close to 0:
-values in \eqn{(-1,0)} prefer connecting to farther nearest neighbours,
-values in \eqn{(0, 1)} fall for closer NNs (which is what many other
-implementations provide), values in \eqn{(-2,-1)} prefer connecting
-to points with smaller core distances, values in \eqn{(1, 2)} favour
-larger core distances; see below for more details}
+\item{mutreach_ties}{adjustment for mutual reachability distance ambiguity
+(for \eqn{M>1}); one of \code{"dcore_min"} (default), \code{"dist_max"},
+\code{"dist_min"}, or \code{"dcore_max"}}
 
 \item{verbose}{whether to print diagnostic messages}
 }
@@ -103,23 +99,11 @@ there can be many minimum spanning trees. In particular, it is likely
 that there are point pairs with the same mutual reachability distances.
 
 To make the definition less ambiguous (albeit with no guarantees),
-internally, the brute-force algorithm relies on the adjusted distance:
-\eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)} or
-\eqn{d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}},
-where \eqn{\varepsilon} is close to \eqn{0}. |\code{mutreach_adj}|<1 selects
-the former formula (\eqn{\varepsilon}=\code{mutreach_adj})
-whilst 1<|\code{mutreach_adj}|<2 chooses the latter
-(\eqn{\varepsilon}=\code{mutreach_adj}±1).
-
-For the K-d tree-based methods, on the other hand, \code{mutreach_adj}
-indicates the preference towards connecting to farther/closer
-points with respect to the original metric or having smaller/larger core distances
-if a point \eqn{i} has multiple nearest-neighbour candidates \eqn{j'}, \eqn{j''} with
-\eqn{c_M(i) \geq \max\{d(i, j'),  c_M(j')\}} and
-\eqn{c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}}.
-
-Generally, the smaller the \code{mutreach_adj}, the more leaves should
-be in the tree (note that there are only four types of adjustments, though).
+the \code{mutreach_ties} argument indicates the preference towards
+connecting to farther/closer points with respect to the original metric
+or having smaller/larger core distances in cases of tied distances.
+For efficiency, the K-d tree-based methods use this adjustment
+only in the first iteration of the algorithm.
 
 The implemented algorithms, see the \code{algorithm} parameter, assume
 that \eqn{M} is rather small; say, \eqn{M \leq 20}.

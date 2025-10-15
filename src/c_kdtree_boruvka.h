@@ -353,7 +353,7 @@ protected:
     BORUVKA_TYPE boruvka_variant;
     bool reset_nns;
 
-    const FLOAT mutreach_adj;  // M>1 only
+    const Py_ssize_t mutreach_ties;  // M>1 only
 
     std::vector<FLOAT> lastbest_dist;       // !use_dtb only
     std::vector<Py_ssize_t> lastbest_ind;   // !use_dtb only
@@ -518,7 +518,7 @@ protected:
                 if (ncl_dist[ds_find_i] <= lastbest_dist[i] || lastbest_dist[i] > dcore[i]) continue;
                 for (Py_ssize_t v=0; v<M; ++v)
                 {
-                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_adj<0.0)?(M-1-v):(v))];
+                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_ties<0)?(M-1-v):(v))];
                     if (ds_find_i == ds.get_parent(j) || dcore[i] < dcore[j]) continue;
 
                     ncl_dist[ds_find_i] = dcore[i];
@@ -626,20 +626,20 @@ protected:
 
         // the correction for ambiguity is only applied at this stage!
 
-        if (mutreach_adj <= -1 || mutreach_adj >= 1) {
+        if (mutreach_ties <= -2 || mutreach_ties >= 2) {
             for (Py_ssize_t i=0; i<this->n; ++i) {
-                // mutreach_adj <= -1 - connect with j whose dcore[j] is the smallest
-                // mutreach_adj >=  1 - connect with j whose dcore[j] is the largest
+                // mutreach_ties <= -2 - connect with j whose dcore[j] is the smallest
+                // mutreach_ties >=  2 - connect with j whose dcore[j] is the largest
 
                 Py_ssize_t bestj = -1;
-                FLOAT bestdcorej = (mutreach_adj <= -1)?INFINITY:(-INFINITY);
+                FLOAT bestdcorej = (mutreach_ties <= -2)?INFINITY:(-INFINITY);
                 for (Py_ssize_t v=0; v<M; ++v)
                 {
                     Py_ssize_t j = Mnn_ind[i*M+v];
                     if (dcore[i] >= dcore[j] && ds.find(i) != ds.find(j)) {
                         if (
-                            (mutreach_adj <= -1 && bestdcorej >= dcore[j]) ||
-                            (mutreach_adj >=  1 && bestdcorej <  dcore[j])
+                            (mutreach_ties <= -2 && bestdcorej >= dcore[j]) ||
+                            (mutreach_ties >=  2 && bestdcorej <  dcore[j])
                         ) {
                             bestj = j;
                             bestdcorej = dcore[j];
@@ -651,12 +651,12 @@ protected:
         }
         else {
             for (Py_ssize_t i=0; i<this->n; ++i) {
-                // connect with j whose d(i,j) is the smallest (1>mutreach_adj>0) or largest (-1<mutreach_adj<0)
+                // connect with j whose d(i,j) is the smallest (1>=mutreach_ties>0) or largest (-1<=mutreach_ties<0)
                 // stops searching early, because the original distances are sorted
 
                 for (Py_ssize_t v=0; v<M; ++v)
                 {
-                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_adj<0.0)?(M-1-v):(v))];
+                    Py_ssize_t j = Mnn_ind[i*M+((mutreach_ties<0)?(M-1-v):(v))];
                     if (dcore[i] >= dcore[j] && ds.find(i) != ds.find(j)) {
                         // j is the nearest neighbour of i w.r.t. mutreach dist.
                         tree_add(i, j, dcore[i]);
@@ -1016,12 +1016,12 @@ public:
         const Py_ssize_t max_leaf_size=16,
         const Py_ssize_t first_pass_max_brute_size=16,
         const FLOAT boruvka_variant=1.5,
-        const FLOAT mutreach_adj=-INFINITY
+        const Py_ssize_t mutreach_ties=-2
     ) :
         kdtree<FLOAT, D, DISTANCE, NODE>(data, n, max_leaf_size), tree_edges(0), tree_iter(0),
         ds(n), ncl_dist(n), ncl_ind(n), ncl_from(n),
         first_pass_max_brute_size(first_pass_max_brute_size),
-        mutreach_adj(mutreach_adj), M(M)
+        mutreach_ties(mutreach_ties), M(M)
     {
         QUITEFASTMST_ASSERT(M>=0);
 

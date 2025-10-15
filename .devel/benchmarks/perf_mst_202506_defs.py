@@ -1,8 +1,6 @@
 """
 NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
 
-TODO UPDATE: M-1 → M !!!  >= v0.9.1
-
 
 quitefastmst library and package for R and Python
 Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
@@ -39,7 +37,7 @@ r_quitefastmst = importr("quitefastmst")
 # # not as fast as ours, lacking Python interface, a newer version does not build
 # # see mst_wangyiqiu
 # def mst_pargeo(X, M):
-#     if M > 1: return None
+#     if M > 0: return None
 #     np.savetxt("/tmp/input.numpy", X)
 #     subprocess.run([
 #         "/home/gagolews/Python/quitefastmst/.devel/benchmarks/wangyiqiu_pargeo/build/executable/emst", "-o", "/tmp/output.pargeo", "/tmp/input.numpy"], capture_output=True, env=None, check=True)
@@ -53,10 +51,9 @@ r_quitefastmst = importr("quitefastmst")
 # forcing this to work required a bit of hackery...
 # edit compiler flags in flags.make manually, add -O3 -march=native
 def mst_wangyiqiu(X, M):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     np.savetxt("/tmp/input.numpy", X)
     out = subprocess.run([
-        "/home/gagolews/Python/quitefastmst/.devel/benchmarks/wangyiqiu_hdbscan/build/src/hdbscan", "-o", "/tmp/output.wangyiqiu", "-m", str(max(1, M)), "/tmp/input.numpy"], capture_output=True, env=None, check=True)
+        "/home/gagolews/Python/quitefastmst/.devel/benchmarks/wangyiqiu_hdbscan/build/src/hdbscan", "-o", "/tmp/output.wangyiqiu", "-m", str(max(1, M+1)), "/tmp/input.numpy"], capture_output=True, env=None, check=True)
     t = float(re.search("mst-total-time = (.*)", out.stdout.decode("utf-8")).group(1))
     res = np.loadtxt("/tmp/output.wangyiqiu")
 
@@ -64,7 +61,7 @@ def mst_wangyiqiu(X, M):
     i2 = res[:, 1].astype(np.intp, order="C")
 
     if M > 2:
-        d_core = quitefastmst.knn_euclid(X, M-1)[0][:, -1]
+        d_core = quitefastmst.knn_euclid(X, M)[0][:, -1]
 
         tree_w = np.maximum(
             np.maximum(d_core[i1], d_core[i2]),
@@ -89,8 +86,7 @@ def mst_wangyiqiu(X, M):
 
 
 def mst_r_mlpack(X, M, n_jobs=1, leaf_size=1):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
-    if M > 1 or n_jobs > 1:
+    if M > 0 or n_jobs > 1:   # M-1→M updated
         return None
 
     if X.shape[0] > max_n_medium_methods:
@@ -106,7 +102,6 @@ def mst_r_mlpack(X, M, n_jobs=1, leaf_size=1):
 
 
 def mst_r_quitefast_default(X, M):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     np_cv_rules = default_converter + numpy2ri.converter
     with np_cv_rules.context():
         _res = r_quitefastmst.mst_euclid(X, M)
@@ -117,12 +112,11 @@ def mst_r_quitefast_default(X, M):
 
 # BallTreeBoruvkaAlgorithm - much slower
 def mst_hdbscan_kdtree(X, M, n_jobs=1, leaf_size=40, leaf_size_div=3):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     if X.shape[0] > max_n_slow_methods: return None
     tree = KDTree(X, metric='euclidean', leaf_size=leaf_size)
     alg = KDTreeBoruvkaAlgorithm(
         tree,
-        min_samples=M-1,
+        min_samples=M,   # M-1→M updated
         metric='euclidean',
         leaf_size=leaf_size // leaf_size_div,  # https://github.com/scikit-learn-contrib/hdbscan/blob/master/hdbscan/hdbscan_.py
         approx_min_span_tree=False,
@@ -136,10 +130,9 @@ def mst_hdbscan_kdtree(X, M, n_jobs=1, leaf_size=40, leaf_size_div=3):
 
 
 def mst_fasthdbscan_kdtree(X, M, leaf_size=40, leaf_size_div=3):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     _res = fast_hdbscan.hdbscan.compute_minimum_spanning_tree(
         X,
-        min_samples=M-1
+        min_samples=M  # M-1→M updated
     )
 
     i1 = _res[0][:, 0].astype(np.intp, order="C")
@@ -161,8 +154,7 @@ def mst_fasthdbscan_kdtree(X, M, leaf_size=40, leaf_size_div=3):
 
 
 def mst_mlpack(X, M, n_jobs=1, leaf_size=1):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
-    if M > 1 or n_jobs > 1:
+    if M > 0 or n_jobs > 1:   # M-1→M updated
         return None
 
     if X.shape[0] > max_n_medium_methods:
@@ -181,7 +173,6 @@ def mst_mlpack(X, M, n_jobs=1, leaf_size=1):
 
 
 def mst_quitefast_brute(X, M, **kwargs):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     if X.shape[0] > max_n_brute: return None
     res = quitefastmst.mst_euclid(X, M, algorithm="brute", **kwargs)
     tree_w, tree_e = res[:2]
@@ -189,7 +180,6 @@ def mst_quitefast_brute(X, M, **kwargs):
 
 
 def mst_quitefast_single_kd_tree(X, M, **kwargs):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     res = quitefastmst.mst_euclid(
         X, M,
         algorithm="single_kd_tree",
@@ -200,7 +190,6 @@ def mst_quitefast_single_kd_tree(X, M, **kwargs):
 
 
 def mst_quitefast_sesqui_kd_tree(X, M, **kwargs):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     res = quitefastmst.mst_euclid(
         X, M,
         algorithm="sesqui_kd_tree",
@@ -211,7 +200,6 @@ def mst_quitefast_sesqui_kd_tree(X, M, **kwargs):
 
 
 def mst_quitefast_dual_kd_tree(X, M, **kwargs):
-    print("TODO UPDATE: M-1 → M !!!  >= v0.9.1")  # TODO
     res = quitefastmst.mst_euclid(
         X, M,
         algorithm="dual_kd_tree",
