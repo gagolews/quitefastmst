@@ -12,7 +12,7 @@ Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
 
 CPPFLAGS="-O3 -march=native" pip3 install fast_hdbscan --force --no-binary="fast_hdbscan" --verbose  # relies on numba, which forces -O3 -march=native anyway
 CPPFLAGS="-O3 -march=native" pip3 install pykdtree --force --no-binary="pykdtree" --verbose
-CPPFLAGS="-O3 -march=native" pip3 install numpy==2.2.6  --no-binary="numpy"  --ignore-installed # for numba
+CPPFLAGS="-O3 -march=native" pip3 install numpy --no-binary="numpy"  --ignore-installed # for numba
 CPPFLAGS="-O3 -march=native" pip3 install ~/Python/quitefastmst --force --verbose
 CPPFLAGS="-O3 -march=native" pip3 install ~/Python/genieclust --force --verbose
 CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.packages(c("RANN", "Rnanoflann", "dbscan", "nabor", "reticulate", "mlpack"))'
