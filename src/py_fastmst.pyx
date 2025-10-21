@@ -432,15 +432,17 @@ cpdef tuple mst_euclid(
     -----
 
     (\*) We note that if there are many pairs of equidistant points,
-    there can be many minimum spanning trees. In particular, it is likely
+    there can be many minimum spanning trees.  In particular, it is likely
     that there are point pairs with the same mutual reachability distances.
 
-    To make the definition less ambiguous (albeit with no guarantees),
-    the `mutreach_ties` argument indicates the preference towards
-    connecting to farther/closer points with respect to the original metric
-    or having smaller/larger core distances in cases of tied distances.
-    For efficiency, the K-d tree-based methods use this adjustment
-    only in the first iteration of the algorithm.
+    To make the definition unambiguous, the `mutreach_ties` argument indicates
+    the preference towards connecting to farther/closer points with respect
+    to the original metric, or having smaller/larger core distances
+    in cases of tied distances; see [12]_.
+
+    The brute force method always resolves all ties, whilst, for efficiency,
+    the K-d tree-based algorithms use this adjustment only for the first `M`
+    nearest neighbours, so the resulting trees might be slightly different.
 
     The implemented algorithms, see the `algorithm` parameter, assume that
     `M` is rather small; say, `M ≤ 20`.
@@ -531,9 +533,12 @@ cpdef tuple mst_euclid(
         2015, 1–51, https://doi.org/10.1145/2733381
 
     .. [11]
-        L. McInnes, J. Healy, Accelerated hierarchical density-based
+        L. McInnes, J. Healy, Accelerated hierarchical density-based
         clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
         https://doi.org/10.1109/ICDMW.2017.12
+
+    .. [12]
+        M. Gagolewski, TODO, 2025
 
 
     Parameters

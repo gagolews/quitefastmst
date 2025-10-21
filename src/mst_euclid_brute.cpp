@@ -46,7 +46,6 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
         mst[i] = CMstTriple<FLOAT>(tree_ind[2*i+0], tree_ind[2*i+1], tree_dist[i]);
     }
 
-
     QUITEFASTMST_PROFILER_START
     std::sort(mst.begin(), mst.end());
     QUITEFASTMST_PROFILER_STOP("mst sort");
@@ -74,20 +73,18 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *
  *  Note that [9]_ defines the core distance as the distance to the (M-1)-th NN.
  *
- *  (\*) We note that if there are many pairs of equidistant points,
+ *  (*) We note that if there are many pairs of equidistant points,
  *  there can be many minimum spanning trees. In particular, it is likely
  *  that there are point pairs with the same mutual reachability distances.
  *  To make the definition less ambiguous (albeit with no guarantees),
  *  internally, we resolve ties as follows.
  *  The `mutreach_ties` argument indicates the preference towards
- *  connecting to farther(-1)/closer(1) points with respect to the original metric
- *  or having smaller(-2)/larger(2) core distances
+ *  connecting to farther(-1)/closer(1) points with respect to the original
+ *  metric or having smaller(-2)/larger(2) core distances.
  *
  *  Time complexity: O(n^2). It is assumed that M is rather small
  *  (say, M <= 20). If M>1, all pairwise the distances are computed twice
  *  (first for the neighbours/core distance, then to determine the tree).
- *
- *  (*) Note that there might be multiple minimum trees spanning a given graph.
  *
  *
  *  References:
@@ -124,7 +121,6 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *        (for M>1): -2 and 2 prefer connecting to points with,
  *        respectively, smaller and larger core distance; -1 and 1 prefer,
  *        respectively, farther and closer nearest neighbours
- *
  * @param verbose should we output diagnostic/progress messages?
  */
 template <class FLOAT>
@@ -143,8 +139,8 @@ void Cmst_euclid_brute(
     QUITEFASTMST_ASSERT(mst_ind);
 
     bool mutreach_adj_via_dcore = (std::abs(mutreach_ties) >= 2);
-    FLOAT mutreach_adj = 0.00000011920928955078125*((mutreach_ties<0)?-1:1);  // TODO: actually resolve ties using a modified comparer
-
+    FLOAT mutreach_adj = ((mutreach_ties<0)?-1:1);
+    FLOAT mutreach_adj_factr = 0.00000011920928955078125;  // 2**-23
 
     std::vector<FLOAT> d_core;
     if (M > 1) {
@@ -162,12 +158,15 @@ void Cmst_euclid_brute(
     if (verbose) QUITEFASTMST_PRINT("[quitefastmst] Computing the MST... %3d%%", 0);
 
 
-    // ind_nn[j] is the vertex from the current tree closest to vertex j
-    std::vector<Py_ssize_t> ind_nn(n);
-    std::vector<FLOAT> dist_nn(n, INFINITY);  // dist_nn[j] = d(j, ind_nn[j])
+    // ncl_ind[j] is the vertex from the current tree closest to vertex j
+    std::vector<Py_ssize_t> ncl_ind(n);
+    std::vector<FLOAT> ncl_dist(n, INFINITY);        // ncl_dist[j] = d_M(j, ncl_ind[j])
 
-    std::vector<Py_ssize_t> ind_left(n);  // aka perm
-    for (Py_ssize_t i=0; i<n; ++i) ind_left[i] = i;
+    std::vector<FLOAT> ncl_dist_adj;   // ncl_dist[j] = adjustment for d_M(j, ncl_ind[j])'s ambiguity
+    if (M > 1) ncl_dist_adj.resize(n, INFINITY);
+
+    std::vector<Py_ssize_t> remaining_ind(n);  // a.k.a. perm
+    for (Py_ssize_t i=0; i<n; ++i) remaining_ind[i] = i;
 
     std::vector< CMstTriple<FLOAT> > mst(n-1);
 
@@ -191,9 +190,9 @@ void Cmst_euclid_brute(
                 for (Py_ssize_t u=0; u<d; ++u)
                     dd += square(x_cur[u]-X[j*d+u]);
 
-                if (dd < dist_nn[j]) {
-                    dist_nn[j] = dd;
-                    ind_nn[j] = i-1;
+                if (dd < ncl_dist[j]) {
+                    ncl_dist[j] = dd;
+                    ncl_ind[j] = i-1;
                 }
             }
         }
@@ -203,32 +202,44 @@ void Cmst_euclid_brute(
             #pragma omp parallel for schedule(static,MST_OMP_CHUNK_SIZE)
             #endif
             for (Py_ssize_t j=i; j<n; ++j) {
-                // if (d_core[i-1] > dist_nn[j]) continue;
+                if (ncl_dist[j] < d_core[i-1]) continue;
+                if (ncl_dist[j] < d_core[j]) continue;
+
                 FLOAT dd = 0.0;
                 for (Py_ssize_t u=0; u<d; ++u)
                     dd += square(x_cur[u]-X[j*d+u]);
 
-                if (mutreach_adj_via_dcore) {
-                    if (d_core[i-1] <= d_core[j]) {
-                        if (dd <= d_core[j])
-                            dd = d_core[j]   - mutreach_adj*d_core[i-1];  // minus
-                        else
-                            dd = dd          - mutreach_adj*d_core[i-1];
-                    }
-                    else {  // d_core[j] < d_core[i-1]
-                        if (dd <= d_core[i-1])
-                            dd = d_core[i-1] - mutreach_adj*d_core[j];
-                        else
-                            dd = dd          - mutreach_adj*d_core[j];
-                    }
+                if (ncl_dist[j] < dd) continue;  // nothing to do
+
+                FLOAT dd_orig = dd;
+                FLOAT dd_adj;
+                FLOAT d_core_min;
+                FLOAT d_core_max;
+
+                if (d_core[i-1] <= d_core[j]) {
+                    d_core_min = d_core[i-1];
+                    d_core_max = d_core[j];
                 }
                 else {
-                    dd = max3(dd, d_core[i-1], d_core[j]) + mutreach_adj*dd; // plus
+                    d_core_min = d_core[j];
+                    d_core_max = d_core[i-1];
                 }
 
-                if (dd < dist_nn[j]) {
-                    dist_nn[j] = dd;
-                    ind_nn[j] = i-1;
+                if (dd > d_core_max) {
+                    dd_adj = 0.0;
+                }
+                else {
+                    dd = d_core_max;
+                    if (mutreach_adj_via_dcore)
+                        dd_adj = mutreach_adj*(-d_core_min+mutreach_adj_factr*dd_orig);
+                    else
+                        dd_adj = mutreach_adj*dd_orig;
+                }
+
+                if (dd < ncl_dist[j] || (dd == ncl_dist[j] && dd_adj < ncl_dist_adj[j]))  {
+                    ncl_dist[j] = dd;
+                    ncl_dist_adj[j] = dd_adj;
+                    ncl_ind[j] = i-1;
                 }
             }
         }
@@ -237,34 +248,28 @@ void Cmst_euclid_brute(
         // we want to include the vertex that is closest to
         // the vertices of the tree constructed so far
         Py_ssize_t best_j = i;
-        for (Py_ssize_t j=i+1; j<n; ++j)
-            if (dist_nn[j] < dist_nn[best_j])
+        for (Py_ssize_t j=i+1; j<n; ++j) {
+            if (ncl_dist[j] < ncl_dist[best_j] || (ncl_dist[j] == ncl_dist[best_j] && ncl_dist_adj[j] < ncl_dist_adj[best_j]))
                 best_j = j;
-
+        }
 
         // with swapping we get better locality of reference
-        std::swap(ind_left[best_j], ind_left[i]);
-        std::swap(dist_nn[best_j], dist_nn[i]);
-        std::swap(ind_nn[best_j], ind_nn[i]);
+        std::swap(remaining_ind[best_j], remaining_ind[i]);
+        std::swap(ncl_dist[best_j], ncl_dist[i]);
+        std::swap(ncl_ind[best_j], ncl_ind[i]);
         for (Py_ssize_t u=0; u<d; ++u) std::swap(X[best_j*d+u], X[i*d+u]);
 
 
         if (M > 1) {
             std::swap(d_core[best_j], d_core[i]);
-            if (mutreach_adj != 0.0) {
-                // recompute the distance without the ambiguity correction
-                dist_nn[i] = 0.0;
-                for (Py_ssize_t u=0; u<d; ++u)
-                    dist_nn[i] += square(X[i*d+u]-X[ind_nn[i]*d+u]);
-                dist_nn[i] = max3(dist_nn[i], d_core[ind_nn[i]], d_core[i]);
-            }
+            std::swap(ncl_dist_adj[best_j], ncl_dist_adj[i]);
         }
 
         // don't visit i again - it's being added to the tree
 
-        // connect best_ind_left with the tree: add a new edge {best_ind_left, ind_nn[best_ind_left]}
-        QUITEFASTMST_ASSERT(ind_nn[i] < i);
-        mst[i-1] = CMstTriple<FLOAT>(ind_left[ind_nn[i]], ind_left[i], dist_nn[i], /*order=*/true);
+        // connect best_remaining_ind with the tree: add a new edge {best_remaining_ind, ncl_ind[best_remaining_ind]}
+        QUITEFASTMST_ASSERT(ncl_ind[i] < i);
+        mst[i-1] = CMstTriple<FLOAT>(remaining_ind[ncl_ind[i]], remaining_ind[i], ncl_dist[i], /*order=*/true);
 
 
         if (verbose) QUITEFASTMST_PRINT("\b\b\b\b%3d%%", (int)((n-1+n-i-1)*(i+1)*100/n/(n-1)));
@@ -287,13 +292,14 @@ void Cmst_euclid_brute(
         mst_ind[2*i+1] = mst[i].i2;
     }
 
+    // set up nn_dist (and nn_ind) - only for M>=1
     if (M > 1) {
         for (Py_ssize_t i=0; i<n*M; ++i)
             nn_dist[i] = sqrt(nn_dist[i]);
     }
     else if (M == 1) {
         // for M==1 we just need the nearest neighbours,
-        // and the MST connects them with each other
+        // as the MST connects them with each other
         for (Py_ssize_t i=0; i<n; ++i)
             nn_dist[i] = INFINITY;
 

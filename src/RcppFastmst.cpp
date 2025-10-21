@@ -322,12 +322,14 @@ List knn_euclid(
 //' there can be many minimum spanning trees. In particular, it is likely
 //' that there are point pairs with the same mutual reachability distances.
 //'
-//' To make the definition less ambiguous (albeit with no guarantees),
-//' the \code{mutreach_ties} argument indicates the preference towards
-//' connecting to farther/closer points with respect to the original metric
-//' or having smaller/larger core distances in cases of tied distances.
-//' For efficiency, the K-d tree-based methods use this adjustment
-//' only in the first iteration of the algorithm.
+//' To make the definition unambiguous, the \code{mutreach_ties} argument
+//' indicates the preference towards connecting to farther/closer points with
+//' respect to the original metric, or having smaller/larger core distances
+//' in cases of tied distances; see (Gagolewski, 2025).
+//'
+//' The brute force method always resolves all ties, whilst, for efficiency,
+//' the K-d tree-based algorithms use this adjustment only for the first \eqn{M}
+//' nearest neighbours, so the resulting trees might be slightly different.
 //'
 //' The implemented algorithms, see the \code{algorithm} parameter, assume
 //' that \eqn{M} is rather small; say, \eqn{M \leq 20}.
@@ -409,6 +411,7 @@ List knn_euclid(
 //' clustering, \emph{IEEE Intl. Conf. Data Mining Workshops (ICMDW)}, 2017,
 //' 33–42, \doi{10.1109/ICDMW.2017.12}.
 //'
+//' M. Gagolewski, TODO, 2025.
 //'
 //'
 //' @param X the "database"; a matrix of shape \eqn{n\times d}
