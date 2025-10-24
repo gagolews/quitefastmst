@@ -65,6 +65,9 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  *  them amongst their M nearest neighbours;
  *  prefer vertices of the smallest core distances
  *
+ *  NOTE This procedure should be run a few times until no more leaves
+ *  change their parents.
+ *
  * @param n number of rows
  * @param m number of edges in the tree
  * @param M the degree of the "core" distance, M > 0
@@ -73,14 +76,59 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
  * @param nn_dist [out] n*M Euclidean distances
  *        to the n points' M nearest neighbours
  * @param nn_ind [out] n*M indexes of the n points' M nearest neighbours
+ *
+ * @return the number of leaves reconnected
  */
 template <class FLOAT>
-void Cleaves_reconnect_dcore_min(
+Py_ssize_t Cleaves_reconnect_dcore_min(
     Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
     FLOAT* tree_dist, Py_ssize_t* tree_ind,
     FLOAT* nn_dist, Py_ssize_t* nn_ind
 ) {
+    std::vector<Py_ssize_t> degrees(n, 0);
+    for (Py_ssize_t i=0; i<2*m; ++i) {
+        QUITEFASTMST_ASSERT(tree_ind[i] >= 0 && tree_ind[i] < n);
+        degrees[tree_ind[i]]++;
+    }
 
+    std::vector<Py_ssize_t> closest_inlier(n, -1);
+    for (Py_ssize_t v=0; v<n; ++v) {
+        QUITEFASTMST_ASSERT(degrees[v] > 0);
+        if (degrees[v] == 1) continue;  // a leaf
+
+        FLOAT dcore_v = nn_dist[v*M+(M-1)];
+        for (Py_ssize_t j=0; j<M; ++j) {
+            Py_ssize_t u  = nn_ind[v*M+j];
+            FLOAT dcore_u = nn_dist[u*M+(M-1)];
+            if (dcore_v > dcore_u) continue;   // v cannot become adjacent to u (minimality condition!)
+            if (closest_inlier[u] < 0 || dcore_v < nn_dist[closest_inlier[u]*M+(M-1)])
+                closest_inlier[u] = v;
+
+            // choose v if u is amongst M NNs of v and v itself has "small" core distance
+        }
+    }
+
+    Py_ssize_t num_changes = 0;
+    for (Py_ssize_t i=0; i<m; ++i) {
+        for (Py_ssize_t j=0; j<=1; ++j) {
+            Py_ssize_t u = tree_ind[i*2+j];
+            if (degrees[u] > 1) continue;  // we want u to be a leaf
+
+            Py_ssize_t v = tree_ind[i*2+(1-j)];
+            QUITEFASTMST_ASSERT(degrees[v] > 1);  // v is a non-leaf
+
+            Py_ssize_t w = closest_inlier[u];
+            if (w >= 0 && w != v) {
+                // w will now be the vertex adjacent to u
+                num_changes++;
+                degrees[v]--;
+                degrees[w]++;
+                tree_ind[i*2+(1-j)] = w;
+            }
+        }
+    }
+
+    return num_changes;
 }
 
 
@@ -349,13 +397,13 @@ template void Ctree_order<float>(Py_ssize_t m, float* tree_dist, Py_ssize_t* tre
 
 template void Ctree_order<double>(Py_ssize_t m, double* tree_dist, Py_ssize_t* tree_ind);
 
-template void Cleaves_reconnect_dcore_min<float>(
+template Py_ssize_t Cleaves_reconnect_dcore_min<float>(
     Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
     float* tree_dist, Py_ssize_t* tree_ind,
     float* nn_dist, Py_ssize_t* nn_ind
 );
 
-template void Cleaves_reconnect_dcore_min<double>(
+template Py_ssize_t Cleaves_reconnect_dcore_min<double>(
     Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
     double* tree_dist, Py_ssize_t* tree_ind,
     double* nn_dist, Py_ssize_t* nn_ind

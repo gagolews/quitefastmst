@@ -148,11 +148,11 @@ void Cknn2_euclid_brute(
     Py_ssize_t d, Py_ssize_t k,
     FLOAT* nn_dist, Py_ssize_t* nn_ind, bool squared, bool verbose
 ) {
-    if (n <= 0)   throw std::domain_error("n <= 0");
-    if (m <= 0)   throw std::domain_error("m <= 0");
-    if (d <= 0)   throw std::domain_error("d <= 0");
-    if (k <= 0)   throw std::domain_error("k <= 0");
-    if (k >  n)   throw std::domain_error("k > n");
+    if (n <= 0) throw std::domain_error("n <= 0");
+    if (m <= 0) throw std::domain_error("m <= 0");
+    if (d <= 0) throw std::domain_error("d <= 0");
+    if (k <= 0) throw std::domain_error("k <= 0");
+    if (k >  n) throw std::domain_error("k > n");
 
     if (verbose) QUITEFASTMST_PRINT("[quitefastmst] Determining the nearest neighbours... ");
 

@@ -71,7 +71,7 @@ cdef extern from "../src/c_fastmst.h":
 
     void Ctree_order[T](Py_ssize_t n, T* tree_dist, Py_ssize_t* tree_ind)
 
-    void Cleaves_reconnect_dcore_min[T](
+    Py_ssize_t Cleaves_reconnect_dcore_min[T](
         Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
         T* tree_dist, Py_ssize_t* tree_ind,
         T* nn_dist, Py_ssize_t* nn_ind
@@ -712,11 +712,15 @@ cpdef tuple mst_euclid(
         pass
     elif mutreach_leaves == "reconnect_dcore_min":
         if M > 0:
-            Cleaves_reconnect_dcore_min(
-                n-1, n, M,
-                &mst_dist[0], &mst_ind[0,0],
-                &nn_dist[0,0], &nn_ind[0,0]
-            )
+            mutreach_leaves_maxiter = 10   # TODO: param
+            while mutreach_leaves_maxiter > 0:
+                num_changes = Cleaves_reconnect_dcore_min(
+                    n-1, n, M,
+                    &mst_dist[0], &mst_ind[0,0],
+                    &nn_dist[0,0], &nn_ind[0,0]
+                )
+                if num_changes <= 0: break
+                mutreach_leaves_maxiter -= 1
     else:
         raise ValueError("invalid 'mutreach_leaves'");
 

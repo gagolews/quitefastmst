@@ -85,7 +85,7 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind);
 
 
 template <class FLOAT>
-void Cleaves_reconnect_dcore_min(
+Py_ssize_t Cleaves_reconnect_dcore_min(
     Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
     FLOAT* tree_dist, Py_ssize_t* tree_ind,
     FLOAT* nn_dist, Py_ssize_t* nn_ind

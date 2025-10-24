@@ -590,11 +590,16 @@ List mst_euclid(
         ;
     else if (mutreach_leaves=="reconnect_dcore_min") {
         if (M>0) {
-            Cleaves_reconnect_dcore_min(
-                n-1, n, M,
-                mst_dist.data(), mst_ind.data(),
-                nn_dist.data(), nn_ind.data()
-            );
+            Py_ssize_t mutreach_leaves_maxiter = 10;   // TODO: param
+            while (mutreach_leaves_maxiter > 0) {
+                Py_ssize_t num_changes = Cleaves_reconnect_dcore_min(
+                    n-1, n, M,
+                    mst_dist.data(), mst_ind.data(),
+                    nn_dist.data(), nn_ind.data()
+                );
+                if (num_changes <= 0) break;
+                mutreach_leaves_maxiter--;
+            }
         }
     }
     else
