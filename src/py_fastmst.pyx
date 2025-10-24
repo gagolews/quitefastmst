@@ -71,6 +71,12 @@ cdef extern from "../src/c_fastmst.h":
 
     void Ctree_order[T](Py_ssize_t n, T* tree_dist, Py_ssize_t* tree_ind)
 
+    void Cleaves_reconnect_dcore_min[T](
+        Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
+        T* tree_dist, Py_ssize_t* tree_ind,
+        T* nn_dist, Py_ssize_t* nn_ind
+    )
+
     void Cknn1_euclid_kdtree[T](
         T* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t k,
         T* nn_dist, Py_ssize_t* nn_ind,
@@ -175,16 +181,16 @@ cpdef tuple tree_order(const floatT[:] tree_dist, const Py_ssize_t[:,:] tree_ind
 
     Orders the edges of a graph (e.g., a spanning tree) w.r.t. the weights
     increasingly, resolving ties if needed based on the points' IDs,
-    i.e., the triples (dist, ind1, ind2) are sorted lexicographically.
+    i.e., the triples *(dist, ind1, ind2)* are sorted lexicographically.
 
 
     Parameters
     ----------
 
-    tree_dist : c_contiguous ndarray, shape (m,)
+    tree_dist : c_contiguous ndarray, shape *(m,)*
         The m edges' weights
 
-    tree_ind : c_contiguous ndarray, shape (m,2)
+    tree_ind : c_contiguous ndarray, shape *(m,2)*
         The corresponding pairs of IDs of the incident nodes
 
 
@@ -192,7 +198,7 @@ cpdef tuple tree_order(const floatT[:] tree_dist, const Py_ssize_t[:,:] tree_ind
     -------
 
     pair : tuple
-        A pair (tree_dist, tree_ind) after the ordering.
+        A pair *(tree_dist, tree_ind)* after the reordering.
 
     """
     cdef Py_ssize_t m = tree_dist.shape[0]
@@ -224,19 +230,19 @@ cpdef tuple knn_euclid(
 
     Euclidean Nearest Neighbours
 
-    If `Y` is ``None``, then the function determines the first `k` nearest
-    neighbours of each point in `X` with respect to the Euclidean distance.
+    If *Y* is ``None``, then the function determines the first *k* nearest
+    neighbours of each point in *X* with respect to the Euclidean distance.
     It is assumed that each query point is not its own neighbour.
 
-    Otherwise, for each point in `Y`, this function determines the `k` nearest
-    points thereto from `X`.
+    Otherwise, for each point in *Y*, this function determines the *k* nearest
+    points thereto from *X*.
 
 
     Notes
     -----
 
-    The implemented algorithms, see the ``algorithm`` parameter, assume that
-    `k` is rather small; say, `k ≤ 20`.
+    The implemented algorithms, see the *algorithm* parameter, assume that
+    *k* is rather small; say, *k ≤ 20*.
 
     Our implementation of K-d trees [1]_ has been quite optimised; amongst
     others, it has good locality of reference (at the cost of making a
@@ -245,7 +251,7 @@ cpdef tuple knn_euclid(
     from [3]_, and a couple of further tuneups proposed by the current author.
     Still, it is well-known that K-d trees perform well only in spaces of low
     intrinsic dimensionality.  Thus, due to the so-called curse of
-    dimensionality, for high `d`, the brute-force algorithm is preferred.
+    dimensionality, for high *d*, the brute-force algorithm is preferred.
 
     The number of threads used is controlled via the ``OMP_NUM_THREADS``
     environment variable or via ``quitefastmst.omp_set_num_threads``
@@ -274,12 +280,12 @@ cpdef tuple knn_euclid(
     Parameters
     ----------
 
-    X : matrix, shape `(n,d)`
-        the `n` input points in :math:`\\mathbb{R}^d` (the "database")
-    k : int `< n`
+    X : matrix, shape *(n,d)*
+        the *n* input points in :math:`\\mathbb{R}^d` (the "database")
+    k : int *< n*
         requested number of nearest neighbours
-        (should be rather small, say, `≤ 20`)
-    Y : None or an ndarray, shape `(m,d)`
+        (should be rather small, say, *≤ 20*)
+    Y : None or an ndarray, shape *(m,d)*
         the "query points"; note that setting ``Y=X``, contrary to ``Y=None``,
         will include the query points themselves amongst their own neighbours
     algorithm : {``"auto"``, ``"kd_tree"``, ``"brute"``}, default ``"auto"``
@@ -290,7 +296,7 @@ cpdef tuple knn_euclid(
         smaller leaves use more memory, yet are not necessarily faster;
         use ``0`` to select the default value, currently set to 32.
     squared : False
-        whether the output ``dist`` should use the squared Euclidean distance
+        whether the output *dist* should use the squared Euclidean distance
     verbose: bool
         whether to print diagnostic messages
 
@@ -299,16 +305,16 @@ cpdef tuple knn_euclid(
     -------
 
     pair : tuple
-        A pair ``(dist, ind)`` representing the `k`-nearest neighbour graph, where:
+        A pair *(dist, ind)* representing the *k*-nearest neighbour graph, where:
 
-            dist : a c_contiguous ndarray, shape `(n,k)` or `(m,k)`
-                ``dist[i,:]`` is sorted nondecreasingly for all `i`,
-                ``dist[i,j]`` gives the weight of the edge ``{i, ind[i,j]}``,
-                i.e., the distance between the `i`-th point and its `j`-th NN
+            dist : a c_contiguous ndarray, shape *(n,k)* or *(m,k)*
+                *dist[i,:]* is sorted nondecreasingly for all *i*,
+                *dist[i,j]* gives the weight of the edge *{i, ind[i,j]}*,
+                i.e., the distance between the *i*-th point and its *j*-th NN
 
             ind : a c_contiguous ndarray of the same shape
-                ``ind[i,j]`` is the index (between `0` and `n-1`)
-                of the `j`-th nearest neighbour of `i`
+                *ind[i,j]* is the index (between *0* and *n-1*)
+                of the *j*-th nearest neighbour of *i*
     """
     cdef Py_ssize_t n = X.shape[0]
     cdef Py_ssize_t d = X.shape[1]
@@ -386,21 +392,21 @@ cpdef tuple mst_euclid(
     str algorithm="auto",
     int max_leaf_size=0,
     int first_pass_max_brute_size=0,
-    str mutreach_ties="dcore_min",
+    str mutreach_ties="dist_min",
+    str mutreach_leaves="keep",
     bint verbose=False
 ):
     """
     quitefastmst.mst_euclid(
         X, M=0, algorithm="auto", max_leaf_size=0,
-        first_pass_max_brute_size=0, mutreach_ties="dcore_min",
-        verbose=False
+        first_pass_max_brute_size=0, mutreach_ties="dist_min",
+        mutreach_leaves="keep", verbose=False
     )
 
     Euclidean and Mutual Reachability Minimum Spanning Trees
 
-
     The function determines the/a(\*) minimum spanning tree (MST) of a set
-    of `n` points, i.e., an acyclic undirected connected graph whose:
+    of *n* points, i.e., an acyclic undirected connected graph whose:
     vertices represent the points, and edges are weighted by the distances
     between point pairs and have minimal total weight.
 
@@ -408,23 +414,23 @@ cpdef tuple mst_euclid(
     (clustering, density estimation, dimensionality reduction,
     outlier detection, etc.).
 
-    For `M ≤ 1`, we get a spanning tree that minimises the sum of Euclidean
+    For *M ≤ 1*, we obtain a spanning tree that minimises the sum of Euclidean
     distances between the points, i.e., the classic Euclidean minimum
-    spanning tree (EMST).  If `M = 1`, the function additionally returns
+    spanning tree (EMST).  If *M = 1*, the function additionally returns
     the distance to each point's nearest neighbour.
 
-    If `M > 1`, the spanning tree is the smallest w.r.t. the degree-`M`
+    If *M > 1*, the spanning tree is the smallest w.r.t. the degree-*M*
     mutual reachability distance [9]_ given by
     :math:`d_M(i, j)=\\max\\{ c_M(i), c_M(j), d(i, j)\\}`, where :math:`d(i,j)`
-    is the Euclidean distance between the `i`-th and the `j`-th point,
-    and :math:`c_M(i)` is the `i`-th `M`-core distance defined as the distance
-    between the `i`-th point and its `M`-th nearest neighbour
+    is the Euclidean distance between the *i*-th and the *j*-th point,
+    and :math:`c_M(i)` is the *i*-th *M*-core distance defined as the distance
+    between the *i*-th point and its *M*-th nearest neighbour
     (not including the query point itself).
 
     Note that [9]_ defines the core distance as the
-    distance to the `(M-1)`-th nearest neighbour (i.e., the `M`-th one,
-    but including self).  In our case, `M` corresponds
-    to the ``hdbscan`` package's ``min_samples``.
+    distance to the *(M-1)*-th nearest neighbour (i.e., the *M*-th one,
+    but including self).  In our case, *M* corresponds
+    to the **hdbscan** package's *min_samples*.
 
 
 
@@ -435,17 +441,17 @@ cpdef tuple mst_euclid(
     there can be many minimum spanning trees.  In particular, it is likely
     that there are point pairs with the same mutual reachability distances.
 
-    To make the definition unambiguous, the `mutreach_ties` argument indicates
+    To make the definition unambiguous, the *mutreach_ties* argument indicates
     the preference towards connecting to farther/closer points with respect
     to the original metric, or having smaller/larger core distances
     in cases of tied distances; see [12]_.
 
     The brute force method always resolves all ties, whilst, for efficiency,
-    the K-d tree-based algorithms use this adjustment only for the first `M`
+    the K-d tree-based algorithms use this adjustment only for the first *M*
     nearest neighbours, so the resulting trees might be slightly different.
 
-    The implemented algorithms, see the `algorithm` parameter, assume that
-    `M` is rather small; say, `M ≤ 20`.
+    The implemented algorithms, see the *algorithm* parameter, assume that
+    *M* is rather small; say, *M ≤ 20*.
 
     Our implementation of K-d trees [6]_ has been quite optimised; amongst
     others, it has good locality of reference (at the cost of making a
@@ -458,7 +464,7 @@ cpdef tuple mst_euclid(
     i.e., the nearest point thereto from another cluster.
     The "dual-tree" Borůvka version of the algorithm is, in principle, based
     on [5]_.  As far as our implementation is concerned, the dual-tree approach
-    is often only faster in 2- and 3-dimensional spaces, for `M ≤ 1`, and in
+    is often only faster in 2- and 3-dimensional spaces, for *M ≤ 1*, and in
     a single-threaded setting.  For another (approximate) adaptation
     of the dual-tree algorithm to the mutual reachability distance, see [11]_.
 
@@ -468,11 +474,11 @@ cpdef tuple mst_euclid(
     spaces and usually not much slower than the single-tree variant otherwise.
 
     Nevertheless, it is well-known that K-d trees perform well only in spaces
-    of low intrinsic dimensionality (a.k.a. the "curse").  For high `d`,
+    of low intrinsic dimensionality (a.k.a. the "curse").  For high *d*,
     the "brute-force" algorithm is recommended.  Here, we provided a
     parallelised [2]_ version of the Jarník [1]_ (a.k.a.
     Prim [3]_ or Dijkstra) algorithm, where the distances are computed
-    on the fly (only once for `M ≤ 1`).
+    on the fly (only once for *M ≤ 1*).
 
     The number of threads is controlled via the ``OMP_NUM_THREADS``
     environment variable or via ``quitefastmst.omp_set_num_threads``
@@ -544,15 +550,15 @@ cpdef tuple mst_euclid(
     Parameters
     ----------
 
-    X : matrix, shape `(n,d)`
-        the "database"; the `n` input points in :math:`\\mathbb{R}^d`
-    M : int `< n`
+    X : matrix, shape *(n,d)*
+        the "database"; the *n* input points in :math:`\\mathbb{R}^d`
+    M : int *< n*
         the smoothing factor a.k.a. the degree of the mutual reachability
-        distance (should be rather small,
-        say, `≤ 20`). `M ≤ 1` denotes the ordinary Euclidean distance
+        distance (should be rather small, say, *≤ 20*);
+        *M ≤ 1* denotes the ordinary Euclidean distance
     algorithm : {``"auto"``, ``"single_kd_tree"``, ``"sesqui_kd_tree"``, ``"dual_kd_tree"``, ``"brute"``}, default ``"auto"``
-        K-d trees can only be used for `d` between 2 and 20 only.
-        ``"auto"`` selects ``"sesqui_kd_tree"`` for `d ≤ 20`.
+        K-d trees can only be used for *d* between 2 and 20 only;
+        ``"auto"`` selects ``"sesqui_kd_tree"`` for *d ≤ 20*;
         ``"brute"`` is used otherwise
     max_leaf_size : int
         maximal number of points in the K-d tree leaves;
@@ -563,8 +569,14 @@ cpdef tuple mst_euclid(
         minimal number of points in a node to treat it as a leaf (unless
         it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
-    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default ``"dcore_min"``
-        adjustment for mutual reachability distance ambiguity (for M>1)
+    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default ``"dist_min"``
+        adjustment for mutual reachability distance ambiguity (for *M > 1*)
+    mutreach_leaves : {``"keep"``, ``"reconnect_dcore_min"``}, default ``"keep"``
+        a way to postprocess the leaves of the computed tree;
+        one of ``"keep"`` (default: do nothing),
+        or ``"reconnect_dcore_min"`` (try reconnecting leaves to inner vertices
+        which have them amongst their *M* nearest neighbours; prefer vertices
+        of the smallest core distance)
     verbose: bool
         whether to print diagnostic messages
 
@@ -573,25 +585,25 @@ cpdef tuple mst_euclid(
     -------
 
     tuple
-        If `M = 0`, a pair ``(mst_dist, mst_index)`` defining the `n-1` edges
+        If *M = 0*, a pair *(mst_dist, mst_index)* defining the *n-1* edges
         of the computed spanning tree is returned:
 
-            mst_dist : an array of length `(n-1)`
-                ``mst_dist[i]`` gives the weight of the `i`-th edge
+            mst_dist : an array of length *(n-1)*
+                *mst_dist[i]* gives the weight of the *i*-th edge
 
-            mst_index : a matrix with `n-1` rows and `2` columns
-                ``{mst_index[i,0], mst_index[i,1]}`` defines the `i`-th edge
+            mst_index : a matrix with *n-1* rows and *2* columns
+                *{mst_index[i,0], mst_index[i,1]}* defines the *i*-th edge
                 of the tree
 
         The tree edges are ordered w.r.t. weights nondecreasingly, and then by
-        the indexes (lexicographic ordering of the ``(weight, index1, index2)``
-        triples).  For each `i`, it holds ``mst_index[i,0]<mst_index[i,1]``.
+        the indexes (lexicographic ordering of the *(weight, index1, index2)*
+        triples).  For each *i*, it holds *mst_index[i,0] < mst_index[i,1]*.
 
-        For `M > 0`, we additionally get:
+        For *M > 0*, we additionally get:
 
-            nn_dist : an `n` by `M` matrix
+            nn_dist : an *n* by *M* matrix
                 it gives the Euclidean distances between each point and its
-                `M` nearest neighbours
+                *M* nearest neighbours
 
             nn_index : a matrix of the same shape
                 it provides the corresponding indexes of the nearest neighbours
@@ -695,6 +707,19 @@ cpdef tuple mst_euclid(
             <Py_ssize_t*>(0) if M==0 else &nn_ind[0,0],
             mutreach_ties_val, verbose
         )
+
+    if mutreach_leaves == "keep":
+        pass
+    elif mutreach_leaves == "reconnect_dcore_min":
+        if M > 0:
+            Cleaves_reconnect_dcore_min(
+                n-1, n, M,
+                &mst_dist[0], &mst_ind[0,0],
+                &nn_dist[0,0], &nn_ind[0,0]
+            )
+    else:
+        raise ValueError("invalid 'mutreach_leaves'");
+
 
     if M == 0:
         return mst_dist, mst_ind

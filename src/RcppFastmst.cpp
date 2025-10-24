@@ -432,8 +432,13 @@ List knn_euclid(
 //'    iteration of the algorithm; use \code{0} to select the default value,
 //'    currently set to 32
 //' @param mutreach_ties adjustment for mutual reachability distance ambiguity
-//'    (for \eqn{M>1}); one of \code{"dcore_min"} (default), \code{"dist_max"},
-//'    \code{"dist_min"}, or \code{"dcore_max"}
+//'    (for \eqn{M>1}); one of \code{"dcore_min"}, \code{"dist_max"},
+//'    \code{"dist_min"} (default), or \code{"dcore_max"}
+//' @param mutreach_leaves a way to postprocess the leaves of the computed tree;
+//'    one of \code{"keep"} (default: do nothing),
+//'    or \code{"reconnect_dcore_min"} (try reconnecting leaves to
+//'    inner vertices which have them amongst their M nearest neighbours;
+//'    prefer vertices of the smallest core distance)
 //' @param verbose whether to print diagnostic messages
 //'
 //'
@@ -477,7 +482,8 @@ List mst_euclid(
     Rcpp::String algorithm="auto",
     int max_leaf_size=0,
     int first_pass_max_brute_size=0,
-    Rcpp::String mutreach_ties="dcore_min",
+    Rcpp::String mutreach_ties="dist_min",
+    Rcpp::String mutreach_leaves="keep",
     bool verbose=false
 ) {
     using FLOAT = double;  // float is not faster..
@@ -580,7 +586,21 @@ List mst_euclid(
             mutreach_ties_val, verbose
         );
 
+    if (mutreach_leaves=="keep")
+        ;
+    else if (mutreach_leaves=="reconnect_dcore_min") {
+        if (M>0) {
+            Cleaves_reconnect_dcore_min(
+                n-1, n, M,
+                mst_dist.data(), mst_ind.data(),
+                nn_dist.data(), nn_ind.data()
+            );
+        }
+    }
+    else
+        stop("invalid 'mutreach_leaves'");
 
+    // generate outputs
     Rcpp::IntegerMatrix out_mst_ind(n-1, 2);
     Rcpp::NumericVector out_mst_dist(n-1);
     for (Py_ssize_t i=0; i<n-1; ++i) {

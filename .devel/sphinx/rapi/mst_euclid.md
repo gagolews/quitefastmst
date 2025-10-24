@@ -23,7 +23,8 @@ mst_euclid(
   algorithm = "auto",
   max_leaf_size = 0L,
   first_pass_max_brute_size = 0L,
-  mutreach_ties = "dcore_min",
+  mutreach_ties = "dist_min",
+  mutreach_leaves = "keep",
   verbose = FALSE
 )
 ```
@@ -37,7 +38,8 @@ mst_euclid(
 | `algorithm` | `"auto"`, `"single_kd_tree"`, `"sesqui_kd_tree"`, `"dual_kd_tree"`, or `"brute"`; K-d trees can only be used for $d$ between 2 and 20 only; `"auto"` selects `"sesqui_kd_tree"` for $d\leq 20$. `"brute"` is used otherwise |
 | `max_leaf_size` | maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use `0` to select the default value, currently set to 32 for the single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm |
 | `first_pass_max_brute_size` | minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use `0` to select the default value, currently set to 32 |
-| `mutreach_ties` | adjustment for mutual reachability distance ambiguity (for $M>1$); one of `"dcore_min"` (default), `"dist_max"`, `"dist_min"`, or `"dcore_max"` |
+| `mutreach_ties` | adjustment for mutual reachability distance ambiguity (for $M>1$); one of `"dcore_min"`, `"dist_max"`, `"dist_min"` (default), or `"dcore_max"` |
+| `mutreach_leaves` | a way to postprocess the leaves of the computed tree; one of `"keep"` (default: do nothing), or `"reconnect_dcore_min"` (try reconnecting leaves to inner vertices which have them amongst their M nearest neighbours; prefer vertices of the smallest core distance) |
 | `verbose` | whether to print diagnostic messages |
 
 ## Details

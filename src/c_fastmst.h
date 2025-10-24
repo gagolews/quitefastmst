@@ -42,6 +42,8 @@
  *  clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
  *  DOI:10.1109/ICDMW.2017.12.
  *
+ *  [12] M. Gagolewski, TODO, 2025.
+ *
  *
  *  Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>
  *
@@ -80,6 +82,14 @@ void Cknn2_euclid_brute(
 
 template <class FLOAT>
 void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind);
+
+
+template <class FLOAT>
+void Cleaves_reconnect_dcore_min(
+    Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
+    FLOAT* tree_dist, Py_ssize_t* tree_ind,
+    FLOAT* nn_dist, Py_ssize_t* nn_ind
+);
 
 
 template <class FLOAT>

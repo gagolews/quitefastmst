@@ -49,8 +49,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // mst_euclid
-List mst_euclid(SEXP X, int M, Rcpp::String algorithm, int max_leaf_size, int first_pass_max_brute_size, Rcpp::String mutreach_ties, bool verbose);
-RcppExport SEXP _quitefastmst_mst_euclid(SEXP XSEXP, SEXP MSEXP, SEXP algorithmSEXP, SEXP max_leaf_sizeSEXP, SEXP first_pass_max_brute_sizeSEXP, SEXP mutreach_tiesSEXP, SEXP verboseSEXP) {
+List mst_euclid(SEXP X, int M, Rcpp::String algorithm, int max_leaf_size, int first_pass_max_brute_size, Rcpp::String mutreach_ties, Rcpp::String mutreach_leaves, bool verbose);
+RcppExport SEXP _quitefastmst_mst_euclid(SEXP XSEXP, SEXP MSEXP, SEXP algorithmSEXP, SEXP max_leaf_sizeSEXP, SEXP first_pass_max_brute_sizeSEXP, SEXP mutreach_tiesSEXP, SEXP mutreach_leavesSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,8 +60,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type max_leaf_size(max_leaf_sizeSEXP);
     Rcpp::traits::input_parameter< int >::type first_pass_max_brute_size(first_pass_max_brute_sizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::String >::type mutreach_ties(mutreach_tiesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::String >::type mutreach_leaves(mutreach_leavesSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(mst_euclid(X, M, algorithm, max_leaf_size, first_pass_max_brute_size, mutreach_ties, verbose));
+    rcpp_result_gen = Rcpp::wrap(mst_euclid(X, M, algorithm, max_leaf_size, first_pass_max_brute_size, mutreach_ties, mutreach_leaves, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -70,7 +71,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_quitefastmst_Romp_set_num_threads", (DL_FUNC) &_quitefastmst_Romp_set_num_threads, 1},
     {"_quitefastmst_Romp_get_max_threads", (DL_FUNC) &_quitefastmst_Romp_get_max_threads, 0},
     {"_quitefastmst_knn_euclid", (DL_FUNC) &_quitefastmst_knn_euclid, 7},
-    {"_quitefastmst_mst_euclid", (DL_FUNC) &_quitefastmst_mst_euclid, 7},
+    {"_quitefastmst_mst_euclid", (DL_FUNC) &_quitefastmst_mst_euclid, 8},
     {NULL, NULL, 0}
 };
 

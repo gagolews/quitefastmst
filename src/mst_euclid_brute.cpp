@@ -59,6 +59,31 @@ void Ctree_order(Py_ssize_t m, FLOAT* tree_dist, Py_ssize_t* tree_ind)
 
 
 
+/*! Reconnect leaves of the minimum spanning tree w.r.t. the
+ *  M-mutual reachability distances without affecting the minimality condition:
+ *  such that, if possible, they are adjacent to inner vertices that have
+ *  them amongst their M nearest neighbours;
+ *  prefer vertices of the smallest core distances
+ *
+ * @param n number of rows
+ * @param m number of edges in the tree
+ * @param M the degree of the "core" distance, M > 0
+ * @param tree_dist [in/out] size m - edge weights
+ * @param tree_ind [in/out] size m*2 - edges of the tree
+ * @param nn_dist [out] n*M Euclidean distances
+ *        to the n points' M nearest neighbours
+ * @param nn_ind [out] n*M indexes of the n points' M nearest neighbours
+ */
+template <class FLOAT>
+void Cleaves_reconnect_dcore_min(
+    Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
+    FLOAT* tree_dist, Py_ssize_t* tree_ind,
+    FLOAT* nn_dist, Py_ssize_t* nn_ind
+) {
+
+}
+
+
 /*! A Jarník (Prim/Dijkstra)-like algorithm for determining
  *  a(*) Euclidean minimum spanning tree (MST) or
  *  one w.r.t. an M-mutual reachability distance.
@@ -323,6 +348,18 @@ void Cmst_euclid_brute(
 template void Ctree_order<float>(Py_ssize_t m, float* tree_dist, Py_ssize_t* tree_ind);
 
 template void Ctree_order<double>(Py_ssize_t m, double* tree_dist, Py_ssize_t* tree_ind);
+
+template void Cleaves_reconnect_dcore_min<float>(
+    Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
+    float* tree_dist, Py_ssize_t* tree_ind,
+    float* nn_dist, Py_ssize_t* nn_ind
+);
+
+template void Cleaves_reconnect_dcore_min<double>(
+    Py_ssize_t m, Py_ssize_t n, Py_ssize_t M,
+    double* tree_dist, Py_ssize_t* tree_ind,
+    double* nn_dist, Py_ssize_t* nn_ind
+);
 
 template void Cmst_euclid_brute<float>(
     float* X, Py_ssize_t n, Py_ssize_t d, Py_ssize_t M,

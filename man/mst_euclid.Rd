@@ -11,7 +11,8 @@ mst_euclid(
   algorithm = "auto",
   max_leaf_size = 0L,
   first_pass_max_brute_size = 0L,
-  mutreach_ties = "dcore_min",
+  mutreach_ties = "dist_min",
+  mutreach_leaves = "keep",
   verbose = FALSE
 )
 }
@@ -39,8 +40,14 @@ iteration of the algorithm; use \code{0} to select the default value,
 currently set to 32}
 
 \item{mutreach_ties}{adjustment for mutual reachability distance ambiguity
-(for \eqn{M>1}); one of \code{"dcore_min"} (default), \code{"dist_max"},
-\code{"dist_min"}, or \code{"dcore_max"}}
+(for \eqn{M>1}); one of \code{"dcore_min"}, \code{"dist_max"},
+\code{"dist_min"} (default), or \code{"dcore_max"}}
+
+\item{mutreach_leaves}{a way to postprocess the leaves of the computed tree;
+one of \code{"keep"} (default: do nothing),
+or \code{"reconnect_dcore_min"} (try reconnecting leaves to
+inner vertices which have them amongst their M nearest neighbours;
+prefer vertices of the smallest core distance)}
 
 \item{verbose}{whether to print diagnostic messages}
 }
