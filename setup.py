@@ -135,8 +135,8 @@ setuptools.setup(
     maintainer="Marek Gagolewski",
     license="GNU Affero General Public License v3",
     install_requires=[
-        "numpy",
         "Cython",  # not: cython
+        "numpy>=2.0.0",
     ],
     python_requires=">=3.9",
     download_url="https://github.com/gagolews/quitefastmst",
