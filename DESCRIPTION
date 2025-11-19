@@ -10,7 +10,7 @@ Authors@R:
         comment=c(ORCID="0000-0003-0637-6028"))
 Description:
     Functions to compute Euclidean minimum spanning trees using single-,
-    sesqui-, and dual-tree Boruvka algorithms.  Thanks to K-d trees, they are
+    sesqui-, and dual-tree Borůvka algorithms.  Thanks to K-d trees, they are
     fast in spaces of low intrinsic dimensionality.  Mutual reachability
     distances (used in the definition of the 'HDBSCAN*' algorithm)
     are also supported.  The package also features relatively fast fallback

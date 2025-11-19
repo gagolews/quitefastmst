@@ -3,7 +3,7 @@
 
 **Keywords**: Euclidean minimum spanning tree, MST, EMST,
 mutual reachability distance, nearest neighbours, k-nn, k-d tree,
-Boruvka, Prim, Jarnik, Kruskal, Genie, HDBSCAN\*, DBSCAN,
+Borůvka, Prim, Jarník, Kruskal, Genie, HDBSCAN\*, DBSCAN,
 clustering, outlier detection.
 
 
