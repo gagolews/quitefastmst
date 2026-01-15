@@ -4,6 +4,9 @@ import scipy.spatial.distance
 import time
 import gc
 import quitefastmst
+import sklearn.datasets
+import pandas as pd
+import sys
 
 import os
 if os.path.exists(".devel/benchmark_data"):
@@ -23,16 +26,19 @@ def mst_check(X, **kwargs):
 
     for M in [0, 1, 2, 3, 5, n-1]:
         res = []
-        for algo in ["auto", "brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
+        for algo in ["brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "auto"]:
             if d > 20 and algo in ["single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
                 continue
 
+            print("    fastmst_%s (M=%d)   " % (algo, M), end="", file=sys.stderr, flush=True)
             t0 = time.time()
             res.append(quitefastmst.mst_euclid(X, algorithm=algo, M=M))
-            print("    fastmst_%s (M=%d)   %10.3fs" % (algo, M, time.time()-t0,))
+            print("%10.3fs" % (time.time()-t0,), file=sys.stderr)
 
             assert np.allclose(res[0][0].sum(), res[-1][0].sum())
             assert np.allclose(res[0][0], res[-1][0])
+
+            assert np.all(np.bincount(res[-1][1].ravel(), minlength=X.shape[0]) >= 1)
 
             if M == 0:
                 assert len(res[-1]) == 2
@@ -48,7 +54,7 @@ def mst_check(X, **kwargs):
 
 
 def test_MST():
-    for dataset in ["big_one", "pathbased", "h2mg_64_50"]:
+    for dataset in ["pathbased", "big_one", "h2mg_64_50"]:
         if dataset == "big_one":
             X = np.random.rand(1000, 20)
         else:
@@ -56,12 +62,35 @@ def test_MST():
 
         # center X + scale (NOT: standardize!)
         X = (X-X.mean(axis=0))/X.std(axis=None, ddof=1)
-        X += np.random.normal(0, 0.0001, X.shape)
+        #X += np.random.normal(0, 0.0001, X.shape)
 
-        print(dataset)
+        print(dataset, file=sys.stderr)
         mst_check(X)
         gc.collect()
 
 
+def test_borderline():
+    # test if does not crash
+
+    np.random.seed(123)
+    n = 1000
+
+    X = np.random.rand(n, 2)
+    X = np.vstack((X,X))  # repeated
+
+    Y = np.zeros((n, 2))
+
+    for algo in ["single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "brute"]:
+        for M in [0, 1, 10]:
+            print("zeros", algo, M, file=sys.stderr)
+            res = quitefastmst.mst_euclid(X, algorithm=algo, M=M)
+            assert np.all(np.bincount(res[1].ravel(), minlength=X.shape[0]) >= 1)
+
+            print("repeated", algo, M, file=sys.stderr)
+            res = quitefastmst.mst_euclid(Y, algorithm=algo, M=M)
+            assert np.all(np.bincount(res[1].ravel(), minlength=X.shape[0]) >= 1)
+
+
 if __name__ == "__main__":
     test_MST()
+    test_borderline()

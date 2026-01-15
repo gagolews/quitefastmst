@@ -16,6 +16,7 @@ pytest/__pycache__
 src/*.o
 src/*.so
 src/py_*.cpp
+src/py_*.c
 cache-*
 coverage.xml
 .coverage

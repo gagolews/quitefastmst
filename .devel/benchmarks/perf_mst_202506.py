@@ -6,7 +6,7 @@ TODO UPDATE: M-1 → M !!!  >= v0.9.1
 
 
 quitefastmst library and package for R and Python
-Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
+Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 
 
 

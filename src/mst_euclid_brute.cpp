@@ -1,6 +1,6 @@
 /*  This file is part of the 'quitefastmst' package.
  *
- *  Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>
+ *  Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License
@@ -164,17 +164,17 @@ Py_ssize_t Cleaves_reconnect_dcore_min(
  *  ----------
  *
  *  [1] V. Jarník, O jistém problému minimálním,
- *  Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63.
+ *  Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63
  *
  *  [2] C.F. Olson, Parallel algorithms for hierarchical clustering,
- *  Parallel Computing 21(8), 1995, 1313–1325.
+ *  Parallel Computing 21(8), 1995, 1313–1325
  *
  *  [3] R. Prim, Shortest connection networks and some generalizations,
- *  The Bell System Technical Journal 36(6), 1957, 1389–1401.
+ *  The Bell System Technical Journal 36(6), 1957, 1389–1401
  *
  *  [9] R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
  *  on hierarchical density estimates, Lecture Notes in Computer Science 7819,
- *  2013, 160–172. DOI: 10.1007/978-3-642-37456-2_14.
+ *  2013, 160–172, https://doi.org/10.1007/978-3-642-37456-2_14
  *
  *
  * @param X [destroyable] a C-contiguous data matrix, shape n*d

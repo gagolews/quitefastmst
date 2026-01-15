@@ -1,6 +1,6 @@
 /*  This file is part of the 'quitefastmst' package.
  *
- *  Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>
+ *  Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License
@@ -117,35 +117,35 @@ void _mst_euclid_kdtree(
  *  ----------
  *
  *  [4] O. Borůvka, O jistém problému minimálním. Práce Mor. Přírodověd. Spol.
- *  V Brně III 3, 1926, 37–58.
+ *  V Brně III 3, 1926, 37–58
  *
  *  [5] W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
  *  tree: algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
- *  Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612.
+ *  Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612
  *
  *  [6] J.L. Bentley, Multidimensional binary search trees used for associative
  *  searching, Communications of the ACM 18(9), 509–517, 1975,
- *  DOI:10.1145/361002.361007.
+ *  https://doi.org/10.1145/361002.361007
  *
  *  [7] S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
- *  are fat, The 4th CGC Workshop on Computational Geometry, 1999.
+ *  are fat, The 4th CGC Workshop on Computational Geometry, 1999
  *
  *  [8] N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
  *  strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
- *  Communications & Computers (CSCC'01), 2001.
+ *  Communications & Computers (CSCC'01), 2001
  *
  *  [9] R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
  *  on hierarchical density estimates, Lecture Notes in Computer Science 7819,
- *  2021, 160–172. DOI: 10.1007/978-3-642-37456-2_14.
+ *  2021, 160–172, https://doi.org/10.1007/978-3-642-37456-2_14
  *
  *  [10] R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
  *  density estimates for data clustering, visualization, and outlier detection,
  *  ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
- *  2015, 1–51, DOI:10.1145/2733381.
+ *  2015, 1–51, https://doi.org/10.1145/2733381
  *
  *  [11] L. McInnes, J. Healy, Accelerated hierarchical density-based
  *  clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
- *  DOI:10.1109/ICDMW.2017.12.
+ *  https://doi.org/10.1109/ICDMW.2017.12
  *
  *
  * @param X [destroyable] a C-contiguous data matrix, shape n*d

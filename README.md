@@ -106,7 +106,7 @@ New contributions are welcome, e.g., Julia, Matlab/GNU Octave wrappers.
 
 ## License
 
-Copyright (C) 2025–2025 Marek Gagolewski <https://www.gagolewski.com/>
+Copyright (C) 2025–2026 Marek Gagolewski <https://www.gagolewski.com/>
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License Version 3,
@@ -123,58 +123,57 @@ received a copy of the License along with this program. If not, see
 
 ## References
 
-Borůvka, O., O jistém problému minimálním,
-*Práce Moravské Přírodovědecké Společnosti* **3**, 1926, 37–58.
+O. Borůvka, O jistém problému minimálním,
+*Práce Moravské Přírodovědecké Společnosti* **3**, 1926, 37–58
 
-Bentley, J.L., Multidimensional binary search trees used for associative
+J.L. Bentley, Multidimensional binary search trees used for associative
 searching, *Communications of the ACM* **18**(9), 509–517, 1975,
-[DOI: 10.1145/361002.361007](https://doi.org/10.1145/361002.361007).
+[DOI:10.1145/361002.361007](https://doi.org/10.1145/361002.361007)
 
-Campello, R.J.G.B., Moulavi, D., Zimek, A., Sander, J., Hierarchical
+R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
 density estimates for data clustering, visualization, and outlier detection,
 *ACM Transactions on Knowledge Discovery from Data (TKDD)* **10**(1),
-2015, 1–51, [DOI: 10.1145/2733381](https://doi.org/10.1145/2733381).
+2015, 1–51, [DOI:10.1145/2733381](https://doi.org/10.1145/2733381)
 
-Campello, R.J.G.B., Moulavi, D., Sander, J.,
+R.J.G.B. Campello, D. Moulavi, J. Sander,
 Density-based clustering based on hierarchical density estimates,
-*Lecture Notes in Computer Science* **7819**, 2013, 160–172.
-[DOI: 10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14).
+*Lecture Notes in Computer Science* **7819**, 2013, 160–172,
+[DOI:10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14)
 
-Gagolewski, M., Cena, A., Bartoszuk, M., Brzozowski, L.,
+M. Gagolewski, A. Cena, M. Bartoszuk, Ł. Brzozowski,
 Clustering with minimum spanning trees: How good can it be?,
-*Journal of Classification* **42**, 2025, 90–112.
-[DOI: 10.1007/s00357-024-09483-1](https://doi.org/10.1007/s00357-024-09483-1).
+*Journal of Classification* **42**, 2025, 90–112,
+[DOI:10.1007/s00357-024-09483-1](https://doi.org/10.1007/s00357-024-09483-1)
 
-Gagolewski, M., A framework for benchmarking clustering algorithms,
-*SoftwareX* **20**, 2022, 101270.
-[DOI: 10.1016/j.softx.2022.101270](https://doi.org/10.1016/j.softx.2022.101270).
-<https://clustering-benchmarks.gagolewski.com/>.
+M. Gagolewski, A framework for benchmarking clustering algorithms,
+*SoftwareX* **20**, 2022, 101270,
+[DOI:10.1016/j.softx.2022.101270](https://doi.org/10.1016/j.softx.2022.101270),
+<https://clustering-benchmarks.gagolewski.com/>
 
-Jarník, V., O jistém problému minimálním,
-*Práce Moravské Přírodovědecké Společnosti* **6**, 1930, 57–63.
+V. Jarník, O jistém problému minimálním (z dopisu panu O. Borůvkovi),
+*Práce Moravské Přírodovědecké Společnosti* **6**, 1930, 57–63
 
-Maneewongvatana, S., Mount, D.M., It's okay to be skinny, if your friends
-are fat, *The 4th CGC Workshop on Computational Geometry*, 1999.
+S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
+are fat, *The 4th CGC Workshop on Computational Geometry*, 1999
 
-March, W.B., Parikshit, R., Gray, A.G., Fast Euclidean minimum spanning
+W.B. March, R. Parikshit, A. Gray, Fast Euclidean minimum spanning
 tree: Algorithm, analysis, and applications,
 *Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD '10)*,
-2010, 603–612.
+2010, 603–612
 
-Olson C.F., Parallel algorithms for hierarchical clustering,
-*Parallel Computing* **21**(8), 1995, 1313–1325.
+C.F. Olson, Parallel algorithms for hierarchical clustering,
+*Parallel Computing* **21**(8), 1995, 1313–1325
 
-McInnes, L., Healy, J., Accelerated hierarchical density-based
+L. McInnes, J. Healy, Accelerated hierarchical density-based
 clustering, *IEEE Intl. Conf. Data Mining Workshops (ICMDW)*, 2017, 33–42,
-[DOI: 10.1109/ICDMW.2017.12](https://doi.org/10.1109/ICDMW.2017.12).
+[DOI:10.1109/ICDMW.2017.12](https://doi.org/10.1109/ICDMW.2017.12)
 
-Prim, R., Shortest connection networks and some generalizations,
-*The Bell System Technical Journal* **36**(6), 1957, 1389–1401.
+R. Prim, Shortest connection networks and some generalizations,
+*The Bell System Technical Journal* **36**(6), 1957, 1389–1401
 
-Sample, N., Haines, M., Arnold, M., Purcell, T.,
-Optimizing search strategies in K-d Trees,
-*5th WSES/IEEE Conf. on Circuits, Systems, Communications & Computers (CSCC'01)*,
-2001.
+N. Sample, M. Haines, M. Arnold, T. Purcell,
+Optimizing search strategies in K-d Trees, *5th WSES/IEEE Conf. Circuits,
+Systems, Communications & Computers (CSCC'01)*, 2001
 
 
 See **quitefastmst**'s [homepage](https://quitefastmst.gagolewski.com/)

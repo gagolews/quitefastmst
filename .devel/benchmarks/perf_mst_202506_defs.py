@@ -3,7 +3,7 @@ NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
 
 
 quitefastmst library and package for R and Python
-Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
+Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 """
 
 import numpy as np

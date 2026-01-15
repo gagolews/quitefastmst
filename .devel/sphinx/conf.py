@@ -1,4 +1,4 @@
-# Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com/>
+# Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 # Configuration file for the Sphinx documentation builder.
 
 import sys, os
@@ -12,7 +12,7 @@ import quitefastmst
 pkg_name = "quitefastmst"
 pkg_title = "quitefastmst"
 pkg_version = quitefastmst.__version__
-copyright_year = "2025–2025"
+copyright_year = "2025–2026"
 html_baseurl = "https://quitefastmst.gagolewski.com/"
 html_logo = "https://www.gagolewski.com/_static/img/quitefastmst.png"
 html_favicon = "https://www.gagolewski.com/_static/img/quitefastmst.png"

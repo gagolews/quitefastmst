@@ -1,6 +1,6 @@
 /*  This file is part of the 'quitefastmst' package.
  *
- *  Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>
+ *  Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License
@@ -58,14 +58,14 @@ void _knn_sqeuclid_kdtree(
  *
  *  [1] J.L. Bentley, Multidimensional binary search trees used for associative
  *  searching, Communications of the ACM 18(9), 509–517, 1975,
- *  DOI:10.1145/361002.361007.
+ *  https://doi.org/10.1145/361002.361007
  *
  *  [2] S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
- *  are fat, 4th CGC Workshop on Computational Geometry, 1999.
+ *  are fat, 4th CGC Workshop on Computational Geometry, 1999
  *
  *  [3] N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
  *  strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
- *  Communications & Computers (CSCC'01), 2001.
+ *  Communications & Computers (CSCC'01), 2001
  *
  *
  *

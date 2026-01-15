@@ -3,49 +3,49 @@
  *
  *
  *  [1] V. Jarník, O jistém problému minimálním,
- *  Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63.
+ *  Práce Moravské Přírodovědecké Společnosti 6, 1930, 57–63
  *
  *  [2] C.F. Olson, Parallel algorithms for hierarchical clustering,
- *  Parallel Computing 21(8), 1995, 1313–1325.
+ *  Parallel Computing 21(8), 1995, 1313–1325
  *
  *  [3] R. Prim, Shortest connection networks and some generalizations,
- *  The Bell System Technical Journal 36(6), 1957, 1389–1401.
+ *  The Bell System Technical Journal 36(6), 1957, 1389–1401
  *
  *  [4] O. Borůvka, O jistém problému minimálním,
- *  Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58.
+ *  Práce Moravské Přírodovědecké Společnosti 3, 1926, 37–58
  *
  *  [5] W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning
  *  tree: Algorithm, analysis, and applications, Proc. 16th ACM SIGKDD Intl.
- *  Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612.
+ *  Conf. Knowledge Discovery and Data Mining (KDD '10), 2010, 603–612
  *
  *  [6] J.L. Bentley, Multidimensional binary search trees used for associative
  *  searching, Communications of the ACM 18(9), 509–517, 1975,
- *  DOI:10.1145/361002.361007.
+ *  https://doi.org/10.1145/361002.361007
  *
  *  [7] S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
- *  are fat, The 4th CGC Workshop on Computational Geometry, 1999.
+ *  are fat, The 4th CGC Workshop on Computational Geometry, 1999
  *
  *  [8] N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
  *  strategies in K-d Trees, 5th WSES/IEEE Conf. on Circuits, Systems,
- *  Communications & Computers (CSCC'01), 2001.
+ *  Communications & Computers (CSCC'01), 2001
  *
  *  [9] R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
  *  on hierarchical density estimates, Lecture Notes in Computer Science 7819,
- *  2013, 160–172. DOI:10.1007/978-3-642-37456-2_14.
+ *  2013, 160–172, https://doi.org/10.1007/978-3-642-37456-2_14
  *
  *  [10] R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
  *  density estimates for data clustering, visualization, and outlier detection,
  *  ACM Transactions on Knowledge Discovery from Data (TKDD) 10(1),
- *  2015, 1–51, DOI:10.1145/2733381.
+ *  2015, 1–51, https://doi.org/10.1145/2733381
  *
  *  [11] L. McInnes, J. Healy, Accelerated hierarchical density-based
  *  clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
- *  DOI:10.1109/ICDMW.2017.12.
+ *  https://doi.org/10.1109/ICDMW.2017.12
  *
- *  [12] M. Gagolewski, TODO, 2025.
+ *  [12] M. Gagolewski, *quitefastmst*, in preparation, 2026, TODO
  *
  *
- *  Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>
+ *  Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License

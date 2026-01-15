@@ -18,7 +18,7 @@ using, e.g., ``-O3 -march=native`` compiler flags and with OpenMP support on.
 
 # ############################################################################ #
 #                                                                              #
-#   Copyleft (C) 2025-2025, Marek Gagolewski <https://www.gagolewski.com>      #
+#   Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>      #
 #                                                                              #
 #                                                                              #
 #   This program is free software: you can redistribute it and/or modify       #
@@ -433,7 +433,6 @@ cpdef tuple mst_euclid(
     to the **hdbscan** package's *min_samples*.
 
 
-
     Notes
     -----
 
@@ -484,7 +483,6 @@ cpdef tuple mst_euclid(
     environment variable or via ``quitefastmst.omp_set_num_threads``
     at runtime. For best speed, consider building the package from sources
     using, e.g., ``-O3 -march=native`` compiler flags.
-
 
 
     References
@@ -544,7 +542,7 @@ cpdef tuple mst_euclid(
         https://doi.org/10.1109/ICDMW.2017.12
 
     .. [12]
-        M. Gagolewski, TODO, 2025
+        M. Gagolewski, *quitefastmst*, in preparation, 2026, TODO
 
 
     Parameters

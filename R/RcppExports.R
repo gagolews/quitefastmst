@@ -68,14 +68,14 @@ omp_get_max_threads <- function() {
 #' @references
 #' J.L. Bentley, Multidimensional binary search trees used for associative
 #' searching, \emph{Communications of the ACM} 18(9), 509–517, 1975,
-#' \doi{10.1145/361002.361007}.
+#' \doi{10.1145/361002.361007}
 #'
 #' S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
-#' are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999.
+#' are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999
 #'
 #' N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
 #' strategies in K-d Trees, \emph{5th WSES/IEEE Conf. on Circuits, Systems,
-#' Communications & Computers} (CSCC'01), 2001.
+#' Communications & Computers} (CSCC'01), 2001
 #'
 #'
 #' @param X the "database"; a matrix of shape \eqn{n\times d}
@@ -237,29 +237,29 @@ knn_euclid <- function(X, k = 1L, Y = NULL, algorithm = "auto", max_leaf_size = 
 #'
 #' J.L. Bentley, Multidimensional binary search trees used for associative
 #' searching, \emph{Communications of the ACM} 18(9), 509–517, 1975,
-#' \doi{10.1145/361002.361007}.
+#' \doi{10.1145/361002.361007}
 #'
 #' S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
-#' are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999.
+#' are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999
 #'
 #' N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
 #' strategies in K-d Trees, \emph{5th WSES/IEEE Conf. on Circuits, Systems,
-#' Communications & Computers} (CSCC'01), 2001.
+#' Communications & Computers} (CSCC'01), 2001
 #'
 #' R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based
 #' on hierarchical density estimates, \emph{Lecture Notes in Computer Science}
-#' 7819, 2013, 160–172. \doi{10.1007/978-3-642-37456-2_14}.
+#' 7819, 2013, 160–172. \doi{10.1007/978-3-642-37456-2_14}
 #'
 #' R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical
 #' density estimates for data clustering, visualization, and outlier detection,
 #' \emph{ACM Transactions on Knowledge Discovery from Data (TKDD)} 10(1),
-#' 2015, 1–51, \doi{10.1145/2733381}.
+#' 2015, 1–51, \doi{10.1145/2733381}
 #'
 #' L. McInnes, J. Healy, Accelerated hierarchical density-based
 #' clustering, \emph{IEEE Intl. Conf. Data Mining Workshops (ICMDW)}, 2017,
-#' 33–42, \doi{10.1109/ICDMW.2017.12}.
+#' 33–42, \doi{10.1109/ICDMW.2017.12}
 #'
-#' M. Gagolewski, TODO, 2025.
+#' M. Gagolewski, quitefastmst, in preparation, 2026, TODO
 #'
 #'
 #' @param X the "database"; a matrix of shape \eqn{n\times d}

@@ -95,14 +95,14 @@ knn_euclid(X, 5, matrix(c(6, 4), nrow=1))  # five closest points to (6, 4)
 \references{
 J.L. Bentley, Multidimensional binary search trees used for associative
 searching, \emph{Communications of the ACM} 18(9), 509–517, 1975,
-\doi{10.1145/361002.361007}.
+\doi{10.1145/361002.361007}
 
 S. Maneewongvatana, D.M. Mount, It's okay to be skinny, if your friends
-are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999.
+are fat, \emph{4th CGC Workshop on Computational Geometry}, 1999
 
 N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search
 strategies in K-d Trees, \emph{5th WSES/IEEE Conf. on Circuits, Systems,
-Communications & Computers} (CSCC'01), 2001.
+Communications & Computers} (CSCC'01), 2001
 }
 \seealso{
 The official online manual of \pkg{quitefastmst} at \url{https://quitefastmst.gagolewski.com/}
