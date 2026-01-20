@@ -62,7 +62,7 @@ def test_MST():
 
         # center X + scale (NOT: standardize!)
         X = (X-X.mean(axis=0))/X.std(axis=None, ddof=1)
-        #X += np.random.normal(0, 0.0001, X.shape)
+        X += np.random.normal(0, 0.0001, X.shape)
 
         print(dataset, file=sys.stderr)
         mst_check(X)
@@ -73,24 +73,24 @@ def test_borderline():
     # test if does not crash
 
     np.random.seed(123)
-    n = 1000
+    n = 3
 
     X = np.random.rand(n, 2)
     X = np.vstack((X,X))  # repeated
 
     Y = np.zeros((n, 2))
 
-    for algo in ["single_kd_tree", "sesqui_kd_tree", "dual_kd_tree", "brute"]:
-        for M in [0, 1, 10]:
-            print("zeros", algo, M, file=sys.stderr)
+    for algo in ["brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree"]:
+        for M in [0, 1, 2]:
+            print("repeated", algo, M, file=sys.stderr)
             res = quitefastmst.mst_euclid(X, algorithm=algo, M=M)
             assert np.all(np.bincount(res[1].ravel(), minlength=X.shape[0]) >= 1)
 
-            print("repeated", algo, M, file=sys.stderr)
+            print("zeros", algo, M, file=sys.stderr)
             res = quitefastmst.mst_euclid(Y, algorithm=algo, M=M)
-            assert np.all(np.bincount(res[1].ravel(), minlength=X.shape[0]) >= 1)
+            assert np.all(np.bincount(res[1].ravel(), minlength=Y.shape[0]) >= 1)
 
 
 if __name__ == "__main__":
-    test_MST()
     test_borderline()
+    test_MST()

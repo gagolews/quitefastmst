@@ -243,9 +243,12 @@ void Cmst_euclid_brute(
 
     std::vector< CMstTriple<FLOAT> > mst(n-1);
 
+    //QUITEFASTMST_PRINT("here1!\n");
     for (Py_ssize_t i=1; i<n; ++i) {
         // i-1 is the vertex most recently added to the tree
         // i, i+1, ..., n-1 - vertices not yet in the tree
+
+        //QUITEFASTMST_PRINT("%d %d\n", i, n);
 
         FLOAT* x_cur = X+(i-1)*d;
 
@@ -322,26 +325,30 @@ void Cmst_euclid_brute(
         // the vertices of the tree constructed so far
         Py_ssize_t best_j = i;
         for (Py_ssize_t j=i+1; j<n; ++j) {
-            if (ncl_dist[j] < ncl_dist[best_j] || (ncl_dist[j] == ncl_dist[best_j] && ncl_dist_adj[j] < ncl_dist_adj[best_j]))
+            if (ncl_dist[j] < ncl_dist[best_j] || (M > 1 && ncl_dist[j] == ncl_dist[best_j] && ncl_dist_adj[j] < ncl_dist_adj[best_j]))
                 best_j = j;
         }
 
-        // with swapping we get better locality of reference
-        std::swap(remaining_ind[best_j], remaining_ind[i]);
-        std::swap(ncl_dist[best_j], ncl_dist[i]);
-        std::swap(ncl_ind[best_j], ncl_ind[i]);
-        for (Py_ssize_t u=0; u<d; ++u) std::swap(X[best_j*d+u], X[i*d+u]);
+        if (best_j != i) {
+            // with swapping we get better locality of reference
+            std::swap(remaining_ind[best_j], remaining_ind[i]);
+            std::swap(ncl_dist[best_j], ncl_dist[i]);
+            std::swap(ncl_ind[best_j], ncl_ind[i]);
 
+            for (Py_ssize_t u=0; u<d; ++u) std::swap(X[best_j*d+u], X[i*d+u]);
 
-        if (M > 1) {
-            std::swap(d_core[best_j], d_core[i]);
-            std::swap(ncl_dist_adj[best_j], ncl_dist_adj[i]);
+            if (M > 1) {
+                std::swap(d_core[best_j], d_core[i]);
+                std::swap(ncl_dist_adj[best_j], ncl_dist_adj[i]);
+            }
         }
+
 
         // don't visit i again - it's being added to the tree
 
         // connect best_remaining_ind with the tree: add a new edge {best_remaining_ind, ncl_ind[best_remaining_ind]}
         QUITEFASTMST_ASSERT(ncl_ind[i] < i);
+        //QUITEFASTMST_PRINT("%d %d %f\n", remaining_ind[ncl_ind[i]], remaining_ind[i], ncl_dist[i]);
         mst[i-1] = CMstTriple<FLOAT>(remaining_ind[ncl_ind[i]], remaining_ind[i], ncl_dist[i], /*order=*/true);
 
 
@@ -355,6 +362,9 @@ void Cmst_euclid_brute(
             #endif
         }
     }
+
+
+    //QUITEFASTMST_PRINT("here2!\n");
 
     // sort the resulting MST edges in increasing order w.r.t. d
     std::sort(mst.begin(), mst.end());
