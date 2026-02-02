@@ -38,10 +38,11 @@ for the reference manual, tutorials, examples, and benchmarks.
 
 Possible applications in topological data analysis:
 clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
-[Genie](https://genieclust.gagolewski.com/), Lumbermark, Single linkage, etc.),
+[Genie](https://genieclust.gagolewski.com/),
+[Lumbermark](https://lumbermark.gagolewski.com/), Single linkage, etc.),
 density estimation, dimensionality reduction,
-outlier and noise point detection, and many more.
-
+outlier and noise point detection
+([Deadwood](https://deadwood.gagolewski.com/)), and many more.
 
 
 ## How to Install
@@ -58,7 +59,6 @@ pip3 install quitefastmst  # python3 -m pip install quitefastmst
 [Minimalist Data Wrangling in Python](https://datawranglingpy.gagolewski.com/).
 
 
-
 For best performance, advanced users will benefit from compiling the package
 from sources:
 
@@ -67,7 +67,6 @@ CPPFLAGS="-O3 -march=native" pip3 install quitefastmst --force --no-binary="quit
 ```
 
 🚧 TO DO (help needed): How to enable OpenMP support on macOS/Darwin in `setup.py`?
-
 
 
 ### R Version
@@ -82,8 +81,6 @@ install.packages("quitefastmst")
 [Deep R Programming](https://deepr.gagolewski.com/).
 
 
-
-
 For best performance, advanced users will benefit from compiling the package
 from sources:
 
@@ -93,15 +90,11 @@ install.packages("quitefastmst", type="source")
 ```
 
 
-
-
 ### Other
 
 The core functionality is implemented in the form of a C++ library.
-It can thus be easily adapted for use in other projects.
-
+It can thus be easily adapted for use in other environments.
 New contributions are welcome, e.g., Julia, Matlab/GNU Octave wrappers.
-
 
 
 ## License
@@ -118,7 +111,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 General Public License Version 3 for more details. You should have
 received a copy of the License along with this program. If not, see
 <https://www.gnu.org/licenses/>.
-
 
 
 ## References

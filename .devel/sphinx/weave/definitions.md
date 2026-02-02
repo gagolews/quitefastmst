@@ -4,22 +4,25 @@
 
 # Definitions
 
-The minimum spanning tree (MST) of a set of *n* points is an acyclic undirected
-connected graph whose:
+A Euclidean minimum spanning tree (MST) connects *n* data points
+via *n-1* shortest segments.  It is a connected acyclic graph where:
 
 * vertices represent the points,
 * edges are weighted by the distances between point pairs,
 * edges have minimal total weight.
 
-MSTs have many uses in, amongst others, topological data analysis
-(clustering, density estimation, dimensionality reduction,
-outlier detection, etc.).
-
-
-The `mst_euclid` function can determine the classic
-Euclidean minimum spanning trees (EMST) as well as ones
+The `mst_euclid` function determines the classic
+Euclidean minimum spanning trees as well as ones
 corresponding to mutual reachability distances {cite}`hdbscan`.
 
+
+MSTs can be used in topological data analysis
+(clustering, density estimation, dimensionality reduction,
+outlier detection, etc.); see:
+[**hdbscan**](https://hdbscan.readthedocs.io/en/latest/),
+[**deadwood**](https://deadwood.gagolewski.com/),
+[**genieclust**](https://genieclust.gagolewski.com/), and
+[**lumbermark**](https://lumbermark.gagolewski.com/).
 
 
 ::::{note}
@@ -33,8 +36,8 @@ package reference manual.
 
 
 Relevant citations —
-the Jarnik-Prim algorithm: {cite}`jarnik`, {cite}`olson`, {cite}`prim`,
-the Boruvka algorithm: {cite}`boruvka`, {cite}`dualtreeboruvka`,
+the Jarník-Prim algorithm: {cite}`jarnik`, {cite}`olson`, {cite}`prim`,
+the Borůvka algorithm: {cite}`boruvka`, {cite}`dualtreeboruvka`,
 K-d trees: {cite}`kdtrees`, {cite}`kdtreesmidrange`, {cite}`kdtreesoptim`,
 mutual reachability distance: {cite}`hdbscan`, {cite}`hdbscan2`.
 

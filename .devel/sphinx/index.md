@@ -36,12 +36,12 @@ outlier and noise point detection, and many more.
 **quitefastmst** is distributed under the open source GNU AGPL v3 license.
 Its source code can be downloaded from [GitHub](https://github.com/gagolews/quitefastmst).
 
-The Python version is available from [PyPI](https://pypi.org/project/quitefastmst)
-and the R one from [CRAN](https://CRAN.R-project.org/package=quitefastmst).
+The Python version is available from [PyPI](https://pypi.org/project/quitefastmst).
+The R version can be fetched from [CRAN](https://CRAN.R-project.org/package=quitefastmst).
 
-However, the core functionality is implemented in the form of a C++ library,
-so it may be adapted to new projects relatively easily:
-any valuable contributions are welcome (Julia or Matlab bindings, etc.).
+The core functionality is implemented in the form of a C++ library.
+It can thus be easily adapted for use in other environments.
+New contributions are welcome, e.g., Julia, Matlab/GNU Octave wrappers.
 
 
 **Author and Maintainer**: [Marek Gagolewski](https://www.gagolewski.com/)

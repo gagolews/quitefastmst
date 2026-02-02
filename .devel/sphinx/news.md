@@ -27,9 +27,12 @@
     was removed.  Instead, the `mutreach_ties` argument is now available.
     It defaults to `"dist_min"` for (rough) compatibility with other packages.
 
+*   [BUGFIX]  #3: SIGSEGV on duplicated inputs in `mst_euclid`
+    with `algorithm="brute"` was fixed.
+
 
 ## 0.9.0 (2025-07-22)
 
-*   [R] Initial CRAN release.
+*   [R]  Initial CRAN release.
 
-*   [Python] Initial PyPI release.
+*   [Python]  Initial PyPI release.
