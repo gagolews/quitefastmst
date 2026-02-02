@@ -145,7 +145,6 @@ setuptools.setup(
         "Bug Tracker":        "https://github.com/gagolews/quitefastmst/issues",
         "Documentation":      "https://quitefastmst.gagolewski.com/",
         "Source Code":        "https://github.com/gagolews/quitefastmst",
-        "Benchmark Datasets": "https://clustering-benchmarks.gagolewski.com/",
         "Author":             "https://www.gagolewski.com/",
     },
     packages=setuptools.find_packages(),

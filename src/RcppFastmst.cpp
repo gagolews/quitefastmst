@@ -325,7 +325,9 @@ List knn_euclid(
 //' To make the definition unambiguous, the \code{mutreach_ties} argument
 //' indicates the preference towards connecting to farther/closer points with
 //' respect to the original metric, or having smaller/larger core distances
-//' in cases of tied distances; see (Gagolewski, 2025).
+//' in cases of tied distances; see (Gagolewski, 2026).  Empirically,
+//' \code{mutreach_ties="dcore_min"} and \code{mutreach_leaves="reconnect_dcore_min"}
+//' leads to MSTs with more leaves and hubs.
 //'
 //' The brute force method always resolves all ties, whilst, for efficiency,
 //' the K-d tree-based algorithms use this adjustment only for the first \eqn{M}

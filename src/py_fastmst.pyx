@@ -8,7 +8,7 @@
 
 """
 k-nearest neighbours and minimum spanning trees with respect to the Euclidean
-metric or the thereon-based mutual reachability distances. The module gives
+metric or the thereon-based mutual reachability distances.  The module gives
 access to a quite fast implementation of K-d trees.
 
 For best speed, consider building the package from sources
@@ -282,21 +282,27 @@ cpdef tuple knn_euclid(
 
     X : matrix, shape *(n,d)*
         the *n* input points in :math:`\\mathbb{R}^d` (the "database")
+
     k : int *< n*
         requested number of nearest neighbours
         (should be rather small, say, *≤ 20*)
+
     Y : None or an ndarray, shape *(m,d)*
         the "query points"; note that setting ``Y=X``, contrary to ``Y=None``,
         will include the query points themselves amongst their own neighbours
+
     algorithm : {``"auto"``, ``"kd_tree"``, ``"brute"``}, default ``"auto"``
         K-d trees can only be used for `d` between 2 and 20.
         ``"auto"`` selects ``"kd_tree"`` in low-dimensional spaces
+
     max_leaf_size : int
         maximal number of points in the K-d tree leaves;
         smaller leaves use more memory, yet are not necessarily faster;
-        use ``0`` to select the default value, currently set to 32.
+        use ``0`` to select the default value, currently set to 32
+
     squared : False
         whether the output *dist* should use the squared Euclidean distance
+
     verbose: bool
         whether to print diagnostic messages
 
@@ -440,10 +446,12 @@ cpdef tuple mst_euclid(
     there can be many minimum spanning trees.  In particular, it is likely
     that there are point pairs with the same mutual reachability distances.
 
-    To make the definition unambiguous, the *mutreach_ties* argument indicates
+    To make the definition less ambiguous, the *mutreach_ties* argument indicates
     the preference towards connecting to farther/closer points with respect
     to the original metric, or having smaller/larger core distances
-    in cases of tied distances; see [12]_.
+    in cases of tied distances; see [12]_.  Empirically,
+    ``mutreach_ties="dcore_min"`` and ``mutreach_leaves="reconnect_dcore_min"``
+    leads to MSTs with more leaves and hubs.
 
     The brute force method always resolves all ties, whilst, for efficiency,
     the K-d tree-based algorithms use this adjustment only for the first *M*
@@ -550,31 +558,38 @@ cpdef tuple mst_euclid(
 
     X : matrix, shape *(n,d)*
         the "database"; the *n* input points in :math:`\\mathbb{R}^d`
+
     M : int *< n*
         the smoothing factor a.k.a. the degree of the mutual reachability
         distance (should be rather small, say, *≤ 20*);
         *M ≤ 1* denotes the ordinary Euclidean distance
+
     algorithm : {``"auto"``, ``"single_kd_tree"``, ``"sesqui_kd_tree"``, ``"dual_kd_tree"``, ``"brute"``}, default ``"auto"``
         K-d trees can only be used for *d* between 2 and 20 only;
         ``"auto"`` selects ``"sesqui_kd_tree"`` for *d ≤ 20*;
         ``"brute"`` is used otherwise
+
     max_leaf_size : int
         maximal number of points in the K-d tree leaves;
         smaller leaves use more memory, yet are not necessarily faster;
         use ``0`` to select the default value, currently set to 32 for the
         single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm
+
     first_pass_max_brute_size : int
         minimal number of points in a node to treat it as a leaf (unless
         it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
+
     mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default ``"dist_min"``
         adjustment for mutual reachability distance ambiguity (for *M > 1*)
+
     mutreach_leaves : {``"keep"``, ``"reconnect_dcore_min"``}, default ``"keep"``
         a way to postprocess the leaves of the computed tree;
         one of ``"keep"`` (default: do nothing),
         or ``"reconnect_dcore_min"`` (try reconnecting leaves to inner vertices
         which have them amongst their *M* nearest neighbours; prefer vertices
         of the smallest core distance)
+
     verbose: bool
         whether to print diagnostic messages
 

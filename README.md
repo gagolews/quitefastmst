@@ -140,15 +140,12 @@ Density-based clustering based on hierarchical density estimates,
 *Lecture Notes in Computer Science* **7819**, 2013, 160–172,
 [DOI:10.1007/978-3-642-37456-2_14](https://doi.org/10.1007/978-3-642-37456-2_14)
 
+M. Gagolewski, quitefastmst, in preparation, 2026
+
 M. Gagolewski, A. Cena, M. Bartoszuk, Ł. Brzozowski,
 Clustering with minimum spanning trees: How good can it be?,
 *Journal of Classification* **42**, 2025, 90–112,
 [DOI:10.1007/s00357-024-09483-1](https://doi.org/10.1007/s00357-024-09483-1)
-
-M. Gagolewski, A framework for benchmarking clustering algorithms,
-*SoftwareX* **20**, 2022, 101270,
-[DOI:10.1016/j.softx.2022.101270](https://doi.org/10.1016/j.softx.2022.101270),
-<https://clustering-benchmarks.gagolewski.com/>
 
 V. Jarník, O jistém problému minimálním (z dopisu panu O. Borůvkovi),
 *Práce Moravské Přírodovědecké Společnosti* **6**, 1930, 57–63

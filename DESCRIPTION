@@ -2,7 +2,7 @@ Package: quitefastmst
 Type: Package
 Title: Euclidean and Mutual Reachability Minimum Spanning Trees
 Version: 0.9.1
-Date: 2026-01-20
+Date: 2026-02-02
 Authors@R:
     person("Marek", "Gagolewski",
         role=c("aut", "cre", "cph"),
@@ -13,7 +13,7 @@ Description:
     sesqui-, and dual-tree Borůvka algorithms.  Thanks to K-d trees, they are
     fast in spaces of low intrinsic dimensionality.  Mutual reachability
     distances (used in the definition of the 'HDBSCAN*' algorithm)
-    are also supported.  The package also features relatively fast fallback
+    are supported too.  The package also features relatively fast fallback
     minimum spanning tree and nearest-neighbours algorithms for spaces of
     higher dimensionality.  The 'Python' version of 'quitefastmst' is available
     via 'PyPI'.
