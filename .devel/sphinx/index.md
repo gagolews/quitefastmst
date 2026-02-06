@@ -82,6 +82,8 @@ rapi
 :caption: Other
 :hidden:
 
+deadwood <https://deadwood.gagolewski.com/>
+lumbermark <https://lumbermark.gagolewski.com/>
 genieclust <https://genieclust.gagolewski.com/>
 Clustering Benchmarks <https://clustering-benchmarks.gagolewski.com/>
 Minimalist Data Wrangling in Python <https://datawranglingpy.gagolewski.com/>

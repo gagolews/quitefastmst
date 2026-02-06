@@ -2,7 +2,7 @@ Package: quitefastmst
 Type: Package
 Title: Euclidean and Mutual Reachability Minimum Spanning Trees
 Version: 0.9.1
-Date: 2026-02-02
+Date: 2026-02-06
 Authors@R:
     person("Marek", "Gagolewski",
         role=c("aut", "cre", "cph"),
@@ -29,4 +29,4 @@ Suggests:
 LinkingTo: Rcpp
 Encoding: UTF-8
 SystemRequirements: OpenMP
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
