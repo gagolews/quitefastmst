@@ -18,8 +18,7 @@ knn_euclid(
 \arguments{
 \item{X}{the "database"; a matrix of shape \eqn{n\times d}}
 
-\item{k}{requested number of nearest neighbours
-(should be rather small)}
+\item{k}{requested number of nearest neighbours}
 
 \item{Y}{the "query points"; \code{NULL} or a matrix of shape \eqn{m\times d};
 note that setting \code{Y=X}, contrary to \code{NULL},
@@ -63,7 +62,7 @@ nearest points thereto from \code{X}.
 }
 \details{
 The implemented algorithms, see the \code{algorithm} parameter, assume
-that \eqn{k} is rather small, say, \eqn{k \leq 20}.
+that \eqn{k} is rather small.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
 amongst others, it has good locality of reference (at the cost of making

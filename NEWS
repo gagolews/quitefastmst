@@ -13,7 +13,7 @@
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 
-## 0.9.1 (under development)
+## 0.9.1 (2026-02-11)
 
 *   [NEW FEATURE]  The `mutreach_leaves` argument to `mst_euclid`
     controls the postprocessing of tree leaves.

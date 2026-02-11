@@ -35,14 +35,12 @@ for the reference manual, tutorials, examples, and benchmarks.
 
 **Author and maintainer**: [Marek Gagolewski](https://www.gagolewski.com/)
 
-
 Possible applications in topological data analysis:
 clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
-[Genie](https://genieclust.gagolewski.com/),
-[Lumbermark](https://lumbermark.gagolewski.com/), Single linkage, etc.),
-density estimation, dimensionality reduction,
-outlier and noise point detection
-([Deadwood](https://deadwood.gagolewski.com/)), and many more.
+[Lumbermark](https://lumbermark.gagolewski.com/),
+[Genie](https://genieclust.gagolewski.com/), Single linkage, etc.),
+outlier detection ([Deadwood](https://deadwood.gagolewski.com/)),
+density estimation, dimensionality reduction, and many more.
 
 
 ## How to Install

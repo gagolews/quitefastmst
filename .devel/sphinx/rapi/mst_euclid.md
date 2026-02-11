@@ -34,7 +34,7 @@ mst_euclid(
 |  |  |
 |----|----|
 | `X` | the \"database\"; a matrix of shape $n\times d$ |
-| `M` | the smoothing factor a.k.a. the degree of the mutual reachability distance (should be rather small). $M\leq 1$ gives the ordinary Euclidean distance |
+| `M` | the smoothing factor a.k.a. the degree of the mutual reachability distance; $M\leq 1$ gives the ordinary Euclidean distance |
 | `algorithm` | `"auto"`, `"single_kd_tree"`, `"sesqui_kd_tree"`, `"dual_kd_tree"`, or `"brute"`; K-d trees can only be used for $d$ between 2 and 20 only; `"auto"` selects `"sesqui_kd_tree"` for $d\leq 20$. `"brute"` is used otherwise |
 | `max_leaf_size` | maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use `0` to select the default value, currently set to 32 for the single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm |
 | `first_pass_max_brute_size` | minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use `0` to select the default value, currently set to 32 |
@@ -50,7 +50,7 @@ To make the definition unambiguous, the `mutreach_ties` argument indicates the p
 
 The brute force method always resolves all ties, whilst, for efficiency, the K-d tree-based algorithms use this adjustment only for the first $M$ nearest neighbours, so the resulting trees might be slightly different.
 
-The implemented algorithms, see the `algorithm` parameter, assume that $M$ is rather small; say, $M \leq 20$.
+The implemented algorithms, see the `algorithm` parameter, assume that $M$ is rather small.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author.
 

@@ -20,8 +20,7 @@ mst_euclid(
 \item{X}{the "database"; a matrix of shape \eqn{n\times d}}
 
 \item{M}{the smoothing factor a.k.a. the degree of the mutual reachability
-distance (should be rather small).
-\eqn{M\leq 1} gives the ordinary Euclidean distance}
+distance; \eqn{M\leq 1} gives the ordinary Euclidean distance}
 
 \item{algorithm}{\code{"auto"}, \code{"single_kd_tree"},
 \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"}, or \code{"brute"};
@@ -117,7 +116,7 @@ the K-d tree-based algorithms use this adjustment only for the first \eqn{M}
 nearest neighbours, so the resulting trees might be slightly different.
 
 The implemented algorithms, see the \code{algorithm} parameter, assume
-that \eqn{M} is rather small; say, \eqn{M \leq 20}.
+that \eqn{M} is rather small.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
 amongst others, it has good locality of reference (at the cost of making

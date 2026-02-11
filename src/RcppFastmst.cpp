@@ -81,7 +81,7 @@ int Romp_get_max_threads()
 //'
 //' @details
 //' The implemented algorithms, see the \code{algorithm} parameter, assume
-//' that \eqn{k} is rather small, say, \eqn{k \leq 20}.
+//' that \eqn{k} is rather small.
 //'
 //' Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
 //' amongst others, it has good locality of reference (at the cost of making
@@ -114,7 +114,6 @@ int Romp_get_max_threads()
 //'
 //' @param X the "database"; a matrix of shape \eqn{n\times d}
 //' @param k requested number of nearest neighbours
-//'     (should be rather small)
 //' @param Y the "query points"; \code{NULL} or a matrix of shape \eqn{m\times d};
 //'     note that setting \code{Y=X}, contrary to \code{NULL},
 //'     will include the query points themselves amongst their own neighbours
@@ -334,7 +333,7 @@ List knn_euclid(
 //' nearest neighbours, so the resulting trees might be slightly different.
 //'
 //' The implemented algorithms, see the \code{algorithm} parameter, assume
-//' that \eqn{M} is rather small; say, \eqn{M \leq 20}.
+//' that \eqn{M} is rather small.
 //'
 //' Our implementation of K-d trees (Bentley, 1975) has been quite optimised;
 //' amongst others, it has good locality of reference (at the cost of making
@@ -418,8 +417,7 @@ List knn_euclid(
 //'
 //' @param X the "database"; a matrix of shape \eqn{n\times d}
 //' @param M the smoothing factor a.k.a. the degree of the mutual reachability
-//'    distance (should be rather small).
-//'    \eqn{M\leq 1} gives the ordinary Euclidean distance
+//'    distance; \eqn{M\leq 1} gives the ordinary Euclidean distance
 //' @param algorithm \code{"auto"}, \code{"single_kd_tree"},
 //'    \code{"sesqui_kd_tree"}, \code{"dual_kd_tree"}, or \code{"brute"};
 //'    K-d trees can only be used for \eqn{d} between 2 and 20 only;

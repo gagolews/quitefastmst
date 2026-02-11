@@ -242,7 +242,7 @@ cpdef tuple knn_euclid(
     -----
 
     The implemented algorithms, see the *algorithm* parameter, assume that
-    *k* is rather small; say, *k ≤ 20*.
+    *k* is rather small.
 
     Our implementation of K-d trees [1]_ has been quite optimised; amongst
     others, it has good locality of reference (at the cost of making a
@@ -285,13 +285,12 @@ cpdef tuple knn_euclid(
 
     k : int *< n*
         requested number of nearest neighbours
-        (should be rather small, say, *≤ 20*)
 
     Y : None or an ndarray, shape *(m,d)*
         the "query points"; note that setting ``Y=X``, contrary to ``Y=None``,
         will include the query points themselves amongst their own neighbours
 
-    algorithm : {``"auto"``, ``"kd_tree"``, ``"brute"``}, default ``"auto"``
+    algorithm : {``"auto"``, ``"kd_tree"``, ``"brute"``}, default="auto"
         K-d trees can only be used for `d` between 2 and 20.
         ``"auto"`` selects ``"kd_tree"`` in low-dimensional spaces
 
@@ -300,10 +299,10 @@ cpdef tuple knn_euclid(
         smaller leaves use more memory, yet are not necessarily faster;
         use ``0`` to select the default value, currently set to 32
 
-    squared : False
+    squared : bool, default=False
         whether the output *dist* should use the squared Euclidean distance
 
-    verbose: bool
+    verbose : bool, default=False
         whether to print diagnostic messages
 
 
@@ -313,14 +312,15 @@ cpdef tuple knn_euclid(
     pair : tuple
         A pair *(dist, ind)* representing the *k*-nearest neighbour graph, where:
 
-            dist : a c_contiguous ndarray, shape *(n,k)* or *(m,k)*
-                *dist[i,:]* is sorted nondecreasingly for all *i*,
-                *dist[i,j]* gives the weight of the edge *{i, ind[i,j]}*,
-                i.e., the distance between the *i*-th point and its *j*-th NN
+        dist : a c_contiguous ndarray, shape *(n,k)* or *(m,k)*
+            *dist[i,:]* is sorted nondecreasingly for all *i*,
+            *dist[i,j]* gives the weight of the edge *{i, ind[i,j]}*,
+            i.e., the distance between the *i*-th point and its *j*-th
+            nearest neighbour
 
-            ind : a c_contiguous ndarray of the same shape
-                *ind[i,j]* is the index (between *0* and *n-1*)
-                of the *j*-th nearest neighbour of *i*
+        ind : a c_contiguous ndarray of the same shape
+            *ind[i,j]* is the index (between *0* and *n-1*)
+            of the *j*-th nearest neighbour of *i*
     """
     cdef Py_ssize_t n = X.shape[0]
     cdef Py_ssize_t d = X.shape[1]
@@ -458,7 +458,7 @@ cpdef tuple mst_euclid(
     nearest neighbours, so the resulting trees might be slightly different.
 
     The implemented algorithms, see the *algorithm* parameter, assume that
-    *M* is rather small; say, *M ≤ 20*.
+    *M* is rather small.
 
     Our implementation of K-d trees [6]_ has been quite optimised; amongst
     others, it has good locality of reference (at the cost of making a
@@ -561,10 +561,9 @@ cpdef tuple mst_euclid(
 
     M : int *< n*
         the smoothing factor a.k.a. the degree of the mutual reachability
-        distance (should be rather small, say, *≤ 20*);
-        *M ≤ 1* denotes the ordinary Euclidean distance
+        distance; *M ≤ 1* denotes the ordinary Euclidean distance
 
-    algorithm : {``"auto"``, ``"single_kd_tree"``, ``"sesqui_kd_tree"``, ``"dual_kd_tree"``, ``"brute"``}, default ``"auto"``
+    algorithm : {``"auto"``, ``"single_kd_tree"``, ``"sesqui_kd_tree"``, ``"dual_kd_tree"``, ``"brute"``}, default='auto'
         K-d trees can only be used for *d* between 2 and 20 only;
         ``"auto"`` selects ``"sesqui_kd_tree"`` for *d ≤ 20*;
         ``"brute"`` is used otherwise
@@ -580,17 +579,17 @@ cpdef tuple mst_euclid(
         it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
 
-    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default ``"dist_min"``
+    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default='dist_min'
         adjustment for mutual reachability distance ambiguity (for *M > 1*)
 
-    mutreach_leaves : {``"keep"``, ``"reconnect_dcore_min"``}, default ``"keep"``
+    mutreach_leaves : {``"keep"``, ``"reconnect_dcore_min"``}, default='keep'
         a way to postprocess the leaves of the computed tree;
         one of ``"keep"`` (default: do nothing),
         or ``"reconnect_dcore_min"`` (try reconnecting leaves to inner vertices
         which have them amongst their *M* nearest neighbours; prefer vertices
         of the smallest core distance)
 
-    verbose: bool
+    verbose : bool, default=False
         whether to print diagnostic messages
 
 
@@ -601,12 +600,12 @@ cpdef tuple mst_euclid(
         If *M = 0*, a pair *(mst_dist, mst_index)* defining the *n-1* edges
         of the computed spanning tree is returned:
 
-            mst_dist : an array of length *(n-1)*
-                *mst_dist[i]* gives the weight of the *i*-th edge
+        mst_dist : an array of length *(n-1)*
+            *mst_dist[i]* gives the weight of the *i*-th edge
 
-            mst_index : a matrix with *n-1* rows and *2* columns
-                *{mst_index[i,0], mst_index[i,1]}* defines the *i*-th edge
-                of the tree
+        mst_index : a matrix with *n-1* rows and *2* columns
+            *{mst_index[i,0], mst_index[i,1]}* defines the *i*-th edge
+            of the tree
 
         The tree edges are ordered w.r.t. weights nondecreasingly, and then by
         the indexes (lexicographic ordering of the *(weight, index1, index2)*
@@ -614,12 +613,12 @@ cpdef tuple mst_euclid(
 
         For *M > 0*, we additionally get:
 
-            nn_dist : an *n* by *M* matrix
-                it gives the Euclidean distances between each point and its
-                *M* nearest neighbours
+        nn_dist : an *n* by *M* matrix
+            it gives the Euclidean distances between each point and its
+            *M* nearest neighbours
 
-            nn_index : a matrix of the same shape
-                it provides the corresponding indexes of the nearest neighbours
+        nn_index : a matrix of the same shape
+            it provides the corresponding indexes of the nearest neighbours
     """
 
     cdef Py_ssize_t n = X.shape[0]

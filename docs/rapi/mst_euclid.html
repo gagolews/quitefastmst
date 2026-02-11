@@ -1,19 +1,20 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="omp: Get or Set the Number of Threads" href="omp.html" /><link rel="prev" title="knn_euclid: Euclidean Nearest Neighbours" href="knn_euclid.html" />
-        <link rel="canonical" href="https://quitefastmst.gagolewski.com/rapi/mst_euclid.html" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="omp: Get or Set the Number of Threads" href="omp.html"><link rel="prev" title="knn_euclid: Euclidean Nearest Neighbours" href="knn_euclid.html">
+        <link rel="canonical" href="https://quitefastmst.gagolewski.com/rapi/mst_euclid.html">
+        <link rel="prefetch" href="https://www.gagolewski.com/_static/img/quitefastmst.png" as="image">
 
-    <link rel="shortcut icon" href="https://www.gagolewski.com/_static/img/quitefastmst.png"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="https://www.gagolewski.com/_static/img/quitefastmst.png"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees - Python and R Package quitefastmst</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1981fb80" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=c484f746" />
     
     
 
@@ -209,7 +210,7 @@
 <a class="sidebar-brand" href="../index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.0
+0.9.1
 </div>
 <form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -233,7 +234,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../weave/python.html">Python Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pythonapi.html">Python Package <cite>quitefastmst</cite> Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../weave/r.html">R Examples</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of R Package quitefastmst Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input aria-label="Toggle navigation of R Package quitefastmst Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="knn_euclid.html">knn_euclid: Euclidean Nearest Neighbours</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees</a></li>
 <li class="toctree-l2"><a class="reference internal" href="omp.html">omp: Get or Set the Number of Threads</a></li>
@@ -243,6 +244,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference external" href="https://deadwood.gagolewski.com/">deadwood</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://lumbermark.gagolewski.com/">lumbermark</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://genieclust.gagolewski.com/">genieclust</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://clustering-benchmarks.gagolewski.com/">Clustering Benchmarks</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://datawranglingpy.gagolewski.com/">Minimalist Data Wrangling in Python</a></li>
@@ -268,7 +271,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/gagolews/quitefastmst/issues/" title="Edit this page">
+  <a class="muted-link" href="https://github.com/gagolews/quitefastmst/issues/" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -290,21 +293,23 @@
 <h1>mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees<a class="headerlink" href="#mst-euclid-euclidean-and-mutual-reachability-minimum-spanning-trees" title="Link to this heading">¶</a></h1>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
-<p>The function determines the/a(*) minimum spanning tree (MST) of a set of <span class="math notranslate nohighlight">\(n\)</span> points, i.e., an acyclic undirected connected graph whose vertices represent the points, edges are weighted by the distances between point pairs, and have minimal total weight.</p>
+<p>The function determines the/a(*) minimum spanning tree (MST) of a set of <span class="math notranslate nohighlight">\(n\)</span> points, i.e., an acyclic undirected connected graph whose vertices represent the points, and edges are weighted by the distances between point pairs and have minimal total weight.</p>
 <p>MSTs have many uses in, amongst others, topological data analysis (clustering, density estimation, dimensionality reduction, outlier detection, etc.).</p>
-<p>In clustering and density estimation, the parameter <code class="docutils literal notranslate"><span class="pre">M</span></code> plays the role of a smoothing factor; for discussion, see (Campello et al., 2015) and the references therein. <code class="docutils literal notranslate"><span class="pre">M</span></code> corresponds to the <span class="pkg">hdbscan</span> Python package’s <code class="docutils literal notranslate"><span class="pre">min_samples=M-1</span></code>.</p>
-<p>For <span class="math notranslate nohighlight">\(M\leq 2\)</span>, we get a spanning tree that minimises the sum of Euclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If <span class="math notranslate nohighlight">\(M=2\)</span>, the function additionally returns the distance to each point’s nearest neighbour.</p>
-<p>If <span class="math notranslate nohighlight">\(M&gt;2\)</span>, the spanning tree is the smallest with respect to the degree-<span class="math notranslate nohighlight">\(M\)</span> mutual reachability distance (Campello et al., 2013) given by <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}\)</span>, where <span class="math notranslate nohighlight">\(d(i,j)\)</span> is the standard Euclidean distance between the <span class="math notranslate nohighlight">\(i\)</span>-th and the <span class="math notranslate nohighlight">\(j\)</span>-th point, and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th <span class="math notranslate nohighlight">\(M\)</span>-core distance defined as the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\((M-1)\)</span>-th nearest neighbour (not including the query point itself).</p>
+<p>In clustering and density estimation, the parameter <code class="docutils literal notranslate"><span class="pre">M</span></code> plays the role of a smoothing factor; for discussion, see (Campello et al., 2015) and the references therein.</p>
+<p>For <span class="math notranslate nohighlight">\(M\leq 1\)</span>, we get a spanning tree that minimises the sum of Euclidean distances between the points, i.e., the classic Euclidean minimum spanning tree (EMST). If <span class="math notranslate nohighlight">\(M=1\)</span>, the function additionally returns the distance to each point’s nearest neighbour.</p>
+<p>If <span class="math notranslate nohighlight">\(M&gt;1\)</span>, the spanning tree is the smallest with respect to the degree-<span class="math notranslate nohighlight">\(M\)</span> mutual reachability distance (Campello et al., 2013) given by <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{ c_M(i), c_M(j), d(i, j)\}\)</span>, where <span class="math notranslate nohighlight">\(d(i,j)\)</span> is the standard Euclidean distance between the <span class="math notranslate nohighlight">\(i\)</span>-th and the <span class="math notranslate nohighlight">\(j\)</span>-th point, and <span class="math notranslate nohighlight">\(c_M(i)\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>-th <span class="math notranslate nohighlight">\(M\)</span>-core distance defined as the distance between the <span class="math notranslate nohighlight">\(i\)</span>-th point and its <span class="math notranslate nohighlight">\(M\)</span>-th nearest neighbour (not including the query point itself).</p>
+<p>Note that (Campello et al., 2013) defines the core distance as the distance to the <span class="math notranslate nohighlight">\((M-1)\)</span>-th nearest neighbour (or the <span class="math notranslate nohighlight">\(M\)</span>-th one, but including self).</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mst_euclid</span><span class="p">(</span>
 <span class="w">  </span><span class="n">X</span><span class="p">,</span>
-<span class="w">  </span><span class="n">M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1L</span><span class="p">,</span>
+<span class="w">  </span><span class="n">M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0L</span><span class="p">,</span>
 <span class="w">  </span><span class="n">algorithm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;auto&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="n">max_leaf_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0L</span><span class="p">,</span>
 <span class="w">  </span><span class="n">first_pass_max_brute_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0L</span><span class="p">,</span>
-<span class="w">  </span><span class="n">mutreach_adj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1.00000011920929</span><span class="p">,</span>
+<span class="w">  </span><span class="n">mutreach_ties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dist_min&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="n">mutreach_leaves</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;keep&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span>
 <span class="p">)</span>
 </pre></div>
@@ -324,7 +329,7 @@
 <td><p>the “database”; a matrix of shape <span class="math notranslate nohighlight">\(n\times d\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">M</span></code></p></td>
-<td><p>the degree of the mutual reachability distance (should be rather small). <span class="math notranslate nohighlight">\(M\leq 2\)</span> denotes the ordinary Euclidean distance</p></td>
+<td><p>the smoothing factor a.k.a. the degree of the mutual reachability distance; <span class="math notranslate nohighlight">\(M\leq 1\)</span> gives the ordinary Euclidean distance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">algorithm</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;single_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dual_kd_tree&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>; K-d trees can only be used for <span class="math notranslate nohighlight">\(d\)</span> between 2 and 20 only; <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code> for <span class="math notranslate nohighlight">\(d\leq 20\)</span>. <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code> is used otherwise</p></td>
@@ -335,10 +340,13 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">first_pass_max_brute_size</span></code></p></td>
 <td><p>minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code></p></td>
-<td><p>adjustment for mutual reachability distance ambiguity (for <span class="math notranslate nohighlight">\(M&gt;2\)</span>) whose fractional part should be close to 0: values in <span class="math notranslate nohighlight">\((-1,0)\)</span> prefer connecting to farther nearest neighbours, values in <span class="math notranslate nohighlight">\((0, 1)\)</span> fall for closer NNs (which is what many other implementations provide), values in <span class="math notranslate nohighlight">\((-2,-1)\)</span> prefer connecting to points with smaller core distances, values in <span class="math notranslate nohighlight">\((1, 2)\)</span> favour larger core distances; see below for more details</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code></p></td>
+<td><p>adjustment for mutual reachability distance ambiguity (for <span class="math notranslate nohighlight">\(M&gt;1\)</span>); one of <code class="docutils literal notranslate"><span class="pre">&quot;dcore_min&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_max&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_min&quot;</span></code> (default), or <code class="docutils literal notranslate"><span class="pre">&quot;dcore_max&quot;</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_leaves</span></code></p></td>
+<td><p>a way to postprocess the leaves of the computed tree; one of <code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code> (default: do nothing), or <code class="docutils literal notranslate"><span class="pre">&quot;reconnect_dcore_min&quot;</span></code> (try reconnecting leaves to inner vertices which have them amongst their M nearest neighbours; prefer vertices of the smallest core distance)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
 <td><p>whether to print diagnostic messages</p></td>
 </tr>
 </tbody>
@@ -347,24 +355,23 @@
 </section>
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Link to this heading">¶</a></h2>
-<p>(*) We note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances.</p>
-<p>To make the definition less ambiguous (albeit with no guarantees), internally, the brute-force algorithm relies on the adjusted distance: <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}+\varepsilon d(i, j)\)</span> or <span class="math notranslate nohighlight">\(d_M(i, j)=\max\{c_M(i), c_M(j), d(i, j)\}-\varepsilon \min\{c_M(i), c_M(j)\}\)</span>, where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is close to <span class="math notranslate nohighlight">\(0\)</span>. |<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>|&lt;1 selects the former formula (<span class="math notranslate nohighlight">\(\varepsilon\)</span>=<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>) whilst 1&lt;|<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>|&lt;2 chooses the latter (<span class="math notranslate nohighlight">\(\varepsilon\)</span>=<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>±1).</p>
-<p>For the K-d tree-based methods, on the other hand, <code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code> indicates the preference towards connecting to farther/closer points with respect to the original metric or having smaller/larger core distances if a point <span class="math notranslate nohighlight">\(i\)</span> has multiple nearest-neighbour candidates <span class="math notranslate nohighlight">\(j'\)</span>, <span class="math notranslate nohighlight">\(j''\)</span> with <span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j'),  c_M(j')\}\)</span> and <span class="math notranslate nohighlight">\(c_M(i) \geq \max\{d(i, j''),  c_M(j'')\}\)</span>.</p>
-<p>Generally, the smaller the <code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>, the more leaves should be in the tree (note that there are only four types of adjustments, though).</p>
-<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(M\)</span> is rather small; say, <span class="math notranslate nohighlight">\(M \leq 20\)</span>.</p>
+<p>(*) Note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances.</p>
+<p>To make the definition unambiguous, the <code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code> argument indicates the preference towards connecting to farther/closer points with respect to the original metric, or having smaller/larger core distances in cases of tied distances; see (Gagolewski, 2026). Empirically, <code class="docutils literal notranslate"><span class="pre">mutreach_ties=&quot;dcore_min&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mutreach_leaves=&quot;reconnect_dcore_min&quot;</span></code> leads to MSTs with more leaves and hubs.</p>
+<p>The brute force method always resolves all ties, whilst, for efficiency, the K-d tree-based algorithms use this adjustment only for the first <span class="math notranslate nohighlight">\(M\)</span> nearest neighbours, so the resulting trees might be slightly different.</p>
+<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(M\)</span> is rather small.</p>
 <p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author.</p>
-<p>The “single-tree” version of the Borůvka algorithm is parallelised: in every iteration, it seeks each point’s nearest “alien”, i.e., the nearest point thereto from another cluster. The “dual-tree” Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for <span class="math notranslate nohighlight">\(M\leq 2\)</span>, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to mutual reachability distances, see (McInnes and Healy, 2017).</p>
+<p>The “single-tree” version of the Borůvka algorithm is parallelised: in every iteration, it seeks each point’s nearest “alien”, i.e., the nearest point thereto from another cluster. The “dual-tree” Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for <span class="math notranslate nohighlight">\(M\leq 1\)</span>, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to mutual reachability distances, see (McInnes and Healy, 2017).</p>
 <p>The “sesqui-tree” variant (by the current author) is a mixture of the two approaches: it compares leaves against the full tree and can be run in parallel. It is usually faster than the single- and dual-tree methods in very low dimensional spaces and usually not much slower than the single-tree variant otherwise.</p>
-<p>Nevertheless, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality (the “curse”). For high <span class="math notranslate nohighlight">\(d\)</span>, the “brute-force” algorithm is recommended. Here, we provided a parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a. Prim, 1957) algorithm, where the distances are computed on the fly (only once for <span class="math notranslate nohighlight">\(M\leq 2\)</span>).</p>
+<p>Nevertheless, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality (the “curse”). For high <span class="math notranslate nohighlight">\(d\)</span>, the “brute-force” algorithm is recommended. Here, we provided a parallelised (see Olson, 1995) version of the Jarník (1930) (a.k.a. Prim, 1957) algorithm, where the distances are computed on the fly (only once for <span class="math notranslate nohighlight">\(M\leq 1\)</span>).</p>
 <p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable or via the <a class="reference internal" href="omp.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">omp_set_num_threads</span></code></span></a> function at runtime. For best speed, consider building the package from sources using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 </section>
 <section id="value">
 <h2>Value<a class="headerlink" href="#value" title="Link to this heading">¶</a></h2>
-<p>A list with two <span class="math notranslate nohighlight">\((M=1)\)</span> or four <span class="math notranslate nohighlight">\((M&gt;1)\)</span> elements, <code class="docutils literal notranslate"><span class="pre">mst.index</span></code> and <code class="docutils literal notranslate"><span class="pre">mst.dist</span></code>, and additionally <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code>.</p>
+<p>A list with two <span class="math notranslate nohighlight">\((M=0)\)</span> or four <span class="math notranslate nohighlight">\((M&gt;0)\)</span> elements, <code class="docutils literal notranslate"><span class="pre">mst.index</span></code> and <code class="docutils literal notranslate"><span class="pre">mst.dist</span></code>, and additionally <code class="docutils literal notranslate"><span class="pre">nn.index</span></code> and <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">mst.index</span></code> is a matrix with <span class="math notranslate nohighlight">\(n-1\)</span> rows and <span class="math notranslate nohighlight">\(2\)</span> columns, whose rows define the tree edges.</p>
 <p><code class="docutils literal notranslate"><span class="pre">mst.dist</span></code> is a vector of length <span class="math notranslate nohighlight">\(n-1\)</span> giving the weights of the corresponding edges.</p>
 <p>The tree edges are ordered with respect to weights nondecreasingly, and then by the indexes (lexicographic ordering of the <code class="docutils literal notranslate"><span class="pre">(weight,</span> <span class="pre">index1,</span> <span class="pre">index2)</span></code> triples). For each <code class="docutils literal notranslate"><span class="pre">i</span></code>, it holds <code class="docutils literal notranslate"><span class="pre">mst_ind[i,1]&lt;mst_ind[i,2]</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">nn.index</span></code> is an <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(M-1\)</span> matrix giving the indexes of each point’s nearest neighbours with respect to the Euclidean distance. <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> provides the corresponding distances.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nn.index</span></code> is an <span class="math notranslate nohighlight">\(n\)</span> by <span class="math notranslate nohighlight">\(M\)</span> matrix giving the indexes of each point’s nearest neighbours with respect to the Euclidean distance. <code class="docutils literal notranslate"><span class="pre">nn.dist</span></code> provides the corresponding Euclidean distances.</p>
 </section>
 <section id="author-s">
 <h2>Author(s)<a class="headerlink" href="#author-s" title="Link to this heading">¶</a></h2>
@@ -377,12 +384,13 @@
 <p>R. Prim, Shortest connection networks and some generalizations, <em>The Bell System Technical Journal</em> 36(6), 1957, 1389–1401.</p>
 <p>O. Borůvka, O jistém problému minimálním, <em>Práce Moravské Přírodovědecké Společnosti</em> 3, 1926, 37–58.</p>
 <p>W.B. March, R. Parikshit, A.G. Gray, Fast Euclidean minimum spanning tree: Algorithm, analysis, and applications, <em>Proc. 16th ACM SIGKDD Intl. Conf. Knowledge Discovery and Data Mining (KDD ‘10)</em>, 2010, 603–612.</p>
-<p>J.L. Bentley, Multidimensional binary search trees used for associative searching, <em>Communications of the ACM</em> 18(9), 509–517, 1975, <a class="reference external" href="https://doi.org/10.1145/361002.361007">doi:10.1145/361002.361007</a>.</p>
-<p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends are fat, <em>4th CGC Workshop on Computational Geometry</em>, 1999.</p>
-<p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search strategies in K-d Trees, <em>5th WSES/IEEE Conf. on Circuits, Systems, Communications &amp; Computers</em> (CSCC’01), 2001.</p>
-<p>R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based on hierarchical density estimates, <em>Lecture Notes in Computer Science</em> 7819, 2013, 160–172. <a class="reference external" href="https://doi.org/10.1007/978-3-642-37456-2_14">doi:10.1007/978-3-642-37456-2_14</a>.</p>
-<p>R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical density estimates for data clustering, visualization, and outlier detection, <em>ACM Transactions on Knowledge Discovery from Data (TKDD)</em> 10(1), 2015, 1–51, <a class="reference external" href="https://doi.org/10.1145/2733381">doi:10.1145/2733381</a>.</p>
-<p>L. McInnes, J. Healy, Accelerated hierarchical density-based clustering, <em>IEEE Intl. Conf. Data Mining Workshops (ICMDW)</em>, 2017, 33–42, <a class="reference external" href="https://doi.org/10.1109/ICDMW.2017.12">doi:10.1109/ICDMW.2017.12</a>.</p>
+<p>J.L. Bentley, Multidimensional binary search trees used for associative searching, <em>Communications of the ACM</em> 18(9), 509–517, 1975, <a class="reference external" href="https://doi.org/10.1145/361002.361007">doi:10.1145/361002.361007</a></p>
+<p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends are fat, <em>4th CGC Workshop on Computational Geometry</em>, 1999</p>
+<p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search strategies in K-d Trees, <em>5th WSES/IEEE Conf. on Circuits, Systems, Communications &amp; Computers</em> (CSCC’01), 2001</p>
+<p>R.J.G.B. Campello, D. Moulavi, J. Sander, Density-based clustering based on hierarchical density estimates, <em>Lecture Notes in Computer Science</em> 7819, 2013, 160–172. <a class="reference external" href="https://doi.org/10.1007/978-3-642-37456-2_14">doi:10.1007/978-3-642-37456-2_14</a></p>
+<p>R.J.G.B. Campello, D. Moulavi, A. Zimek, J. Sander, Hierarchical density estimates for data clustering, visualization, and outlier detection, <em>ACM Transactions on Knowledge Discovery from Data (TKDD)</em> 10(1), 2015, 1–51, <a class="reference external" href="https://doi.org/10.1145/2733381">doi:10.1145/2733381</a></p>
+<p>L. McInnes, J. Healy, Accelerated hierarchical density-based clustering, <em>IEEE Intl. Conf. Data Mining Workshops (ICMDW)</em>, 2017, 33–42, <a class="reference external" href="https://doi.org/10.1109/ICDMW.2017.12">doi:10.1109/ICDMW.2017.12</a></p>
+<p>M. Gagolewski, quitefastmst, in preparation, 2026, TODO</p>
 </section>
 <section id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
@@ -435,11 +443,11 @@
             <div class="copyright">
               
               
-              Copyright &#169; 2025–2025 by <a href="https://www.gagolewski.com">Marek Gagolewski</a>.
+              Copyright &#169; 2025–2026 by <a href="https://www.gagolewski.com">Marek Gagolewski</a>.
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-09-04T16:14:22+0200.
+              Last updated on 2026-02-11T17:04:05+0100.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -481,10 +489,10 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=39bb1c6d"></script>
+</div><script src="../_static/documentation_options.js?v=9dc39874"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>

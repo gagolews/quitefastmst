@@ -1,19 +1,20 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees" href="mst_euclid.html" /><link rel="prev" title="R Package quitefastmst Reference" href="../rapi.html" />
-        <link rel="canonical" href="https://quitefastmst.gagolewski.com/rapi/knn_euclid.html" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees" href="mst_euclid.html"><link rel="prev" title="R Package quitefastmst Reference" href="../rapi.html">
+        <link rel="canonical" href="https://quitefastmst.gagolewski.com/rapi/knn_euclid.html">
+        <link rel="prefetch" href="https://www.gagolewski.com/_static/img/quitefastmst.png" as="image">
 
-    <link rel="shortcut icon" href="https://www.gagolewski.com/_static/img/quitefastmst.png"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="https://www.gagolewski.com/_static/img/quitefastmst.png"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>knn_euclid: Euclidean Nearest Neighbours - Python and R Package quitefastmst</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=1981fb80" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=c484f746" />
     
     
 
@@ -209,7 +210,7 @@
 <a class="sidebar-brand" href="../index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.0
+0.9.1
 </div>
 <form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -233,7 +234,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../weave/python.html">Python Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pythonapi.html">Python Package <cite>quitefastmst</cite> Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../weave/r.html">R Examples</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of R Package quitefastmst Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../rapi.html">R Package <em>quitefastmst</em> Reference</a><input aria-label="Toggle navigation of R Package quitefastmst Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">knn_euclid: Euclidean Nearest Neighbours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mst_euclid.html">mst_euclid: Euclidean and Mutual Reachability Minimum Spanning Trees</a></li>
 <li class="toctree-l2"><a class="reference internal" href="omp.html">omp: Get or Set the Number of Threads</a></li>
@@ -243,6 +244,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference external" href="https://deadwood.gagolewski.com/">deadwood</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://lumbermark.gagolewski.com/">lumbermark</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://genieclust.gagolewski.com/">genieclust</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://clustering-benchmarks.gagolewski.com/">Clustering Benchmarks</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://datawranglingpy.gagolewski.com/">Minimalist Data Wrangling in Python</a></li>
@@ -268,7 +271,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/gagolews/quitefastmst/issues/" title="Edit this page">
+  <a class="muted-link" href="https://github.com/gagolews/quitefastmst/issues/" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -321,7 +324,7 @@
 <td><p>the “database”; a matrix of shape <span class="math notranslate nohighlight">\(n\times d\)</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">k</span></code></p></td>
-<td><p>requested number of nearest neighbours (should be rather small)</p></td>
+<td><p>requested number of nearest neighbours</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Y</span></code></p></td>
 <td><p>the “query points”; <code class="docutils literal notranslate"><span class="pre">NULL</span></code> or a matrix of shape <span class="math notranslate nohighlight">\(m\times d\)</span>; note that setting <code class="docutils literal notranslate"><span class="pre">Y=X</span></code>, contrary to <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, will include the query points themselves amongst their own neighbours</p></td>
@@ -344,9 +347,9 @@
 </section>
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Link to this heading">¶</a></h2>
-<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(k\)</span> is rather small, say, <span class="math notranslate nohighlight">\(k \leq 20\)</span>.</p>
+<p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(k\)</span> is rather small.</p>
 <p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author. Still, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality. Thus, due to the so-called curse of dimensionality, for high <code class="docutils literal notranslate"><span class="pre">d</span></code>, the brute-force algorithm is recommended.</p>
-<p>The number of threads used is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable or via the <a class="reference internal" href="omp.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">omp_set_num_threads</span></code></span></a> function at runtime. For best speed, consider building the package from sources using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
+<p>The number of threads is controlled via the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable or via the <a class="reference internal" href="omp.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">omp_set_num_threads</span></code></span></a> function at runtime. For best speed, consider building the package from sources using, e.g., <code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code> compiler flags.</p>
 </section>
 <section id="value">
 <h2>Value<a class="headerlink" href="#value" title="Link to this heading">¶</a></h2>
@@ -361,9 +364,9 @@
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
-<p>J.L. Bentley, Multidimensional binary search trees used for associative searching, <em>Communications of the ACM</em> 18(9), 509–517, 1975, <a class="reference external" href="https://doi.org/10.1145/361002.361007">doi:10.1145/361002.361007</a>.</p>
-<p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends are fat, <em>4th CGC Workshop on Computational Geometry</em>, 1999.</p>
-<p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search strategies in K-d Trees, <em>5th WSES/IEEE Conf. on Circuits, Systems, Communications &amp; Computers</em> (CSCC’01), 2001.</p>
+<p>J.L. Bentley, Multidimensional binary search trees used for associative searching, <em>Communications of the ACM</em> 18(9), 509–517, 1975, <a class="reference external" href="https://doi.org/10.1145/361002.361007">doi:10.1145/361002.361007</a></p>
+<p>S. Maneewongvatana, D.M. Mount, It’s okay to be skinny, if your friends are fat, <em>4th CGC Workshop on Computational Geometry</em>, 1999</p>
+<p>N. Sample, M. Haines, M. Arnold, T. Purcell, Optimizing search strategies in K-d Trees, <em>5th WSES/IEEE Conf. on Circuits, Systems, Communications &amp; Computers</em> (CSCC’01), 2001</p>
 </section>
 <section id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
@@ -425,11 +428,11 @@
             <div class="copyright">
               
               
-              Copyright &#169; 2025–2025 by <a href="https://www.gagolewski.com">Marek Gagolewski</a>.
+              Copyright &#169; 2025–2026 by <a href="https://www.gagolewski.com">Marek Gagolewski</a>.
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2025-09-04T16:14:22+0200.
+              Last updated on 2026-02-11T17:04:05+0100.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -471,10 +474,10 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=39bb1c6d"></script>
+</div><script src="../_static/documentation_options.js?v=9dc39874"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>

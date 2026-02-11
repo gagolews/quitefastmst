@@ -25,7 +25,7 @@ knn_euclid(
 |  |  |
 |----|----|
 | `X` | the \"database\"; a matrix of shape $n\times d$ |
-| `k` | requested number of nearest neighbours (should be rather small) |
+| `k` | requested number of nearest neighbours |
 | `Y` | the \"query points\"; `NULL` or a matrix of shape $m\times d$; note that setting `Y=X`, contrary to `NULL`, will include the query points themselves amongst their own neighbours |
 | `algorithm` | `"auto"`, `"kd_tree"` or `"brute"`; K-d trees can be used for `d` between 2 and 20 only; `"auto"` selects `"kd_tree"` in low-dimensional spaces |
 | `max_leaf_size` | maximal number of points in the K-d tree leaves; smaller leaves use more memory, yet are not necessarily faster; use `0` to select the default value, currently set to 32 |
@@ -34,7 +34,7 @@ knn_euclid(
 
 ## Details
 
-The implemented algorithms, see the `algorithm` parameter, assume that $k$ is rather small, say, $k \leq 20$.
+The implemented algorithms, see the `algorithm` parameter, assume that $k$ is rather small.
 
 Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author. Still, it is well-known that K-d trees perform well only in spaces of low intrinsic dimensionality. Thus, due to the so-called curse of dimensionality, for high `d`, the brute-force algorithm is recommended.
 

@@ -13,7 +13,7 @@ Package **features**:
     using single-, sesqui-, and dual-tree Borůvka algorithms – quite fast
     in spaces of low intrinsic dimensionality,
 
-* Minimum spanning trees with respect to mutual reachability distances based
+* minimum spanning trees with respect to mutual reachability distances based
     on the Euclidean metric (used in the definition of the HDBSCAN\* algorithm;
     see {cite}`hdbscan`),
 
@@ -26,9 +26,11 @@ Package **features**:
 
 Possible applications in topological data analysis:
 clustering ([HDBSCAN\*](https://hdbscan.readthedocs.io/en/latest/index.html),
-[Genie](https://genieclust.gagolewski.com/), Lumbermark, Single linkage, etc.),
+[Lumbermark](https://lumbermark.gagolewski.com/),
+[Genie](https://genieclust.gagolewski.com/), Single linkage, etc.),
+outlier detection ([Deadwood](https://deadwood.gagolewski.com/)),
 density estimation, dimensionality reduction,
-outlier and noise point detection, and many more.
+and many more.
 
 
 ## Contributing
