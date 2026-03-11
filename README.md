@@ -16,10 +16,10 @@ clustering, outlier detection.
 Package **features**:
 
 * [Euclidean Minimum Spanning Trees](https://en.wikipedia.org/wiki/Euclidean_minimum_spanning_tree)
-    using single-, sesqui-, and dual-tree Borůvka algorithms – quite fast
+    using single-, sesqui-, and dual-tree Borůvka algorithms, which are quite fast
     in spaces of low intrinsic dimensionality,
 
-* Minimum spanning trees with respect to mutual reachability distances based
+* minimum spanning trees with respect to mutual reachability distances based
     on the Euclidean metric (used in the definition of the HDBSCAN\* algorithm;
     see Campello, Moulavi, Sander, 2013),
 

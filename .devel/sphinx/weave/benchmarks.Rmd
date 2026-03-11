@@ -57,7 +57,7 @@ to the 9th nearest neighbour).
 The number of threads was set to 1 or 10.  Note that **mlpack** does not support
 parallel processing and only implements standard EMSTs.
 **[wangyiqiu_hdbscan](https://github.com/wangyiqiu/hdbscan)**
-required some trickery to be run from the terminal – it does not work out
+required some trickery to be run from the terminal: it does not work out
 of the box.
 
 For each $n$, $d$, and $M$, three runs were performed and the smallest
@@ -68,7 +68,8 @@ input dataset to ensure **fast_hdbscan** got compiled on-the-fly by **numba**.
 See the relevant Python scripts:
 [`perf_mst_202506.py`](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506.py),
 [`perf_mst_202506_defs`.py](https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py)
-(🚧🚧 TODO: next release: *M-1 → M* 🚧🚧)
+
+🚧🚧 TODO: next release: *M-1 → M*, mutreach_ties='dist_min' 🚧🚧
 
 
 ## Results
