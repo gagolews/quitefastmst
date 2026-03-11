@@ -38,10 +38,9 @@
 #ifndef QUITEFASTMST_ASSERT
 #define __QUITEFASTMST_STR(x) #x
 #define QUITEFASTMST_STR(x) __QUITEFASTMST_STR(x)
-
-#define QUITEFASTMST_ASSERT(EXPR) { if (!(EXPR)) \
+#define QUITEFASTMST_ASSERT(EXPR) do if (!(EXPR)) \
     throw std::runtime_error( "[quitefastmst] Assertion " #EXPR " failed in "\
-        __FILE__ ":" QUITEFASTMST_STR(__LINE__) ); }
+        __FILE__ ":" QUITEFASTMST_STR(__LINE__) ); while(0)
 #endif
 
 
