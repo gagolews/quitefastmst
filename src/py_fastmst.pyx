@@ -400,6 +400,7 @@ cpdef tuple mst_euclid(
     int first_pass_max_brute_size=0,
     str mutreach_ties="dist_min",
     str mutreach_leaves="keep",
+    # bool real_dist=False,
     bint verbose=False
 ):
     """
@@ -556,10 +557,10 @@ cpdef tuple mst_euclid(
     Parameters
     ----------
 
-    X : matrix, shape *(n,d)*
+    X : matrix, shape (n,d)
         the "database"; the *n* input points in :math:`\\mathbb{R}^d`
 
-    M : int *< n*
+    M : int < n
         the smoothing factor a.k.a. the degree of the mutual reachability
         distance; *M ≤ 1* denotes the ordinary Euclidean distance
 
@@ -579,10 +580,10 @@ cpdef tuple mst_euclid(
         it actually is a leaf) in the first iteration of the algorithm;
         use ``0`` to select the default value, currently set to 32
 
-    mutreach_ties : {``"dcore_min"``, ``"dist_max"``, ``"dist_min"``, ``"dcore_max"``}, default='dist_min'
+    mutreach_ties : {'dcore_min', 'dist_max', 'dist_min', 'dcore_max'}, default='dist_min'
         adjustment for mutual reachability distance ambiguity (for *M > 1*)
 
-    mutreach_leaves : {``"keep"``, ``"reconnect_dcore_min"``}, default='keep'
+    mutreach_leaves : {'keep', 'reconnect_dcore_min'}, default='keep'
         a way to postprocess the leaves of the computed tree;
         one of ``"keep"`` (default: do nothing),
         or ``"reconnect_dcore_min"`` (try reconnecting leaves to inner vertices
@@ -740,4 +741,16 @@ cpdef tuple mst_euclid(
     if M == 0:
         return mst_dist, mst_ind
     else:
+        # cdef Py_ssize_t i, j, i1, i2
+        # if M > 1 and real_dist:
+        #     for i in range(n-1):
+        #         i1, i2 = mst_ind[i,0], mst_ind[i,1]
+        #         mst_dist[i] = 0.0
+        #         for j in range(d):
+        #             mst_dist[i] += (X[i1,j]-X[i2,j])**2
+        #         mst_dist[i] = libc.math.sqrt(mst_dist[i])
+        #     mst_ord = np.argsort(mst_dist)
+        #     mst_dist = mst_dist[mst_ord]
+        #     mst_ind = mst_ind[mst_ord, :]
+
         return mst_dist, mst_ind, nn_dist, nn_ind
