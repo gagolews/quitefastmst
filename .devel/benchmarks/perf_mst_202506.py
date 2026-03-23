@@ -5,6 +5,8 @@ Run like: python3 ~/Python/quitefastmst/.devel/benchmarks/perf_mst_202506.py
 quitefastmst library and package for R and Python
 Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 
+https://github.com/arborx/ArborX/commit/463fd905ac55bd984fe0d1b19bda077e446948f6 2026-03-23
+
 
 
 CPPFLAGS="-O3 -march=native" pip3 install fast_hdbscan --force --no-binary="fast_hdbscan" --verbose  # relies on numba, which forces -O3 -march=native anyway
