@@ -2,9 +2,6 @@
 NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
 Run like: python3 ~/Python/quitefastmst/.devel/benchmarks/perf_mst_202506.py
 
-TODO UPDATE: M-1 → M !!!  >= v0.9.1
-
-
 quitefastmst library and package for R and Python
 Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 
@@ -18,13 +15,14 @@ CPPFLAGS="-O3 -march=native" pip3 install ~/Python/genieclust --force --verbose
 CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.packages(c("RANN", "Rnanoflann", "dbscan", "nabor", "reticulate", "mlpack"))'
 # mlpack's source distribution is not available from PyPI
 
+
 """
 
-n_jobs = 1
-n_trials = 3
+n_jobs = 6
+n_trials = 1
 seed = 123
 
-n = 2_500_000
+n = 10_000_000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -54,7 +52,7 @@ scenarios = [
     # (1208592,  2,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  3,  1,  "norm"),
-    (n, 2, 1, "norm"),  # TODO UPDATE: M-1 → M !!!  >= v0.9.1 🚧🚧🚧
+    (n, 2, 1, "norm"),
     (n, 2, 10, "norm"),
     (n, 5, 1, "norm"),
     (n, 5, 10, "norm"),
@@ -77,7 +75,7 @@ scenarios = [
 # ------------------------------------------------------------------------------
 
 import os
-import numba
+import numba # TODO
 import numpy as np
 import pandas as pd
 import timeit
@@ -97,6 +95,8 @@ if n_jobs > 0:
     os.environ["OMP_NUM_THREADS"]    = str(n_jobs)
     os.environ["PARLAY_NUM_THREADS"] = str(n_jobs)
     os.environ["NUMBA_NUM_THREADS"]  = str(n_jobs)
+    #os.environ["OMP_PROC_BIND"]      = "spread"  # slower!
+    #os.environ["OMP_PLACES"]         = "threads" # slower!
 
 os.environ["COLUMNS"] = "200"  # output width, in characters
 np.set_printoptions(
@@ -112,8 +112,9 @@ pd.set_option("display.width", 200)
 
 import importlib
 modules = [
-    'numba', 'cython', 'numpy', 'scipy', 'sklearn', 'pykdtree', 'quitefastmst',
-    'genieclust', 'mlpack', 'hdbscan', 'fast_hdbscan', 'rpy2'
+    'cython', 'numpy', 'scipy', 'sklearn', 'pykdtree', 'quitefastmst',
+    'genieclust', 'mlpack', 'hdbscan',  'numba',
+    # 'fast_hdbscan', 'rpy2'# TODO
 ]
 for m in modules:
     try:
@@ -127,15 +128,16 @@ for m in modules:
 import perf_mst_202506_defs as msts
 
 cases = dict(
-    #quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
+    # quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
     quitefast_sesqui_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_sesqui_kd_tree(X, M),
     # quitefast_dual_kd_tree         = lambda X, M, n_jobs: msts.mst_quitefast_dual_kd_tree(X, M),
-    # wangyiqiu                      = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
+    ArborX                         = lambda X, M, n_jobs: msts.mst_arborx(X, M),
+    MemoGFK                        = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
     # quitefast_brute                = lambda X, M, n_jobs: msts.mst_quitefast_brute(X, M),
     # mlpack                         = lambda X, M, n_jobs: msts.mst_mlpack(X, M, n_jobs),
     # fasthdbscan_kdtree             = lambda X, M, n_jobs: msts.mst_fasthdbscan_kdtree(X, M),
     # hdbscan_kdtree                 = lambda X, M, n_jobs: msts.mst_hdbscan_kdtree(X, M, n_jobs),
-    r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
+    # r_mlpack                       = lambda X, M, n_jobs: msts.mst_r_mlpack(X, M, n_jobs),
     # r_quitefast_default            = lambda X, M, n_jobs: msts.mst_r_quitefast_default(X, M),
 )
 

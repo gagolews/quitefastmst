@@ -6,18 +6,26 @@ quitefastmst library and package for R and Python
 Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 """
 
+# TODO ArborX
+# OMP_PROC_BIND=spread  OMP_PLACES=threads ./a.out
+# g++ -O3 -march=native  -I../../src/cluster -I../../src/spatial -I../../src/geometry -I/usr/include/kokkos -I../../src -fopenmp -I../../include example_dbscan.cpp -std=c++23 -lkokkoscore
+# g++ -O3 -march=native  -I../../src/cluster -I../../src/spatial -I../../src/geometry -I/usr/include/kokkos -I../../src -fopenmp -I../../include -std=c++23 -lkokkoscore example_emst.cpp
+
+
+# TODO scikit-learn
+
 import numpy as np
 import numba
 import hdbscan
 from sklearn.neighbors import KDTree
 from hdbscan._hdbscan_boruvka import KDTreeBoruvkaAlgorithm
-import fast_hdbscan
+# import fast_hdbscan # TODO
 import genieclust
 import quitefastmst
 import mlpack
 import subprocess
 import re
-
+import os
 
 max_n_slow_methods   = 250_000
 max_n_medium_methods = 2_500_000
@@ -46,6 +54,50 @@ r_quitefastmst = importr("quitefastmst")
 #                 np.sum((X[tree_e[:,0],:]-X[tree_e[:,1],:])**2, axis=1)
 #             )
 #     return tree_w, tree_e
+
+
+# forcing this to work required a bit of hackery...
+# edit compiler flags in flags.make manually, add -O3 -march=native
+def mst_arborx(X, M):
+    np.savetxt("/tmp/input.matrix", X, header="%d %d" % X.shape, comments="")
+    out = subprocess.run([
+        "/home/gagolews/Python/quitefastmst/.devel/benchmarks/ArborX/marek/mst", "/tmp/input.matrix", "/tmp/output.arborx", str(max(1, M+1))], capture_output=True, env=dict(
+            OMP_PROC_BIND="spread",
+            OMP_PLACES="threads",  # they recommend it
+            OMP_NUM_THREADS=os.getenv("OMP_NUM_THREADS", 1)  # unrespected otherwise
+        ), check=True)
+    t = float(re.search("mst-total-time = (.*)", out.stdout.decode("utf-8")).group(1))
+    res = np.loadtxt("/tmp/output.arborx")
+
+    i1 = res[:, 0].astype(np.intp, order="C")
+    i2 = res[:, 1].astype(np.intp, order="C")
+    tree_w = res[:, 2].astype(np.double, order="C")
+
+    if M > 2:
+        d_core = quitefastmst.knn_euclid(X, M)[0][:, -1]
+
+        tree_w = np.maximum(
+            np.maximum(d_core[i1], d_core[i2]),
+            np.sqrt(
+                np.sum((X[i1,:]-X[i2,:])**2, axis=1)
+            )
+        )
+    else:
+        tree_w = np.sqrt(
+                np.sum((X[i1,:]-X[i2,:])**2, axis=1)
+            )
+    tree_e = np.c_[i1, i2].astype(np.intp, order="C")
+
+    return (tree_w, tree_e, t)
+
+
+    # return (
+    #     res[:, 2].astype("float", order="C"),
+    #     res[:,:2].astype(np.intp, order="C"),
+    #     t
+    # )
+
+
 
 
 # forcing this to work required a bit of hackery...
