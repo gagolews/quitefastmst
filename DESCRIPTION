@@ -1,8 +1,8 @@
 Package: quitefastmst
 Type: Package
 Title: Euclidean and Mutual Reachability Minimum Spanning Trees
-Version: 0.9.1
-Date: 2026-03-13
+Version: 0.9.1.9001
+Date: 2026-03-23
 Authors@R:
     person("Marek", "Gagolewski",
         role=c("aut", "cre", "cph"),

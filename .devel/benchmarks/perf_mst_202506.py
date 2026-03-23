@@ -20,11 +20,11 @@ CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.pa
 
 """
 
-n_jobs = 6
-n_trials = 1
+n_jobs = 10
+n_trials = 3
 seed = 123
 
-n = 10_000_000
+n = 250000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -54,10 +54,10 @@ scenarios = [
     # (1208592,  2,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  3,  1,  "norm"),
-    (n, 2, 1, "norm"),
-    (n, 2, 10, "norm"),
-    (n, 5, 1, "norm"),
-    (n, 5, 10, "norm"),
+    (n, 2, 0, "norm"),
+    (n, 2, 9, "norm"),
+    (n, 5, 0, "norm"),
+    (n, 5, 9, "norm"),
     # (1208592,  3,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  5,  1,  "norm"),

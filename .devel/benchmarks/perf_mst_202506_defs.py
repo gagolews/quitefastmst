@@ -1,18 +1,9 @@
 """
 NOTE: This file is used in benchmarks.Rmd, copy it before making any changes
 
-
 quitefastmst library and package for R and Python
 Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 """
-
-# TODO ArborX
-# OMP_PROC_BIND=spread  OMP_PLACES=threads ./a.out
-# g++ -O3 -march=native  -I../../src/cluster -I../../src/spatial -I../../src/geometry -I/usr/include/kokkos -I../../src -fopenmp -I../../include example_dbscan.cpp -std=c++23 -lkokkoscore
-# g++ -O3 -march=native  -I../../src/cluster -I../../src/spatial -I../../src/geometry -I/usr/include/kokkos -I../../src -fopenmp -I../../include -std=c++23 -lkokkoscore example_emst.cpp
-
-
-# TODO scikit-learn
 
 import numpy as np
 import numba
@@ -39,25 +30,8 @@ r_mlpack = importr("mlpack")
 r_quitefastmst = importr("quitefastmst")
 
 
-
-
-
-# # not as fast as ours, lacking Python interface, a newer version does not build
-# # see mst_wangyiqiu
-# def mst_pargeo(X, M):
-#     if M > 0: return None
-#     np.savetxt("/tmp/input.numpy", X)
-#     subprocess.run([
-#         "/home/gagolews/Python/quitefastmst/.devel/benchmarks/wangyiqiu_pargeo/build/executable/emst", "-o", "/tmp/output.pargeo", "/tmp/input.numpy"], capture_output=True, env=None, check=True)
-#     tree_e = np.genfromtxt("/tmp/output.pargeo", dtype=int)
-#     tree_w = np.sqrt(
-#                 np.sum((X[tree_e[:,0],:]-X[tree_e[:,1],:])**2, axis=1)
-#             )
-#     return tree_w, tree_e
-
-
 # forcing this to work required a bit of hackery...
-# edit compiler flags in flags.make manually, add -O3 -march=native
+# edit compiler flags in Makefile manually, add -O3 -march=native
 def mst_arborx(X, M):
     np.savetxt("/tmp/input.matrix", X, header="%d %d" % X.shape, comments="")
     out = subprocess.run([
@@ -177,8 +151,6 @@ def mst_hdbscan_kdtree(X, M, n_jobs=1, leaf_size=40, leaf_size_div=3):
     _res = alg.spanning_tree()
 
     return (_res[:, 2], _res[:, :2])
-
-
 
 
 def mst_fasthdbscan_kdtree(X, M, leaf_size=40, leaf_size_div=3):

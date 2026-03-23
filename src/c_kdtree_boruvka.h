@@ -842,27 +842,40 @@ protected:
 
         if (curleaf->qtb_data.lastbest_ind < 0) return;
 
-        #if OPENMP_IS_ENABLED
-        if (omp_nthreads > 1) omp_set_lock(&omp_lock);
-        #endif
-        if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i]) {
-            ncl_dist[ds_find_i] = curleaf->qtb_data.lastbest_dist;
-            ncl_ind[ds_find_i]  = curleaf->qtb_data.lastbest_ind;
-            ncl_from[ds_find_i] = curleaf->qtb_data.lastbest_from;
-        }
+        Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
+        QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
 
-        if (omp_nthreads == 1) {  // otherwise slightly worse performance...
-            Py_ssize_t ds_find_j = ds.get_parent(curleaf->qtb_data.lastbest_ind);
-            QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
+        #if OPENMP_IS_ENABLED
+        if (omp_nthreads > 1 && (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i] || curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_j])) {
+            omp_set_lock(&omp_lock);
+            if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i]) {
+                ncl_dist[ds_find_i] = curleaf->qtb_data.lastbest_dist;
+                ncl_ind[ds_find_i]  = curleaf->qtb_data.lastbest_ind;
+                ncl_from[ds_find_i] = curleaf->qtb_data.lastbest_from;
+            }
+
+            if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_j]) {
+                ncl_dist[ds_find_j] = curleaf->qtb_data.lastbest_dist;
+                ncl_ind[ds_find_j]  = curleaf->qtb_data.lastbest_from;
+                ncl_from[ds_find_j] = curleaf->qtb_data.lastbest_ind;
+            }
+            omp_unset_lock(&omp_lock);
+        }
+        #endif
+
+        if (omp_nthreads == 1) {
+            if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_i]) {
+                ncl_dist[ds_find_i] = curleaf->qtb_data.lastbest_dist;
+                ncl_ind[ds_find_i]  = curleaf->qtb_data.lastbest_ind;
+                ncl_from[ds_find_i] = curleaf->qtb_data.lastbest_from;
+            }
+
             if (curleaf->qtb_data.lastbest_dist < ncl_dist[ds_find_j]) {
                 ncl_dist[ds_find_j] = curleaf->qtb_data.lastbest_dist;
                 ncl_ind[ds_find_j]  = curleaf->qtb_data.lastbest_from;
                 ncl_from[ds_find_j] = curleaf->qtb_data.lastbest_ind;
             }
         }
-        #if OPENMP_IS_ENABLED
-        if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
-        #endif
     }
 
 
@@ -889,19 +902,34 @@ protected:
 
         if (lastbest_ind[i] < 0) return;
 
+        Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
+        QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
+
         #if OPENMP_IS_ENABLED
-        if (omp_nthreads > 1) omp_set_lock(&omp_lock);
+        if (omp_nthreads > 1 && (lastbest_dist[i] < ncl_dist[ds_find_i] || lastbest_dist[i] < ncl_dist[ds_find_j])) {
+            omp_set_lock(&omp_lock);
+            if (lastbest_dist[i] < ncl_dist[ds_find_i]) {  // test again
+                ncl_dist[ds_find_i] = lastbest_dist[i];
+                ncl_ind[ds_find_i]  = lastbest_ind[i];
+                ncl_from[ds_find_i] = i;
+            }
+
+            if (lastbest_dist[i] < ncl_dist[ds_find_j]) {
+                ncl_dist[ds_find_j] = lastbest_dist[i];
+                ncl_ind[ds_find_j]  = i;
+                ncl_from[ds_find_j] = lastbest_ind[i];
+            }
+            omp_unset_lock(&omp_lock);
+        }
         #endif
 
-        if (lastbest_dist[i] < ncl_dist[ds_find_i]) {
-            ncl_dist[ds_find_i] = lastbest_dist[i];
-            ncl_ind[ds_find_i]  = lastbest_ind[i];
-            ncl_from[ds_find_i] = i;
-        }
+        if (omp_nthreads == 1) {
+            if (lastbest_dist[i] < ncl_dist[ds_find_i]) {
+                ncl_dist[ds_find_i] = lastbest_dist[i];
+                ncl_ind[ds_find_i]  = lastbest_ind[i];
+                ncl_from[ds_find_i] = i;
+            }
 
-        if (omp_nthreads == 1) {  // otherwise slightly worse performance...
-            Py_ssize_t ds_find_j = ds.get_parent(lastbest_ind[i]);
-            QUITEFASTMST_ASSERT(ds_find_i != ds_find_j);
             if (lastbest_dist[i] < ncl_dist[ds_find_j]) {
                 ncl_dist[ds_find_j] = lastbest_dist[i];
                 ncl_ind[ds_find_j]  = i;
@@ -909,9 +937,6 @@ protected:
             }
         }
 
-        #if OPENMP_IS_ENABLED
-        if (omp_nthreads > 1) omp_unset_lock(&omp_lock);
-        #endif
     }
 
 

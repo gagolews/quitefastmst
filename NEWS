@@ -13,6 +13,11 @@
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 
+## 0.9.1.9xxx (under development)
+
+*   [PERFORMANCE] `mst_euclid` asks for an OpenMP lock less frequently.
+
+
 ## 0.9.1 (2026-02-11)
 
 *   [NEW FEATURE]  The `mutreach_leaves` argument to `mst_euclid`

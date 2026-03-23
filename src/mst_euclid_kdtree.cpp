@@ -195,7 +195,6 @@ void Cmst_euclid_kdtree(
 
     if (max_leaf_size <= 0) throw std::domain_error("max_leaf_size <= 0");
 
-
     //if (first_pass_max_brute_size <= 0)
     // does no harm - will have no effect
 
