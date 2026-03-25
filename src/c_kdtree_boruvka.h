@@ -1029,7 +1029,7 @@ protected:
 
             if (boruvka_variant == BORUVKA_DTB)
                 find_mst_next_dtb();
-            else if (boruvka_variant == BORUVKA_QTB) // TODO
+            else if (boruvka_variant == BORUVKA_QTB)
                 find_mst_next_qtb();
             else
                 find_mst_next_stb();

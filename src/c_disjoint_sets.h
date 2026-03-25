@@ -24,7 +24,7 @@
 
 
 
-/*! Disjoint Sets (Union-Find) Data Structure
+/*!  Disjoint Sets (Union-Find) Data Structure
  *
  *   A class to represent partitions of the set {0,1,...,n-1} for any n.
  *
