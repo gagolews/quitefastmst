@@ -77,6 +77,15 @@ scenarios = [
 # ------------------------------------------------------------------------------
 
 import os
+
+if n_jobs > 0:
+    os.environ["OMP_NUM_THREADS"]    = str(n_jobs)
+    os.environ["PARLAY_NUM_THREADS"] = str(n_jobs)
+    os.environ["NUMBA_NUM_THREADS"]  = str(n_jobs)
+    #os.environ["OMP_PROC_BIND"]      = "spread"  # slower!
+    #os.environ["OMP_PLACES"]         = "threads" # slower!
+
+
 import numba # TODO
 import numpy as np
 import pandas as pd
@@ -92,24 +101,12 @@ ofname = "/home/gagolews/Python/quitefastmst/.devel/benchmarks/perf_mst_202506-%
 # import os.path
 # if os.path.isfile(ofname): raise Exception("file exists")
 
-
-if n_jobs > 0:
-    os.environ["OMP_NUM_THREADS"]    = str(n_jobs)
-    os.environ["PARLAY_NUM_THREADS"] = str(n_jobs)
-    os.environ["NUMBA_NUM_THREADS"]  = str(n_jobs)
-    #os.environ["OMP_PROC_BIND"]      = "spread"  # slower!
-    #os.environ["OMP_PLACES"]         = "threads" # slower!
-
 os.environ["COLUMNS"] = "200"  # output width, in characters
 np.set_printoptions(
     linewidth=200,   # output width
     legacy="1.25",   # print scalars without type information
 )
 pd.set_option("display.width", 200)
-
-
-
-
 
 
 import importlib
