@@ -95,7 +95,6 @@ clean:
 	python3 setup.py clean
 	rm -rf quitefastmst/__pycache__/
 	rm -rf quitefastmst.egg-info/
-	rm -rf ../quitefastmst/
 	rm -rf dist/
 	rm -rf build/
 	rm -rf .devel/pytest/__pycache__/
