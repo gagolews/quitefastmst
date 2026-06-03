@@ -326,11 +326,8 @@ List knn_euclid(
 //' respect to the original metric, or having smaller/larger core distances
 //' in cases of tied distances; see (Gagolewski, 2026).  Empirically,
 //' \code{mutreach_ties="dcore_min"} and \code{mutreach_leaves="reconnect_dcore_min"}
-//' leads to MSTs with more leaves and hubs.
-//'
-//' The brute force method always resolves all ties, whilst, for efficiency,
-//' the K-d tree-based algorithms use this adjustment only for the first \eqn{M}
-//' nearest neighbours, so the resulting trees might be slightly different.
+//' leads to MSTs with more leaves and hubs.  This is only available
+//' in the brute force method.
 //'
 //' The implemented algorithms, see the \code{algorithm} parameter, assume
 //' that \eqn{M} is rather small.
@@ -432,8 +429,8 @@ List knn_euclid(
 //'    iteration of the algorithm; use \code{0} to select the default value,
 //'    currently set to 32
 //' @param mutreach_ties adjustment for mutual reachability distance ambiguity
-//'    (for \eqn{M>1}); one of \code{"dcore_min"}, \code{"dist_max"},
-//'    \code{"dist_min"} (default), or \code{"dcore_max"}
+//'    (for \eqn{M>1} and algorithm \code{"brute"}); one of \code{"dcore_min"},
+//'    \code{"dist_max"}, \code{"dist_min"} (default), or \code{"dcore_max"}
 //' @param mutreach_leaves a way to postprocess the leaves of the computed tree;
 //'    one of \code{"keep"} (default: do nothing),
 //'    or \code{"reconnect_dcore_min"} (try reconnecting leaves to
@@ -577,7 +574,8 @@ List mst_euclid(
             XC.data(), n, d, M, mst_dist.data(), mst_ind.data(),
             (M==0)?nullptr:nn_dist.data(), (M==0)?nullptr:nn_ind.data(),
             max_leaf_size, first_pass_max_brute_size, boruvka_variant,
-            mutreach_ties_val, verbose
+            // mutreach_ties_val,
+            verbose
         );
     else
         Cmst_euclid_brute(

@@ -28,5 +28,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Marek Gagolewski \email{marek@gagolewski.com} (\href{https://orcid.org/0000-0003-0637-6028}{ORCID}) [copyright holder]
 
+Authors:
+\itemize{
+  \item Marek Gagolewski \email{marek@gagolewski.com} (\href{https://orcid.org/0000-0003-0637-6028}{ORCID}) [copyright holder]
+}
+
 }
 \keyword{internal}

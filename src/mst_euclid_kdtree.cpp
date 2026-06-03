@@ -31,7 +31,7 @@ void _mst_euclid_kdtree(
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
     FLOAT boruvka_variant,
-    Py_ssize_t mutreach_ties,
+    // Py_ssize_t mutreach_ties,
     bool /*verbose*/
 ) {
     using DISTANCE=quitefastkdtree::kdtree_distance_sqeuclid<FLOAT, D>;
@@ -40,7 +40,7 @@ void _mst_euclid_kdtree(
 
     QUITEFASTMST_PROFILER_START
     quitefastkdtree::kdtree_boruvka<FLOAT, D, DISTANCE> tree(X, n, M,
-        max_leaf_size, first_pass_max_brute_size, boruvka_variant, mutreach_ties);
+        max_leaf_size, first_pass_max_brute_size, boruvka_variant);
     QUITEFASTMST_PROFILER_STOP("tree init")
 
     QUITEFASTMST_PROFILER_START
@@ -84,8 +84,6 @@ void _mst_euclid_kdtree(
  *  (\*) We note that if there are many pairs of equidistant points,
  *  there can be many minimum spanning trees. In particular, it is likely
  *  that there are point pairs with the same mutual reachability distances.
- *  The ``mutreach_ties`` argument serves as an adjustment to address this
- *  (partially).
  *
  *  The implemented algorithm assumes that `M` is rather small; say, `M <= 20`.
  *
@@ -167,10 +165,6 @@ void _mst_euclid_kdtree(
  *        of the algorithm
  * @param boruvka_variant whether a dual- (2.0), a single- (1.0) or
  *        a sesqui-tree (otherwise) Borůvka algorithm should be used
- * @param mutreach_ties (M>1 only) adjustment for mutual reachability distance
- *        ambiguity (for M>1): -2 and 2 prefer connecting to points with,
- *        respectively, smaller and larger core distance; -1 and 1 prefer,
- *        respectively, farther and closer nearest neighbours
  * @param verbose should we output diagnostic/progress messages?
  */
 template <class FLOAT>
@@ -181,7 +175,6 @@ void Cmst_euclid_kdtree(
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
     FLOAT boruvka_variant,
-    Py_ssize_t mutreach_ties,
     bool verbose
 ) {
     QUITEFASTMST_PROFILER_USE
@@ -205,7 +198,7 @@ void Cmst_euclid_kdtree(
             _mst_euclid_kdtree<FLOAT,  D_>(\
                 X, n, M, mst_dist, mst_ind, \
                 nn_dist, nn_ind, max_leaf_size, first_pass_max_brute_size, \
-                boruvka_variant, mutreach_ties, verbose \
+                boruvka_variant, verbose \
             )
 
     /* LMAO; templates... */
@@ -248,7 +241,7 @@ template void Cmst_euclid_kdtree<float>(
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
     float boruvka_variant,
-    Py_ssize_t mutreach_ties,
+    // Py_ssize_t mutreach_ties,
     bool verbose
 );
 
@@ -260,6 +253,6 @@ template void Cmst_euclid_kdtree<double>(
     Py_ssize_t max_leaf_size,
     Py_ssize_t first_pass_max_brute_size,
     double boruvka_variant,
-    Py_ssize_t mutreach_ties,
+    // Py_ssize_t mutreach_ties,
     bool verbose
 );

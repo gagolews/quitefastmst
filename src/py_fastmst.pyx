@@ -108,7 +108,9 @@ cdef extern from "../src/c_fastmst.h":
         T* mst_dist, Py_ssize_t* mst_ind,
         T* nn_dist, Py_ssize_t* nn_ind,
         Py_ssize_t max_leaf_size, Py_ssize_t first_pass_max_brute_size,
-        T boruvka_variant, Py_ssize_t mutreach_ties, bint verbose
+        T boruvka_variant,
+        # Py_ssize_t mutreach_ties,
+        bint verbose
     ) except +
 
     void Cmst_euclid_brute[T](
@@ -452,11 +454,8 @@ cpdef tuple mst_euclid(
     to the original metric, or having smaller/larger core distances
     in cases of tied distances; see [12]_.  Empirically,
     ``mutreach_ties="dcore_min"`` and ``mutreach_leaves="reconnect_dcore_min"``
-    leads to MSTs with more leaves and hubs.
-
-    The brute force method always resolves all ties, whilst, for efficiency,
-    the K-d tree-based algorithms use this adjustment only for the first *M*
-    nearest neighbours, so the resulting trees might be slightly different.
+    leads to MSTs with more leaves and hubs.    This is only available
+    in the brute force method.
 
     The implemented algorithms, see the *algorithm* parameter, assume that
     *M* is rather small.
@@ -581,7 +580,8 @@ cpdef tuple mst_euclid(
         use ``0`` to select the default value, currently set to 32
 
     mutreach_ties : {'dcore_min', 'dist_max', 'dist_min', 'dcore_max'}, default='dist_min'
-        adjustment for mutual reachability distance ambiguity (for *M > 1*)
+        adjustment for mutual reachability distance ambiguity (for *M > 1*);
+        ``"brute"`` algorithm only
 
     mutreach_leaves : {'keep', 'reconnect_dcore_min'}, default='keep'
         a way to postprocess the leaves of the computed tree;
@@ -710,7 +710,9 @@ cpdef tuple mst_euclid(
             <floatT*>(0)     if M==0 else &nn_dist[0,0],
             <Py_ssize_t*>(0) if M==0 else &nn_ind[0,0],
             max_leaf_size, first_pass_max_brute_size,
-            boruvka_variant, mutreach_ties_val, verbose
+            boruvka_variant,
+            # mutreach_ties_val,
+            verbose
         )
     else:
         Cmst_euclid_brute(

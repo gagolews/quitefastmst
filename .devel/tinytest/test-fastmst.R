@@ -55,7 +55,7 @@ for (d in c(2, 20)) {
 d <- 2
 M <- 10
 X <- matrix(rnorm(n*d), nrow=n)
-for (a in c("brute", "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree")) {
+for (a in c("brute")) {  #, "single_kd_tree", "sesqui_kd_tree", "dual_kd_tree")) {
     ts <- list(
         mst_euclid(X, M=M, algorithm=a, mutreach_ties="dcore_min", mutreach_leaves="reconnect_dcore_min"),
         mst_euclid(X, M=M, algorithm=a, mutreach_ties="dcore_min"),

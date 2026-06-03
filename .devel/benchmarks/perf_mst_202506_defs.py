@@ -10,7 +10,7 @@ import numba
 import hdbscan
 from sklearn.neighbors import KDTree
 from hdbscan._hdbscan_boruvka import KDTreeBoruvkaAlgorithm
-import fast_hdbscan # TODO
+# import fast_hdbscan # NOTE slow import
 import genieclust
 import quitefastmst
 import mlpack

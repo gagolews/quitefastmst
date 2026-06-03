@@ -129,7 +129,7 @@ void Cmst_euclid_kdtree(
     Py_ssize_t max_leaf_size=32,
     Py_ssize_t first_pass_max_brute_size=32,
     FLOAT boruvka_variant=1.5,
-    Py_ssize_t mutreach_ties=-2,
+    // Py_ssize_t mutreach_ties=-2,
     bool verbose=false
 );
 

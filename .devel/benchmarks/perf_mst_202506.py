@@ -8,23 +8,29 @@ Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com/>
 https://github.com/arborx/ArborX/commit/463fd905ac55bd984fe0d1b19bda077e446948f6 2026-03-23
 
 
-
+CPPFLAGS="-O3 -march=native" pip3 install hdbscan --force --no-binary="hdbscan" --verbose
 CPPFLAGS="-O3 -march=native" pip3 install fast_hdbscan --force --no-binary="fast_hdbscan" --verbose  # relies on numba, which forces -O3 -march=native anyway
-CPPFLAGS="-O3 -march=native" pip3 install pykdtree --force --no-binary="pykdtree" --verbose
+CPPFLAGS="-O3 -march=native" pip3 install cython --no-binary="cython" --force
 CPPFLAGS="-O3 -march=native" pip3 install numpy --no-binary="numpy"  --ignore-installed # for numba
+CPPFLAGS="-O3 -march=native" pip3 install scikit-learn --no-binary="scikit-learn" --force
+CPPFLAGS="-O3 -march=native" pip3 install numba --no-binary="numba" --force
+CPPFLAGS="-O3 -march=native" pip3 install pykdtree --force --no-binary="pykdtree" --verbose
+CPPFLAGS="-O3 -march=native" pip3 install fastcluster --force --no-binary="fastcluster" --verbose
 CPPFLAGS="-O3 -march=native" pip3 install ~/Python/quitefastmst --force --verbose
+CPPFLAGS="-O3 -march=native" pip3 install ~/Python/deadwood --force --verbose
 CPPFLAGS="-O3 -march=native" pip3 install ~/Python/genieclust --force --verbose
+CPPFLAGS="-O3 -march=native" pip3 install ~/Python/lumbermark --force --verbose
 CPPFLAGS="-O3 -march=native" CXX_DEFS="-O3 -march=native" Rscript -e 'install.packages(c("RANN", "Rnanoflann", "dbscan", "nabor", "reticulate", "mlpack"))'
 # mlpack's source distribution is not available from PyPI
 
 
 """
 
-n_jobs = 10
+n_jobs = 1
 n_trials = 3
 seed = 123
 
-n = 250000
+n = 1_000_000
 scenarios = [
     # (n, 2, 1,  "pareto(2)"),
     # (n, 2, 2,  "pareto(2)"),
@@ -55,9 +61,9 @@ scenarios = [
     # (1208592,  3, 10,  "norm"),
     # (1208592,  3,  1,  "norm"),
     (n, 2, 0, "norm"),
-    (n, 2, 9, "norm"),
+    (n, 2, 10, "norm"),
     (n, 5, 0, "norm"),
-    (n, 5, 9, "norm"),
+    (n, 5, 10, "norm"),
     # (1208592,  3,  1,  "norm"),
     # (1208592,  3, 10,  "norm"),
     # (1208592,  5,  1,  "norm"),
@@ -96,7 +102,7 @@ import gc
 
 start_time = int(time.time())
 hostname = os.uname()[1]
-ofname = "/home/gagolews/Python/quitefastmst/.devel/benchmarks/perf_mst_202506-%s.csv" % (hostname, )
+ofname = "/home/gagolews/Python/quitefastmst/.devel/benchmarks/perf_mst_202604-%s.csv" % (hostname, )
 
 # import os.path
 # if os.path.isfile(ofname): raise Exception("file exists")
@@ -127,11 +133,11 @@ for m in modules:
 import perf_mst_202506_defs as msts
 
 cases = dict(
-    # quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
+    quitefast_single_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_single_kd_tree(X, M),
     quitefast_sesqui_kd_tree       = lambda X, M, n_jobs: msts.mst_quitefast_sesqui_kd_tree(X, M),
     # quitefast_dual_kd_tree         = lambda X, M, n_jobs: msts.mst_quitefast_dual_kd_tree(X, M),
-    ArborX                         = lambda X, M, n_jobs: msts.mst_arborx(X, M),
-    MemoGFK                        = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
+    # ArborX                         = lambda X, M, n_jobs: msts.mst_arborx(X, M),
+    # MemoGFK                        = lambda X, M, n_jobs: msts.mst_wangyiqiu(X, M),
     # quitefast_brute                = lambda X, M, n_jobs: msts.mst_quitefast_brute(X, M),
     # mlpack                         = lambda X, M, n_jobs: msts.mst_mlpack(X, M, n_jobs),
     # fasthdbscan_kdtree             = lambda X, M, n_jobs: msts.mst_fasthdbscan_kdtree(X, M),
