@@ -2,7 +2,7 @@
 
 ::::{note}
 This section is a work in progress.
-Below we present some preliminary results.
+Below we present some preliminary results for **quitefastmst** 0.9.0.
 ::::
 
 <!--

@@ -11,7 +11,7 @@
  *  of building minimum spanning trees.
  *
  *
- *  Copyleft (C) 2025, Marek Gagolewski <https://www.gagolewski.com>
+ *  Copyleft (C) 2025-2026, Marek Gagolewski <https://www.gagolewski.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License
@@ -362,6 +362,7 @@ protected:
 
         if (dim_width == 0) {
             // a pathological case: this will be a "large" leaf (all points with the same coords)
+            ++nleaves;
             return;
         }
 

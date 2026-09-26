@@ -10,12 +10,16 @@
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 
-## 0.9.1.9xxx (under development)
+## 0.9.2 (under development)
 
-*   [PERFORMANCE] `mst_euclid` asks for an OpenMP lock less frequently.
+*   [PERFORMANCE]  `mst_euclid` asks for the OpenMP lock less frequently.
 
 *   [BACKWARD INCOMPATIBILITY]  `mutreach_ties` is now available only for
     the brute-force algorithm.
+
+*   [BUGFIX]  genieclust/#94: Assertion `_leafnum == this->nleaves` failed in
+    `c_kdtree_boruvka.h:399` (thanks to @drobertsicl for
+    the report).
 
 
 ## 0.9.1 (2026-02-11)
