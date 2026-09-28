@@ -10,7 +10,7 @@
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 
-## 0.9.2 (under development)
+## 0.9.2 (2026-09-28)
 
 *   [PERFORMANCE]  `mst_euclid` asks for the OpenMP lock less frequently.
 
@@ -18,8 +18,7 @@
     the brute-force algorithm.
 
 *   [BUGFIX]  genieclust/#94: Assertion `_leafnum == this->nleaves` failed in
-    `c_kdtree_boruvka.h:399` (thanks to @drobertsicl for
-    the report).
+    `c_kdtree_boruvka.h:399` (thanks to @drobertsicl for the report).
 
 
 ## 0.9.1 (2026-02-11)

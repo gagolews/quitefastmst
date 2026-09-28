@@ -210,7 +210,7 @@
 <a class="sidebar-brand" href="index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.1
+0.9.2
 </div>
 <form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -294,16 +294,24 @@
 <section id="to-do">
 <h2>To Do<a class="headerlink" href="#to-do" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>[HELP NEEDED] [Python] Set up OpenMP on macOS.</p></li>
+<li><p>[HELP NEEDED] [Python] Set up OpenMP on macOS.
+TODO: <a class="reference external" href="https://gist.github.com/FirefoxMetzger/b10a215204732ebf0a2cc34b15b89039">https://gist.github.com/FirefoxMetzger/b10a215204732ebf0a2cc34b15b89039</a> ?</p></li>
 <li><p>Parallelise the K-d tree building procedure.</p></li>
-<li><p>In the Borůvka algorithm based on K-d trees, apply the correction
-for ambiguity of mutual reachability distances (<code class="docutils literal notranslate"><span class="pre">mutreach_adj</span></code>)
-also when considering non-M first neighbours.</p></li>
 <li><p>Extend the online documentation: Tutorials, benchmarks, definitions.</p></li>
 </ul>
 </section>
 <section id="id1">
-<h2>0.9.1 (2026-02-11)<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<h2>0.9.2 (2026-09-28)<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>[PERFORMANCE]  <code class="docutils literal notranslate"><span class="pre">mst_euclid</span></code> asks for the OpenMP lock less frequently.</p></li>
+<li><p>[BACKWARD INCOMPATIBILITY]  <code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code> is now available only for
+the brute-force algorithm.</p></li>
+<li><p>[BUGFIX]  genieclust/#94: Assertion <code class="docutils literal notranslate"><span class="pre">_leafnum</span> <span class="pre">==</span> <span class="pre">this-&gt;nleaves</span></code> failed in
+<code class="docutils literal notranslate"><span class="pre">c_kdtree_boruvka.h:399</span></code> (thanks to &#64;drobertsicl for the report).</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>0.9.1 (2026-02-11)<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>[NEW FEATURE]  The <code class="docutils literal notranslate"><span class="pre">mutreach_leaves</span></code> argument to <code class="docutils literal notranslate"><span class="pre">mst_euclid</span></code>
 controls the postprocessing of tree leaves.</p></li>
@@ -318,8 +326,8 @@ It defaults to <code class="docutils literal notranslate"><span class="pre">&quo
 with <code class="docutils literal notranslate"><span class="pre">algorithm=&quot;brute&quot;</span></code> was fixed.</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>0.9.0 (2025-07-22)<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h2>0.9.0 (2025-07-22)<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>[R]  Initial CRAN release.</p></li>
 <li><p>[Python]  Initial PyPI release.</p></li>
@@ -362,7 +370,7 @@ with <code class="docutils literal notranslate"><span class="pre">algorithm=&quo
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2026-02-12T17:31:37+0100.
+              Last updated on 2026-09-28T10:19:17+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -385,8 +393,9 @@ with <code class="docutils literal notranslate"><span class="pre">algorithm=&quo
             <ul>
 <li><a class="reference internal" href="#">Changelog</a><ul>
 <li><a class="reference internal" href="#to-do">To Do</a></li>
-<li><a class="reference internal" href="#id1">0.9.1 (2026-02-11)</a></li>
-<li><a class="reference internal" href="#id2">0.9.0 (2025-07-22)</a></li>
+<li><a class="reference internal" href="#id1">0.9.2 (2026-09-28)</a></li>
+<li><a class="reference internal" href="#id2">0.9.1 (2026-02-11)</a></li>
+<li><a class="reference internal" href="#id3">0.9.0 (2025-07-22)</a></li>
 </ul>
 </li>
 </ul>
@@ -398,7 +407,7 @@ with <code class="docutils literal notranslate"><span class="pre">algorithm=&quo
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=9dc39874"></script>
+</div><script src="_static/documentation_options.js?v=aa3b121e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

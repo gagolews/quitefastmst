@@ -210,7 +210,7 @@
 <a class="sidebar-brand" href="index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.1
+0.9.2
 </div>
 <form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -422,9 +422,9 @@ to the <strong>hdbscan</strong> package’s <em>min_samples</em>.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>X</strong><span class="classifier">matrix, shape <em>(n,d)</em></span></dt><dd><p>the “database”; the <em>n</em> input points in <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span></p>
+<dt><strong>X</strong><span class="classifier">matrix, shape (n,d)</span></dt><dd><p>the “database”; the <em>n</em> input points in <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span></p>
 </dd>
-<dt><strong>M</strong><span class="classifier">int <em>&lt; n</em></span></dt><dd><p>the smoothing factor a.k.a. the degree of the mutual reachability
+<dt><strong>M</strong><span class="classifier">int &lt; n</span></dt><dd><p>the smoothing factor a.k.a. the degree of the mutual reachability
 distance; <em>M ≤ 1</em> denotes the ordinary Euclidean distance</p>
 </dd>
 <dt><strong>algorithm</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;single_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;sesqui_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dual_kd_tree&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>}, default=’auto’</span></dt><dd><p>K-d trees can only be used for <em>d</em> between 2 and 20 only;
@@ -440,9 +440,10 @@ single-tree and sesqui-tree and 8 for the dual-tree Borůvka algorithm</p>
 it actually is a leaf) in the first iteration of the algorithm;
 use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p>
 </dd>
-<dt><strong>mutreach_ties</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;dcore_min&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_max&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_min&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dcore_max&quot;</span></code>}, default=’dist_min’</span></dt><dd><p>adjustment for mutual reachability distance ambiguity (for <em>M &gt; 1</em>)</p>
+<dt><strong>mutreach_ties</strong><span class="classifier">{‘dcore_min’, ‘dist_max’, ‘dist_min’, ‘dcore_max’}, default=’dist_min’</span></dt><dd><p>adjustment for mutual reachability distance ambiguity (for <em>M &gt; 1</em>);
+<code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code> algorithm only</p>
 </dd>
-<dt><strong>mutreach_leaves</strong><span class="classifier">{<code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;reconnect_dcore_min&quot;</span></code>}, default=’keep’</span></dt><dd><p>a way to postprocess the leaves of the computed tree;
+<dt><strong>mutreach_leaves</strong><span class="classifier">{‘keep’, ‘reconnect_dcore_min’}, default=’keep’</span></dt><dd><p>a way to postprocess the leaves of the computed tree;
 one of <code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code> (default: do nothing),
 or <code class="docutils literal notranslate"><span class="pre">&quot;reconnect_dcore_min&quot;</span></code> (try reconnecting leaves to inner vertices
 which have them amongst their <em>M</em> nearest neighbours; prefer vertices
@@ -487,10 +488,8 @@ the preference towards connecting to farther/closer points with respect
 to the original metric, or having smaller/larger core distances
 in cases of tied distances; see <a class="reference internal" href="#r9c4badab60be-12" id="id9">[12]</a>.  Empirically,
 <code class="docutils literal notranslate"><span class="pre">mutreach_ties=&quot;dcore_min&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mutreach_leaves=&quot;reconnect_dcore_min&quot;</span></code>
-leads to MSTs with more leaves and hubs.</p>
-<p>The brute force method always resolves all ties, whilst, for efficiency,
-the K-d tree-based algorithms use this adjustment only for the first <em>M</em>
-nearest neighbours, so the resulting trees might be slightly different.</p>
+leads to MSTs with more leaves and hubs.    This is only available
+in the brute force method.</p>
 <p>The implemented algorithms, see the <em>algorithm</em> parameter, assume that
 <em>M</em> is rather small.</p>
 <p>Our implementation of K-d trees <a class="reference internal" href="#r9c4badab60be-6" id="id10">[6]</a> has been quite optimised; amongst
@@ -631,7 +630,7 @@ clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2026-02-12T17:31:37+0100.
+              Last updated on 2026-09-28T10:19:17+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -666,7 +665,7 @@ clustering, IEEE Intl. Conf. Data Mining Workshops (ICMDW), 2017, 33–42,
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=9dc39874"></script>
+</div><script src="_static/documentation_options.js?v=aa3b121e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

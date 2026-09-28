@@ -3,19 +3,22 @@
 ## To Do
 
 *   [HELP NEEDED] [Python] Set up OpenMP on macOS.
+    TODO: <https://gist.github.com/FirefoxMetzger/b10a215204732ebf0a2cc34b15b89039> ?
 
 *   Parallelise the K-d tree building procedure.
-
-*   In the Borůvka algorithm based on K-d trees, apply the correction
-    for ambiguity of mutual reachability distances (`mutreach_adj`)
-    also when considering non-M first neighbours.
 
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
 
-## 0.9.1.9xxx (under development)
+## 0.9.2 (2026-09-28)
 
-*   [PERFORMANCE] `mst_euclid` asks for an OpenMP lock less frequently.
+*   [PERFORMANCE]  `mst_euclid` asks for the OpenMP lock less frequently.
+
+*   [BACKWARD INCOMPATIBILITY]  `mutreach_ties` is now available only for
+    the brute-force algorithm.
+
+*   [BUGFIX]  genieclust/#94: Assertion `_leafnum == this->nleaves` failed in
+    `c_kdtree_boruvka.h:399` (thanks to @drobertsicl for the report).
 
 
 ## 0.9.1 (2026-02-11)

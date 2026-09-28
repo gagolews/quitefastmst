@@ -210,7 +210,7 @@
 <a class="sidebar-brand" href="../index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.1
+0.9.2
 </div>
 <form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -294,7 +294,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This section is a work in progress.
-Below we present some preliminary results.</p>
+Below we present some preliminary results for <strong>quitefastmst</strong> 0.9.0.</p>
 </div>
 <section id="platform">
 <h2>Platform<a class="headerlink" href="#platform" title="Link to this heading">¶</a></h2>
@@ -333,7 +333,7 @@ to the 9th nearest neighbour).</p>
 <p>The number of threads was set to 1 or 10.  Note that <strong>mlpack</strong> does not support
 parallel processing and only implements standard EMSTs.
 <strong><a class="reference external" href="https://github.com/wangyiqiu/hdbscan">wangyiqiu_hdbscan</a></strong>
-required some trickery to be run from the terminal – it does not work out
+required some trickery to be run from the terminal: it does not work out
 of the box.</p>
 <p>For each <span class="math notranslate nohighlight">\(n\)</span>, <span class="math notranslate nohighlight">\(d\)</span>, and <span class="math notranslate nohighlight">\(M\)</span>, three runs were performed and the smallest
 timing was recorded.  Moreover, there was a pre-run on a subset of the
@@ -341,8 +341,8 @@ input dataset to ensure <strong>fast_hdbscan</strong> got compiled on-the-fly by
 <strong>hdbscan_kdtree</strong> was not run for larger <span class="math notranslate nohighlight">\(n\)</span>s.</p>
 <p>See the relevant Python scripts:
 <a class="reference external" href="https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506.py"><code class="docutils literal notranslate"><span class="pre">perf_mst_202506.py</span></code></a>,
-<a class="reference external" href="https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py"><code class="docutils literal notranslate"><span class="pre">perf_mst_202506_defs</span></code>.py</a>
-(🚧🚧 TODO: next release: <em>M-1 → M</em> 🚧🚧)</p>
+<a class="reference external" href="https://github.com/gagolews/quitefastmst/blob/0b29075589475223f4eb43a16204b82df3a82cde/.devel/benchmarks/perf_mst_202506_defs.py"><code class="docutils literal notranslate"><span class="pre">perf_mst_202506_defs</span></code>.py</a></p>
+<p>🚧🚧 TODO: next release: <em>M-1 → M</em>, mutreach_ties=’dist_min’ 🚧🚧</p>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
@@ -561,7 +561,7 @@ input dataset to ensure <strong>fast_hdbscan</strong> got compiled on-the-fly by
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2026-02-12T17:31:37+0100.
+              Last updated on 2026-09-28T10:19:17+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -601,7 +601,7 @@ input dataset to ensure <strong>fast_hdbscan</strong> got compiled on-the-fly by
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=9dc39874"></script>
+</div><script src="../_static/documentation_options.js?v=aa3b121e"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

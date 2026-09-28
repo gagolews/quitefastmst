@@ -210,7 +210,7 @@
 <a class="sidebar-brand" href="../index.html">quitefastmst</a>
 </span>
 <div class="sidebar-brand">
-0.9.1
+0.9.2
 </div>
 <form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -341,7 +341,7 @@
 <td><p>minimal number of points in a node to treat it as a leaf (unless it actually is a leaf) in the first iteration of the algorithm; use <code class="docutils literal notranslate"><span class="pre">0</span></code> to select the default value, currently set to 32</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code></p></td>
-<td><p>adjustment for mutual reachability distance ambiguity (for <span class="math notranslate nohighlight">\(M&gt;1\)</span>); one of <code class="docutils literal notranslate"><span class="pre">&quot;dcore_min&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_max&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_min&quot;</span></code> (default), or <code class="docutils literal notranslate"><span class="pre">&quot;dcore_max&quot;</span></code></p></td>
+<td><p>adjustment for mutual reachability distance ambiguity (for <span class="math notranslate nohighlight">\(M&gt;1\)</span> and algorithm <code class="docutils literal notranslate"><span class="pre">&quot;brute&quot;</span></code>); one of <code class="docutils literal notranslate"><span class="pre">&quot;dcore_min&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_max&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dist_min&quot;</span></code> (default), or <code class="docutils literal notranslate"><span class="pre">&quot;dcore_max&quot;</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mutreach_leaves</span></code></p></td>
 <td><p>a way to postprocess the leaves of the computed tree; one of <code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code> (default: do nothing), or <code class="docutils literal notranslate"><span class="pre">&quot;reconnect_dcore_min&quot;</span></code> (try reconnecting leaves to inner vertices which have them amongst their M nearest neighbours; prefer vertices of the smallest core distance)</p></td>
@@ -356,8 +356,7 @@
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Link to this heading">¶</a></h2>
 <p>(*) Note that if there are many pairs of equidistant points, there can be many minimum spanning trees. In particular, it is likely that there are point pairs with the same mutual reachability distances.</p>
-<p>To make the definition unambiguous, the <code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code> argument indicates the preference towards connecting to farther/closer points with respect to the original metric, or having smaller/larger core distances in cases of tied distances; see (Gagolewski, 2026). Empirically, <code class="docutils literal notranslate"><span class="pre">mutreach_ties=&quot;dcore_min&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mutreach_leaves=&quot;reconnect_dcore_min&quot;</span></code> leads to MSTs with more leaves and hubs.</p>
-<p>The brute force method always resolves all ties, whilst, for efficiency, the K-d tree-based algorithms use this adjustment only for the first <span class="math notranslate nohighlight">\(M\)</span> nearest neighbours, so the resulting trees might be slightly different.</p>
+<p>To make the definition unambiguous, the <code class="docutils literal notranslate"><span class="pre">mutreach_ties</span></code> argument indicates the preference towards connecting to farther/closer points with respect to the original metric, or having smaller/larger core distances in cases of tied distances; see (Gagolewski, 2026). Empirically, <code class="docutils literal notranslate"><span class="pre">mutreach_ties=&quot;dcore_min&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mutreach_leaves=&quot;reconnect_dcore_min&quot;</span></code> leads to MSTs with more leaves and hubs. This is only available in the brute force method.</p>
 <p>The implemented algorithms, see the <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter, assume that <span class="math notranslate nohighlight">\(M\)</span> is rather small.</p>
 <p>Our implementation of K-d trees (Bentley, 1975) has been quite optimised; amongst others, it has good locality of reference (at the cost of making a copy of the input dataset), features the sliding midpoint (midrange) rule suggested by Maneewongvatana and Mound (1999), node pruning strategies inspired by some ideas from (Sample et al., 2001), and a couple of further tuneups proposed by the current author.</p>
 <p>The “single-tree” version of the Borůvka algorithm is parallelised: in every iteration, it seeks each point’s nearest “alien”, i.e., the nearest point thereto from another cluster. The “dual-tree” Borůvka version of the algorithm is, in principle, based on (March et al., 2010). As far as our implementation is concerned, the dual-tree approach is often only faster in 2- and 3-dimensional spaces, for <span class="math notranslate nohighlight">\(M\leq 1\)</span>, and in a single-threaded setting. For another (approximate) adaptation of the dual-tree algorithm to mutual reachability distances, see (McInnes and Healy, 2017).</p>
@@ -447,7 +446,7 @@
               Some rights reserved. Licensed under <a href='https://creativecommons.org/licenses/by-nc-nd/4.0/'>CC BY-NC-ND 4.0</a>.
               Built with <a href="https://sphinx-doc.org/">Sphinx</a>
               and a customised <a href="https://github.com/pradyunsg/furo">Furo</a> theme.
-              Last updated on 2026-02-12T17:31:37+0100.
+              Last updated on 2026-09-28T10:19:17+0200.
               This site will never display any ads: it is a non-profit project.
               It does not collect any data.
             </div>
@@ -489,7 +488,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=9dc39874"></script>
+</div><script src="../_static/documentation_options.js?v=aa3b121e"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
