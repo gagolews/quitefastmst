@@ -440,7 +440,7 @@ List knn_euclid(
 //'
 //'
 //' @return
-//' A list with two $(M=0)$ or four $(M>0)$ elements, \code{mst.index} and
+//' A list with two \eqn{(M=0)} or four \eqn{(M>0)} elements, \code{mst.index} and
 //' \code{mst.dist}, and additionally \code{nn.index} and \code{nn.dist}.
 //'
 //' \code{mst.index} is a matrix with \eqn{n-1} rows and \eqn{2} columns,
