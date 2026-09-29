@@ -9,6 +9,8 @@
 
 *   Extend the online documentation: Tutorials, benchmarks, definitions.
 
+*   Instruct how to build the Python package from sources.
+
 
 ## 0.9.2 (2026-09-28)
 

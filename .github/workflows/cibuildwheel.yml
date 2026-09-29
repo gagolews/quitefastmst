@@ -1,4 +1,4 @@
-name: quitefastmst wheels
+name: wheels
 
 on: workflow_dispatch
 

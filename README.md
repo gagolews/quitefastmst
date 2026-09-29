@@ -87,6 +87,13 @@ Sys.setenv(CXX_DEFS="-O3 -march=native")  # for gcc and clang
 install.packages("quitefastmst", type="source")
 ```
 
+To enable OpenMP on macOS, execute `brew install libomp`, and then call in R:
+
+```r
+Sys.setenv(CXX_DEFS="-O3 -march=native -Xpreprocessor -fopenmp")
+install.packages("quitefastmst", type="source")
+```
+
 
 ### Other
 
